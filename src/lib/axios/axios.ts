@@ -1,36 +1,26 @@
 // lib/axios.ts
 import axios from 'axios';
-import { useAuthStore } from '@/stores/auth/auth.strore';
+import {useAuthStore} from "@/stores/auth/auth.strore";
 
 export const api = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_API_URL,
-    withCredentials: true,
-});
-
-api.interceptors.request.use((config) => {
-    const token = useAuthStore.getState().accessToken;
-    if (token) config.headers.Authorization = `Bearer ${token}`;
-    return config;
+    baseURL: process.env.NEXT_PUBLIC_BE_URL || 'http://localhost:3000',
+    withCredentials: true, // Bắt buộc để trình duyệt tự động gửi/nhận HttpOnly Cookie
 });
 
 let isRefreshing = false;
-let pendingQueue: Array<(token: string) => void> = [];
+let pendingQueue: Array<() => void> = [];
 
 api.interceptors.response.use(
     (res) => res,
-
-
     async (error) => {
         const originalRequest = error.config;
 
         if (error.response?.status === 401 && !originalRequest._retry) {
-            originalRequest._retry = true;   // tránh lặp vô hạn nếu refresh cũng fail
+            originalRequest._retry = true;
 
             if (isRefreshing) {
-                // nếu đang refresh rồi, các request khác xếp hàng chờ, không gọi refresh nhiều lần cùng lúc
                 return new Promise((resolve) => {
-                    pendingQueue.push((token: string) => {
-                        originalRequest.headers.Authorization = `Bearer ${token}`;
+                    pendingQueue.push(() => {
                         resolve(api(originalRequest));
                     });
                 });
@@ -39,19 +29,18 @@ api.interceptors.response.use(
             isRefreshing = true;
 
             try {
-                const { data } = await axios.post(
-                    `${process.env.NEXT_PUBLIC_API_URL}/auth/refresh`,
+                // Gọi refresh token. NestJS sẽ tự động Set-Cookie mới (cả access_token & refresh_token) về trình duyệt
+                await axios.post(
+                    `${process.env.BE_URL || 'http://localhost:4000'}/auth/refresh`,
                     {},
-                    { withCredentials: true },   // gửi kèm cookie refresh_token
+                    { withCredentials: true },
                 );
 
-                useAuthStore.getState().setAuth(data.access_token, useAuthStore.getState().user);
-
-                pendingQueue.forEach((cb) => cb(data.access_token));
+                // Chạy lại hàng đợi request bị kẹt
+                pendingQueue.forEach((cb) => cb());
                 pendingQueue = [];
 
-                originalRequest.headers.Authorization = `Bearer ${data.access_token}`;
-                return api(originalRequest);   // gọi lại request ban đầu với token mới
+                return api(originalRequest); // Gửi lại request cũ, trình duyệt tự đính kèm cookie mới
             } catch (refreshError) {
                 useAuthStore.getState().logout();
                 window.location.href = '/login';
