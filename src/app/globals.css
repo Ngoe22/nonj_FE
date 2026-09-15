@@ -1,26 +1,116 @@
-/*@import "tailwindcss";*/
+@import "tailwindcss";
 
-/*:root {*/
-/*  --background: #ffffff;*/
-/*  --foreground: #171717;*/
-/*}*/
+@theme inline {
+    --color-background: var(--background);
+    --color-surface: var(--surface);
+    --color-surface-hover: var(--surface-hover);
+    --color-foreground: var(--foreground);
+    --color-muted: var(--muted);
+    --color-border: var(--border);
+    --color-border-strong: var(--border-strong);
 
-/*@theme inline {*/
-/*  --color-background: var(--background);*/
-/*  --color-foreground: var(--foreground);*/
-/*  --font-sans: var(--font-geist-sans);*/
-/*  --font-mono: var(--font-geist-mono);*/
-/*}*/
+    --color-status-success: var(--status-success);
+    --color-status-success-bg: var(--status-success-bg);
+    --color-status-pending: var(--status-pending);
+    --color-status-pending-bg: var(--status-pending-bg);
+    --color-status-error: var(--status-error);
+    --color-status-error-bg: var(--status-error-bg);
+    --color-status-info: var(--status-info);
+    --color-status-info-bg: var(--status-info-bg);
+    --color-status-neutral: var(--status-neutral);
+    --color-status-neutral-bg: var(--status-neutral-bg);
+    --color-status-warning: var(--status-warning);
+    --color-status-warning-bg: var(--status-warning-bg);
+    --color-status-purple: var(--status-purple);
+    --color-status-purple-bg: var(--status-purple-bg);
+    --color-status-pink: var(--status-pink);
+    --color-status-pink-bg: var(--status-pink-bg);
+}
 
-/*@media (prefers-color-scheme: dark) {*/
-/*  :root {*/
-/*    --background: #0a0a0a;*/
-/*    --foreground: #ededed;*/
-/*  }*/
-/*}*/
+:root {
+    /* Base */
+    --background: #efefef;
+    --surface: #ffffff;
+    --surface-hover: #f3f4f6;
 
-/*body {*/
-/*  background: var(--background);*/
-/*  color: var(--foreground);*/
-/*  font-family: Arial, Helvetica, sans-serif;*/
-/*}*/
+    --foreground: #111111;
+    --muted: #6b7280;
+
+    --border: #e5e7eb;
+    --border-strong: #d1d5db;
+}
+
+.dark {
+    /* Base */
+    --background: #111111;
+    --surface: #1a1a1a;
+    --surface-hover: #252525;
+
+    --foreground: #f5f5f5;
+    --muted: #a3a3a3;
+
+    --border: #2f2f2f;
+    --border-strong: #404040;
+}
+
+/* --------------------------------
+   Status colors
+-------------------------------- */
+
+:root {
+    --status-success: #16a34a;
+    --status-success-bg: #dcfce7;
+
+    --status-pending: #d97706;
+    --status-pending-bg: #fef3c7;
+
+    --status-error: #dc2626;
+    --status-error-bg: #fee2e2;
+
+    --status-info: #2563eb;
+    --status-info-bg: #dbeafe;
+
+    --status-neutral: #6b7280;
+    --status-neutral-bg: #f3f4f6;
+
+    --status-warning: #ca8a04;
+    --status-warning-bg: #fef9c3;
+
+    --status-purple: #9333ea;
+    --status-purple-bg: #f3e8ff;
+
+    --status-pink: #db2777;
+    --status-pink-bg: #fce7f3;
+}
+
+.dark {
+    --status-success-bg: #052e16;
+    --status-pending-bg: #451a03;
+    --status-error-bg: #450a0a;
+    --status-info-bg: #172554;
+    --status-neutral-bg: #262626;
+    --status-warning-bg: #422006;
+    --status-purple-bg: #3b0764;
+    --status-pink-bg: #500724;
+}
+
+/* --------------------------------
+   Global
+-------------------------------- */
+
+html {
+    background: var(--background);
+}
+
+body {
+    margin: 0;
+    background: var(--background);
+    color: var(--foreground);
+    transition:
+            background-color 200ms ease,
+            color 200ms ease;
+}
+
+* {
+    box-sizing: border-box;
+}

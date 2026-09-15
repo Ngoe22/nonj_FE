@@ -1,6 +1,5 @@
 // lib/axios.ts
 import axios from 'axios';
-import {useAuthStore} from "@/stores/auth/auth.strore";
 
 export const api = axios.create({
     baseURL: process.env.NEXT_PUBLIC_BE_URL || 'http://localhost:3000',
@@ -42,7 +41,6 @@ api.interceptors.response.use(
 
                 return api(originalRequest); // Gửi lại request cũ, trình duyệt tự đính kèm cookie mới
             } catch (refreshError) {
-                useAuthStore.getState().logout();
                 window.location.href = '/login';
                 return Promise.reject(refreshError);
             } finally {
