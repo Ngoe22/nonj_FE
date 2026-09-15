@@ -11,6 +11,8 @@ interface HomeLayoutProps {
 }
 
 export default function HomeLayout({ children }: HomeLayoutProps) {
+
+
     const { isOpen, toggleSidebar } = useSidebarStore();
     const initTheme = useThemeStore((state) => state.initTheme);
 
