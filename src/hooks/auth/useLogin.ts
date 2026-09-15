@@ -1,18 +1,26 @@
-// hooks/mutations/use-login.ts
-
+import {useMutation, useQueryClient} from "@tanstack/react-query";
+import {useRouter} from "next/navigation";
 import {api} from "@/lib/axios/axios";
-import {useAuthStore} from "@/stores/auth/auth.strore";
-import {useMutation} from "@tanstack/react-query";
 
-export function useLogin() {
-    const setAuth = useAuthStore((s :any) => s.setAuth);
+//----------------------------------------------------------------
 
-    return useMutation({
-        mutationFn: async (body: { email: string; password: string }) => {
-            return await api.post('/auth/login', body);
-        },
-        onSuccess: (data :any) => {
-            setAuth(data.access_token, data.user);   // save to  Zustand
-        },
-    });
+interface LoginInfo {
+    email: string;
+    password: string;
+}
+
+export function useLogin () {
+    const queryClient = useQueryClient();
+    const router = useRouter();
+    return useMutation( {
+        mutationFn : async (login_info:LoginInfo ) => {
+            const res = await  api.post( 'auth/login' ,  login_info)
+            return res.data;
+        } ,
+        onSuccess : (data:LoginInfo) => {
+            console.log(data)
+            queryClient.setQueryData([ 'user_profile' ] ,data )
+            router.push('/');
+        }
+    } )
 }

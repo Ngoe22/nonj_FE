@@ -6,7 +6,6 @@ import {useRegister} from "@/hooks/auth/useRegister";
 
 export default function LoginPage() {
     const router = useRouter();
-
     const [formData, setFormData] = useState({
         email: '',
         password: '',
