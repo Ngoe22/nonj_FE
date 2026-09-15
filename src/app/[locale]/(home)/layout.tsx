@@ -7,6 +7,6 @@ export default function Layout(
     {children}: { children: React.ReactNode
 }) {
 
-  const user =  useUserProfile()
+  // const user =  useUserProfile()
   return (<HomeLayout>{children}</HomeLayout>);
 }

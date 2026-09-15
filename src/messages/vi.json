@@ -1,0 +1,8 @@
+{
+  "Auth": {
+    "login": "Đăng nhập",
+    "register": "Đăng ký",
+    "email": "Email",
+    "password": "Mật khẩu"
+  }
+}

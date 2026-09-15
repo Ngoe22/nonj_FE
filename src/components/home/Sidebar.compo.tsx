@@ -4,7 +4,7 @@ import {
     ChevronLeft,
     ChevronRight,
     Handshake,
-    Home,
+    Home, Languages,
     LogOut,
     Moon,
     Sun,
@@ -14,6 +14,7 @@ import {
     X
 } from "lucide-react";
 import {useRouter} from "next/navigation";
+import LanguageButton from "@/components/language_model/LanguageSelectorBtn.compo";
 
 
 export default function Sidebar() {
@@ -73,6 +74,8 @@ export default function Sidebar() {
             </nav>
             {/* Bottom actions */}
             <div className="space-y-1 border-t border-border p-3">
+                {/*test language*/}
+                <LanguageButton></LanguageButton>
                 <SidebarButton
                     icon={darkMode ? <Sun size={19} /> : <Moon size={19} />}
                     label={darkMode ? "Light theme" : "Dark theme"}
