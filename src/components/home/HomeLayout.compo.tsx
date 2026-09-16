@@ -38,7 +38,7 @@ export default function HomeLayout({ children }: HomeLayoutProps) {
                 )}
 
                 {/* Content */}
-                <main className="relative min-w-0 flex-1 overflow-y-auto flex flex-col gap-3">
+                <main className="relative min-w-0 flex-1 overflow-y-auto flex flex-col gap-3 ">
 
                     {/* Header */}
                     <header className="flex shrink-0 items-center justify-between bg-surface  md:justify-end p-4 rounded-2xl">

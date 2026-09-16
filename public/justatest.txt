@@ -1,47 +1,79 @@
 
+khi vao endpoint /group
 
+
+all group  : la tat ca cac group chi quan la member hay founder
+my group la cac group ma minh la chu ( founder )
+|------------------------------------------|
+|  all group         |    my group
+----------------------
+list of group
+
+
+
+
+khi mo group  endpoint se them group/:groupd id
 |------------------------------------------------------|
-|  top bar                                             |
-|  exam            member           join_request       |
-|                                                      |
-|         content cua moi phan tren top bar            |
+|  ten group                              1 nut menu   |
+|  @slug   hiển thị màu xám  , bé                      |
+   description
+|         -------------------------                    |
+|                      góc phải có nút tạo collection  |
+|        hien thi list of collection                   |
 |------------------------------------------------------|
 
-exam (part)
+collection có dạng   | endpoint se them group/:groupd id /collection
 |------------------------------------------------------|
-|  collections
+|  tiêu đề     -  góc phải là dấu 3 chấm có xóa và sửa |
+|  miêu tả                                             |
 |------------------------------------------------------|
-|   hien thi list of collection                        |
+khi ấn vào xóa hiện thị model confirm
+khi ấn vào sửa những thông tin như tiêu đề , miêu tả hiển thị trong model đã điền sẵn thông tin
+
+khuyến nghị tạo 1 model componet rồi dùng chung nhiều chỗ
 
 
 
-an vao collection
-
+an vao collection | endpoint se them group/:groupd id /collection/:collection_id
 |  <-                    ten collection    |  dau mui ten back ve list    + ten collection hien tai
 |------------------------------------------|
-|  list of posts  // doan nay de trong sau nay code tiep
+|  list of posts  // đoạn này để trông sau này làm post sau
 
 
-member (member)
+trong nut menu co
+
+- cài đặt  ( nếu là admin hoặc fouder sẽ hiện  , permission se duoc cung cap o data  )
+- join request   ( nếu là admin hoặc fouder sẽ hiện , permission se duoc cung cap o data )
+- member
+- quit group ( neu là founder thì là xóa group  )
+
+
+member khi ấn vào 1 trong mấy cái menu sẽ hiện ra
 |------------------------------------------------------|
-|  member
+| <-                 ten mục vừa ấn vào                |
 |------------------------------------------------------|
-|   hien thi list of member                        |
+|                    nội dung mục      // đoạn này để trông sau này làm  sau                     |
 
 
-
-
-
-
-|                                                      |
-|                                                      |
-|                                                      |
-|                                                      |
-|                                                      |
-|                                                      |
-|                                                      |
-|                                                      |
+nội dung mục setting
+|------------------------------------------------------|
+   thong tin nhom    goc phai co dau 3 cham de edit
+   ten
+   desc
+----------
+|  join_mode        |    hiện thị cái hiện tại  ,ấn vào thì drop 1 list option       enum Group_Join_Mode                        |
+|  view_mode        |    hiện thị cái hiện tại  ,ấn vào thì drop 1 list option       enum Group_View_Mode                     |
 |------------------------------------------------------|
 
+nội dung mục request
+|------------------------------------------------------|
+| the img avatar |  @username |  nickname |  req time  status :pending | approve /reject btn
+|------------------------------------------------------|
 
+nội dung mục member
+|------------------------------------------------------|
+| the img avatar |  @username |  nickname |  joined time | nut action   kick / thang chuc lam admin / hoac giam chuc tu admin xuong member
+|------------------------------------------------------|
 
+====================
+ghi nho cac nut action deu phu thuoc vao permission de render
