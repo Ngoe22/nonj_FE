@@ -3,13 +3,14 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {useLogin} from "@/hooks/auth/useLogin";
+import {useTranslations} from "next-intl";
 
 export default function LoginForm() {
-    const router = useRouter();
 
+    const txt = useTranslations('Auth')
+    const router = useRouter();
     const [email, setUsername] = useState('');
     const [password, setPassword] = useState('');
-
     const loginMutation = useLogin();
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -27,11 +28,11 @@ export default function LoginForm() {
         <div>
             <div className="mb-7">
                 <h2 className="text-2xl font-bold text-foreground">
-                    Chào mừng trở lại
+                    {txt('login_welcome_txt')}
                 </h2>
 
                 <p className="mt-2 text-sm text-muted">
-                    Đăng nhập vào tài khoản của bạn.
+                    {txt('login_welcome_desc')}
                 </p>
             </div>
 
@@ -41,21 +42,21 @@ export default function LoginForm() {
             >
                 <div>
                     <label className="mb-2 block text-sm font-medium text-foreground">
-                        Email
+                        {txt('login_email_label')}
                     </label>
 
                     <input
                         type="email"
                         value={email}
                         onChange={(e) => setUsername(e.target.value)}
-                        placeholder="you@example.com"
-                        className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition placeholder:text-muted focus:border-border-strong"
+                        placeholder={txt('login_email_plh')}
+                        className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition placeholder:text-muted"
                     />
                 </div>
 
                 <div>
                     <label className="mb-2 block text-sm font-medium text-foreground">
-                        Mật khẩu
+                        {txt('login_password_label')}
                     </label>
 
                     <input
@@ -73,13 +74,13 @@ export default function LoginForm() {
                     className="w-full rounded-xl bg-foreground px-4 py-3 text-sm font-semibold text-background transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                     {loginMutation.isPending
-                        ? 'Đang đăng nhập...'
-                        : 'Đăng nhập'}
+                        ? '.....'
+                        : txt('login_btn')}
                 </button>
 
                 {loginMutation.isError && (
                     <p className="rounded-xl border border-[var(--status-error)] bg-[var(--status-error-bg)] px-4 py-3 text-sm text-[var(--status-error)]">
-                        Sai tài khoản hoặc mật khẩu
+                        {txt('login_fail')}
                     </p>
                 )}
             </form>

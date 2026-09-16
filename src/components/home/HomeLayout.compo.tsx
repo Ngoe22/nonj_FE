@@ -37,7 +37,6 @@ export default function HomeLayout({ children }: HomeLayoutProps) {
                     />
                 )}
 
-                {/*           ${isOpen ? "justify-between " : "justify-left"} */}
                 {/* Content */}
                 <main className="relative min-w-0 flex-1 overflow-y-auto flex flex-col gap-3">
 

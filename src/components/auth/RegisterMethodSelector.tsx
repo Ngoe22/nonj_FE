@@ -1,5 +1,7 @@
 'use client';
 
+import {useTranslations} from "next-intl";
+
 type RegisterMethod = 'manual' | 'google';
 
 interface AuthMethodSelectorProps {
@@ -7,11 +9,14 @@ interface AuthMethodSelectorProps {
     onChange: (method: RegisterMethod) => void;
 }
 
-export default function AuthMethodSelector({method, onChange,}: AuthMethodSelectorProps) {
+export default function RegisterMethodSelector({method, onChange,}: AuthMethodSelectorProps) {
+
+    const txt = useTranslations('Auth')
+
     return (
         <div>
             <p className="mb-3 text-sm font-medium text-foreground">
-                Phương thức đăng ký
+                {txt("register_method_text")}
             </p>
 
             <div className="grid grid-cols-2 gap-2">
@@ -28,7 +33,7 @@ export default function AuthMethodSelector({method, onChange,}: AuthMethodSelect
                     }
                     `}
                 >
-                    Manual
+                    {txt('manual_option')}
                 </button>
 
                 <button
@@ -44,7 +49,7 @@ export default function AuthMethodSelector({method, onChange,}: AuthMethodSelect
                     }
                     `}
                 >
-                    Google
+                    {txt('google_option')}
                 </button>
             </div>
         </div>

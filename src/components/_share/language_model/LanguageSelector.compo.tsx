@@ -3,10 +3,14 @@
 import { X, Check } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import {LanguageCode, languages, useLanguageStore} from "@/stores/language/language.store";
+import {useTranslations} from "next-intl";
 
 
 
 export default function LanguageSelector() {
+
+    const txt =  useTranslations('LangueModel');
+
 
     const router = useRouter();
     const pathname = usePathname();
@@ -63,6 +67,8 @@ export default function LanguageSelector() {
         router.push(newPath);
     };
 
+
+
     return (
         <>
             {/* BACKDROP */}
@@ -72,18 +78,18 @@ export default function LanguageSelector() {
             />
 
             {/* PANEL */}
-            <div className="fixed inset-x-3 top-1/2 z-50 max-h-[85vh] -translate-y-1/2 sm:inset-x-auto sm:left-1/2 sm:w-[560px] sm:-translate-x-1/2">
+            <div className="fixed inset-x-3 top-1/2 z-50 max-h-[85vh] -translate-y-1/2 sm:inset-x-auto sm:left-1/2 sm:w-140 sm:-translate-x-1/2">
                 <div className="flex max-h-[85vh] flex-col overflow-hidden rounded-3xl border border-border bg-surface shadow-2xl">
 
                     {/* HEADER */}
                     <div className="flex shrink-0 items-center justify-between border-b border-border px-5 py-4 sm:px-6">
                         <div>
                             <h2 className="text-base font-semibold text-foreground">
-                                Language
+                                {txt('header')}
                             </h2>
 
                             <p className="mt-1 text-xs text-muted">
-                                Choose your preferred language
+                                {txt('header_desc')}
                             </p>
                         </div>
 
@@ -98,7 +104,7 @@ export default function LanguageSelector() {
                     </div>
 
                     {/* LANGUAGE LIST */}
-                    <div className="min-h-0 flex-1 overflow-y-auto px-5 py-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:px-6">
+                    <div className="min-h-0 flex-1 overflow-y-auto px-5 py-5 scrollbar-none [&::-webkit-scrollbar]:hidden sm:px-6">
 
                         <div className="columns-2 gap-3 sm:columns-3">
                             {languages.map((language ) => {
@@ -165,11 +171,11 @@ export default function LanguageSelector() {
                                         )}
 
                                         {/* CURRENT */}
-                                        {!isSelected && isCurrent && (
-                                            <span className="ml-2 shrink-0 rounded-full bg-foreground px-2 py-1 text-[10px] font-medium text-background">
-                                                Current
-                                            </span>
-                                        )}
+                                        {/*{!isSelected && isCurrent && (*/}
+                                        {/*    <span className="ml-2 shrink-0 rounded-full bg-foreground px-2 py-1 text-[10px] font-medium text-background">*/}
+                                        {/*        {txt('current')}*/}
+                                        {/*    </span>*/}
+                                        {/*)}*/}
                                     </button>
                                 );
                             })}
@@ -197,7 +203,7 @@ export default function LanguageSelector() {
                                 disabled:opacity-40
                             "
                         >
-                            Xác nhận
+                            {txt('confirm')}
                         </button>
                     </div>
 

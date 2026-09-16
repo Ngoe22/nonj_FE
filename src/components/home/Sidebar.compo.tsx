@@ -1,8 +1,9 @@
+
 import {useSidebarStore} from "@/stores/side_bar/side_bar.store";
 import {useThemeStore} from "@/stores/theme/theme.store";
 import {
     ChevronLeft,
-    ChevronRight,
+    ChevronRight, Form,
     Handshake,
     Home, Languages,
     LogOut,
@@ -14,13 +15,19 @@ import {
     X
 } from "lucide-react";
 import {useRouter} from "next/navigation";
-import LanguageButton from "@/components/language_model/LanguageSelectorBtn.compo";
+import { useOpenLanguageSelector} from "@/components/_share/language_model/LanguageSelectorBtn.compo";
+import LanguageSelector from "@/components/_share/language_model/LanguageSelector.compo";
+import {useTranslations} from "next-intl";
 
 
 export default function Sidebar() {
+
     const { isOpen, toggleSidebar } = useSidebarStore();
     const { darkMode, toggleTheme } = useThemeStore();
+    const openLanguageSelectorFn = useOpenLanguageSelector();
     const router = useRouter();
+
+    const txt =  useTranslations('Sidebar');
 
 
     return (
@@ -54,37 +61,51 @@ export default function Sidebar() {
             <nav className="flex-1 space-y-1 p-3">
                 <SidebarButton
                     icon={<Home size={19} />}
-                    label="Home"
+                    label={txt('home')}
                     isOpen={isOpen}
                     onClick={()=>router.push('/')}
                 />
                 <SidebarButton
                     icon={< Handshake size={19} />}
-                    label="Group"
+                    label={txt('group')}
                     isOpen={isOpen}
                     onClick={()=>router.push('/group')}
                 />
                 <SidebarButton
                     icon={< UserGroup size={19} />}
-                    label="Friend"
+                    label={txt('friend')}
                     isOpen={isOpen}
                     onClick={()=>router.push('/friend')}
 
                 />
+                <SidebarButton
+                    icon={< Form size={19} />}
+                    label={txt('exam_preparation')}
+                    isOpen={isOpen}
+                    onClick={()=>router.push('/exam_preparation')}
+
+                />
             </nav>
+
             {/* Bottom actions */}
             <div className="space-y-1 border-t border-border p-3">
                 {/*test language*/}
-                <LanguageButton></LanguageButton>
+                <SidebarButton
+                    icon={<Languages  size={19} />}
+                    label={txt('language')}
+                    onClick={openLanguageSelectorFn}
+                    isOpen={isOpen}
+                />
+
                 <SidebarButton
                     icon={darkMode ? <Sun size={19} /> : <Moon size={19} />}
-                    label={darkMode ? "Light theme" : "Dark theme"}
+                    label={darkMode ? txt('theme_light') : txt('theme_dark') }
                     onClick={toggleTheme}
                     isOpen={isOpen}
                 />
                 <SidebarButton
                     icon={<LogOut size={19} />}
-                    label="Logout"
+                    label={txt('logout')}
                     isOpen={isOpen}
                 />
             </div>

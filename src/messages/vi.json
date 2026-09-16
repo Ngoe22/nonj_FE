@@ -1,8 +1,58 @@
 {
   "Auth": {
-    "login": "Đăng nhập",
-    "register": "Đăng ký",
-    "email": "Email",
-    "password": "Mật khẩu"
+
+    "login_toggle" : "Đăng nhập",
+    "register_toggle" : "Đăng ký",
+
+    "poster_main_text": "Hi , NONJ ",
+    "poster_desc" : "Học , học nữa , học mãi",
+
+    "login_welcome_txt" : "Chào mừng trở lại",
+    "login_welcome_desc" : "Đăng nhập vào tài khoản của bạn.",
+    "login_email_label" : "Email",
+    "login_email_plh" : "nhuchuatungcogiayphutliaxa@gmail.com",
+    "login_password_label" : "Mật khẩu",
+    "login_password_plh" : "",
+    "login_btn" : "Đăng nhập",
+    "login_fail" : "Sai tài email mật khẩu",
+
+    "register_method_text" : "Phương thức đăng ký",
+    "manual_option" : "Thủ công",
+    "google_option" : "Google",
+    "register_with_gg" : "Đăng ký với Google",
+    "register_continue_with_gg" : "Tiếp tục với Google",
+    "manual_header" : "Tạo tài khoản",
+    "manual_desc": "Đăng ký tài khoản mới để bắt đầu.",
+
+    "manual_register_email_label" : "Email",
+    "manual_register_email_plh" : "dauguongmattrenvaianhkhocoa@gmail.com",
+    "manual_register_password_label" : "Mật khẩu",
+    "manual_register_password_plh" : "",
+    "manual_register_user_name_label" : "Username",
+    "manual_register_user_name_plh" : "@linglung22 |là tên mà mọi người dùng để tìm kiếm bạn , ",
+    "manual_register_nickname_label" : "Tên",
+    "manual_register_nickname_plh" : "Lung Thị Linh",
+    "manual_register_bio_label" : "Giới thiệu",
+    "manual_register_bio_pld" : "Nhập giới thiệu bản thân ...",
+    "register_btn" : "Đăng ký",
+    "register_fail" : "Đăng ký thất bại"
+
+  },
+  "Sidebar" : {
+    "home": "Trang chủ",
+    "group" : "Nhóm" ,
+    "friend" : "Bạn bè",
+    "exam_preparation" : "Soạn bài ",
+
+    "language" : "Ngôn ngữ",
+    "theme_light" : "Sáng",
+    "theme_dark" : "Tối",
+    "logout" : "Đăng xuất"
+  },
+  "LangueModel": {
+    "header" : "Ngôn ngữ",
+    "current" : "*",
+    "header_desc" : "Lựa chọn ngôn ngữ của bạn",
+    "confirm" : "Xác nhận"
   }
 }

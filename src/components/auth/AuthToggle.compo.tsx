@@ -1,5 +1,7 @@
 'use client';
 
+import {useTranslations} from "next-intl";
+
 type AuthMode = 'login' | 'register';
 
 interface AuthToggleProps {
@@ -8,6 +10,9 @@ interface AuthToggleProps {
 }
 
 export default function AuthToggle({mode, onChange}: AuthToggleProps) {
+
+    const txt= useTranslations('Auth')
+
     return (
         <div className="flex w-full max-w-sm rounded-xl border border-border bg-background p-1">
             <button
@@ -23,7 +28,7 @@ export default function AuthToggle({mode, onChange}: AuthToggleProps) {
                 }
                 `}
             >
-                Đăng nhập
+                {txt('login_toggle')}
             </button>
 
             <button
@@ -39,7 +44,7 @@ export default function AuthToggle({mode, onChange}: AuthToggleProps) {
                 }
                 `}
             >
-                Đăng ký
+                {txt('register_toggle')}
             </button>
 
         </div>

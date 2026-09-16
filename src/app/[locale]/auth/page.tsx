@@ -3,11 +3,13 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import AuthToggle from "@/components/auth/AuthToggle.compo";
-import AuthMethodSelector from "@/components/auth/AuthMethodSelector.compo";
+import AuthMethodSelector from "@/components/auth/RegisterMethodSelector";
 
 import {GoogleRegister} from "@/components/auth/GoogleRegister.compo";
 import LoginForm from "@/components/auth/LoginForm.compo";
 import RegisterForm from "@/components/auth/RegisterForm.compo";
+import {LanguageButton} from "@/components/_share/language_model/LanguageSelectorBtn.compo";
+import LanguageSelector from "@/components/_share/language_model/LanguageSelector.compo";
 
 
 
@@ -24,7 +26,9 @@ export default function AuthPage() {
         useState<RegisterMethod>('manual');
 
     return (
-        <main className="h-screen overflow-hidden bg-background p-3 sm:p-5 md:p-6">
+        <main className="relative h-screen overflow-hidden bg-background p-3 sm:p-5 md:p-6">
+            <LanguageSelector/>
+
             <div className="mx-auto flex h-full min-h-0 max-w-6xl overflow-hidden rounded-3xl border border-border bg-surface shadow-xl">
 
                 {/* LEFT - IMAGE */}
@@ -52,6 +56,12 @@ export default function AuthPage() {
 
                 {/* RIGHT - AUTH */}
                 <section className="flex min-h-0 w-full flex-col md:w-1/2">
+
+                    <div
+                        className={`p-4`}
+                    >
+                        <LanguageButton></LanguageButton>
+                    </div>
 
                     {/* Header */}
                     <div className="flex shrink-0 items-center justify-center px-5 pt-8 sm:px-8 md:pt-10">

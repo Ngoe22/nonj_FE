@@ -1,8 +1,51 @@
 {
   "Auth": {
-    "login": "Login",
-    "register": "Register",
-    "email": "Email",
-    "password": "Password"
+    "login_toggle": "Log in",
+    "register_toggle": "Register",
+    "poster_main_text": "Hi, NONJ",
+    "poster_desc": "Learn, learn more, learn forever",
+    "login_welcome_txt": "Welcome back",
+    "login_welcome_desc": "Log in to your account.",
+    "login_email_label": "Email",
+    "login_email_plh": "youremail@gmail.com",
+    "login_password_label": "Password",
+    "login_password_plh": "",
+    "login_btn": "Log in",
+    "login_fail" : "Email or password is incorrect",
+    "register_method_text": "Register method",
+    "manual_option": "Manual",
+    "google_option": "Google",
+    "register_with_gg" : "Register with GG",
+    "register_continue_with_gg" : "Continue with Google",
+    "manual_header": "Create an account",
+    "manual_desc": "Register for a new account to get started.",
+    "manual_register_email_label": "Email",
+    "manual_register_email_plh": "youremail@gmail.com",
+    "manual_register_password_label": "Password",
+    "manual_register_password_plh": "",
+    "manual_register_user_name_label": "Username",
+    "manual_register_user_name_plh": "@mbappe22 | the name people use to find you",
+    "manual_register_nickname_label": "Name",
+    "manual_register_nickname_plh": "your name or nickname ",
+    "manual_register_bio_label": "Bio",
+    "manual_register_bio_pld": "Tell us a bit about yourself...",
+    "register_btn": "Submit" ,
+    "register_fail" : "Register fail"
+  },
+  "Sidebar": {
+    "home": "Home",
+    "group": "Groups",
+    "friend": "Friends",
+    "exam_preparation" : "Exam preparation",
+    "language": "Language",
+    "theme_light": "Light",
+    "theme_dark": "Dark",
+    "logout": "Log out"
+  },
+  "LangueModel": {
+    "header" : "Language",
+    "current" : "Current",
+    "header_desc" : "Choose your preferred language",
+    "confirm" : "Confirm"
   }
 }

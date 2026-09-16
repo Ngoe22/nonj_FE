@@ -3,10 +3,11 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {useRegister} from "@/hooks/auth/useRegister";
+import {useTranslations} from "next-intl";
 
 export default function RegisterForm() {
     const router = useRouter();
-
+    const txt = useTranslations('Auth')
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -40,11 +41,11 @@ export default function RegisterForm() {
         <div>
             <div className="mb-7">
                 <h2 className="text-2xl font-bold text-foreground">
-                    Tạo tài khoản
+                    {txt('manual_header')}
                 </h2>
 
                 <p className="mt-2 text-sm text-muted">
-                    Đăng ký tài khoản mới để bắt đầu.
+                    {txt('manual_desc')}
                 </p>
             </div>
 
@@ -54,7 +55,7 @@ export default function RegisterForm() {
             >
                 <div>
                     <label className="mb-2 block text-sm font-medium text-foreground">
-                        Email
+                        {txt('manual_register_email_label')}
                     </label>
 
                     <input
@@ -62,42 +63,42 @@ export default function RegisterForm() {
                         name="email"
                         value={formData.email}
                         onChange={handleChange}
-                        placeholder="you@example.com"
-                        className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition placeholder:text-muted focus:border-border-strong"
+                        placeholder= {txt('manual_register_email_plh')}
+                        className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition placeholder:text-muted"
                     />
                 </div>
 
                 <div>
                     <label className="mb-2 block text-sm font-medium text-foreground">
-                        Username
+                        {txt('manual_register_user_name_label')}
                     </label>
 
                     <input
                         name="user_name"
                         value={formData.user_name}
                         onChange={handleChange}
-                        placeholder="username"
-                        className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition placeholder:text-muted focus:border-border-strong"
+                        placeholder={txt('manual_register_user_name_plh')}
+                        className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition placeholder:text-muted"
                     />
                 </div>
 
                 <div>
                     <label className="mb-2 block text-sm font-medium text-foreground">
-                        Nickname
+                        {txt('manual_register_nickname_label')}
                     </label>
 
                     <input
                         name="nickname"
                         value={formData.nickname}
                         onChange={handleChange}
-                        placeholder="Nickname"
-                        className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition placeholder:text-muted focus:border-border-strong"
+                        placeholder={txt('manual_register_nickname_plh')}
+                        className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition placeholder:text-muted"
                     />
                 </div>
 
                 <div>
                     <label className="mb-2 block text-sm font-medium text-foreground">
-                        Mật khẩu
+                        {txt('manual_register_password_label')}
                     </label>
 
                     <input
@@ -106,20 +107,20 @@ export default function RegisterForm() {
                         value={formData.password}
                         onChange={handleChange}
                         placeholder="••••••••"
-                        className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition placeholder:text-muted focus:border-border-strong"
+                        className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition placeholder:text-muted"
                     />
                 </div>
 
                 <div>
                     <label className="mb-2 block text-sm font-medium text-foreground">
-                        Bio
+                        {txt('manual_register_bio_label')}
                     </label>
 
                     <textarea
                         name="bio"
                         value={formData.bio}
                         onChange={handleChange}
-                        placeholder="Giới thiệu về bạn..."
+                        placeholder={txt('manual_register_bio_pld')}
                         rows={3}
                         className="w-full resize-none rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition placeholder:text-muted focus:border-border-strong"
                     />
@@ -131,13 +132,13 @@ export default function RegisterForm() {
                     className="w-full rounded-xl bg-foreground px-4 py-3 text-sm font-semibold text-background transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                     {registerMutation.isPending
-                        ? 'Đang đăng ký...'
-                        : 'Đăng ký'}
+                        ? '.....'
+                        : txt('register_btn')}
                 </button>
 
                 {registerMutation.isError && (
-                    <p className="rounded-xl border border-[var(--status-error)] bg-[var(--status-error-bg)] px-4 py-3 text-sm text-[var(--status-error)]">
-                        Đăng ký thất bại
+                    <p className="rounded-xl border border-status-error bg-[var(--status-error-bg)] px-4 py-3 text-sm text-[var(--status-error)]">
+                        {txt('register_fail')}
                     </p>
                 )}
             </form>
