@@ -1,0 +1,47 @@
+
+
+|------------------------------------------------------|
+|  top bar                                             |
+|  exam            member           join_request       |
+|                                                      |
+|         content cua moi phan tren top bar            |
+|------------------------------------------------------|
+
+exam (part)
+|------------------------------------------------------|
+|  collections
+|------------------------------------------------------|
+|   hien thi list of collection                        |
+
+
+
+an vao collection
+
+|  <-                    ten collection    |  dau mui ten back ve list    + ten collection hien tai
+|------------------------------------------|
+|  list of posts  // doan nay de trong sau nay code tiep
+
+
+member (member)
+|------------------------------------------------------|
+|  member
+|------------------------------------------------------|
+|   hien thi list of member                        |
+
+
+
+
+
+
+|                                                      |
+|                                                      |
+|                                                      |
+|                                                      |
+|                                                      |
+|                                                      |
+|                                                      |
+|                                                      |
+|------------------------------------------------------|
+
+
+

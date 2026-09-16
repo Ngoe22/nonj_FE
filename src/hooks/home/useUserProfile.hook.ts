@@ -3,9 +3,8 @@
 import {useQuery} from "@tanstack/react-query";
 import {api} from "@/lib/axios/axios";
 
-
-export function useUserProfile() {
-
+// useGetUserProfile
+export function useGetUserProfile() {
 
     return useQuery( {
         queryKey: ['user_profile'],
@@ -15,5 +14,4 @@ export function useUserProfile() {
         } ,
         staleTime: 5 * 60 * 1000, // 5 phút
     })
-
 }
