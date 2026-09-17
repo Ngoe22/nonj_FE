@@ -149,3 +149,95 @@ hien thị thông tin cơ bản kèm theo pending
   id: ['SA', 'me', 'other'],
     title: ['SA', 'me', 'other'],
     desc : ['SA', 'me', 'other'],
+
+
+
+
+
+
+---------------
+
+group_search:
+Search Groups
+Find groups and manage your group requests.
+Search
+Join group request
+Search by name
+Search by @group_code
+Requested at
+pending
+Search for a group to see results.
+No groups found
+Try another keyword.
+
+---------------
+
+group:
+Groups
+Manage your groups and collections.
+All Groups
+My Groups
++ Create Group
+
+Settings
+Group information
+Name
+Description
+Join mode
+By Request
+Public
+View mode
+Private
+Public
+
+Join Requests
+Pending
+Approve
+Reject
+
+Members
+User
+Name
+Joined
+Role
+Member
+Admin
+Founder
+Kick
+Promote
+Demote
+
+Leave Group
+Delete Group
+
+---------------
+collections:
+Collections
++ New Collection
+Edit
+Delete
+Title
+Description
+No posts yet
+Posts in this collection will appear here.
+
+
+---------------
+Exam Preparation:
+
+My Exam Preparation
+Your exam preparation collections.
+Exams
+Information
+Title
+Collection
+Exercise content
+Exercise content
+This section will be implemented later.
+Back
+Create
+Delete
+
+
+
+

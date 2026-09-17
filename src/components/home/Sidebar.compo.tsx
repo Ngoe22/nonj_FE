@@ -14,10 +14,12 @@ import {
     Users,
     X
 } from "lucide-react";
-import {useRouter} from "next/navigation";
+
 import { useOpenLanguageSelector} from "@/components/_share/language_model/LanguageSelectorBtn.compo";
 import LanguageSelector from "@/components/_share/language_model/LanguageSelector.compo";
 import {useTranslations} from "next-intl";
+import {useRouter} from "@/i18n/navigation";
+
 
 
 export default function Sidebar() {

@@ -6,6 +6,7 @@ import {
     Users,
     UserPlus,
 } from 'lucide-react';
+import {useTranslations} from "next-intl";
 
 interface GroupMenuProps {
     open: boolean;
@@ -34,6 +35,9 @@ export default function GroupMenu({
                                       onQuit,
                                       onDelete
                                   }: GroupMenuProps) {
+
+   const txt = useTranslations('Group')
+
     if (!open) {
         return null;
     }
@@ -47,7 +51,7 @@ export default function GroupMenu({
                     className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm hover:bg-surface-hover"
                 >
                     <Settings size={17} />
-                    Settings
+                    {txt('settings')}
                 </button>
             )}
 
@@ -58,7 +62,7 @@ export default function GroupMenu({
                     className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm hover:bg-surface-hover"
                 >
                     <UserPlus size={17} />
-                    Join Requests
+                    {txt('join_requests')}
                 </button>
             )}
             {canViewMembers && (
@@ -68,7 +72,7 @@ export default function GroupMenu({
                     className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm hover:bg-surface-hover"
                 >
                     <Users size={17} />
-                    Members
+                    {txt('members')}
                 </button>
             )}
 
@@ -81,7 +85,7 @@ export default function GroupMenu({
                     className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-red-600 hover:bg-red-50"
                 >
                     <LogOut size={17} />
-                    Leave Group
+                    {txt('leave_group')}
                 </button>)
             }
 
@@ -92,7 +96,7 @@ export default function GroupMenu({
                     className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-red-600 hover:bg-red-50"
                 >
                     <LogOut size={17} />
-                    Delete Group
+                    {txt('delete_group')}
                 </button>)
             }
         </div>

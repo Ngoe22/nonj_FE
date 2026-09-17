@@ -45,18 +45,18 @@ export default function GroupHeader({
                 </button>
             </div>
 
-            {canAddCollection && (
-                <div className="mt-6 flex justify-end">
-                    <button
-                        type="button"
-                        onClick={onAddCollection}
-                        className="flex items-center gap-2 rounded-xl bg-foreground px-4 py-2.5 text-sm font-medium text-background"
-                    >
-                        <Plus size={17} />
-                        New Collection
-                    </button>
-                </div>
-            )}
+            {/*{canAddCollection && (*/}
+            {/*    <div className="mt-6 flex justify-end">*/}
+            {/*        <button*/}
+            {/*            type="button"*/}
+            {/*            onClick={onAddCollection}*/}
+            {/*            className="flex items-center gap-2 rounded-xl bg-foreground px-4 py-2.5 text-sm font-medium text-background"*/}
+            {/*        >*/}
+            {/*            <Plus size={17} />*/}
+            {/*            New Collection*/}
+            {/*        </button>*/}
+            {/*    </div>*/}
+            {/*)}*/}
         </div>
     );
 }

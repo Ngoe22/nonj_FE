@@ -6,10 +6,14 @@ import { useParams } from 'next/navigation';
 
 import { testGroupData } from '@/mock/group';
 import GroupCard from "@/components/group/GroupList/GroupCard.compo";
+import {useTranslations} from "next-intl";
 
 type Tab = 'all' | 'my';
 
 export default function GroupList() {
+
+    const txt = useTranslations('Group')
+
     const params = useParams();
 
     const locale = String(params.locale);
@@ -38,11 +42,11 @@ export default function GroupList() {
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-bold">
-                        Groups
+                        {txt('title')}
                     </h1>
 
                     <p className="mt-1 text-sm text-muted-foreground">
-                        Manage your groups and collections.
+                        {txt('description')}
                     </p>
                 </div>
 
@@ -51,7 +55,7 @@ export default function GroupList() {
                     className="flex items-center gap-2 rounded-xl bg-foreground px-4 py-2.5 text-sm font-medium text-background"
                 >
                     <Plus size={17} />
-                    Create Group
+                    {txt('create_group')}
                 </button>
             </div>
 
@@ -65,7 +69,7 @@ export default function GroupList() {
                             : 'text-muted-foreground'
                     }`}
                 >
-                    All Groups
+                    {txt('all_groups')}
                 </button>
 
                 <button
@@ -77,7 +81,7 @@ export default function GroupList() {
                             : 'text-muted-foreground'
                     }`}
                 >
-                    My Groups
+                    {txt('my_groups')}
                 </button>
             </div>
 
