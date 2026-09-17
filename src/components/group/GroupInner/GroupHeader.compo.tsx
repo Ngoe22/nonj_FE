@@ -27,11 +27,11 @@ export default function GroupHeader({
                         {group.name}
                     </h1>
 
-                    <p className="mt-1 text-sm text-muted">
+                    <p className="mt-1 text-sm text-muted-foreground">
                         @{group.slug}
                     </p>
 
-                    <p className="mt-3 max-w-2xl text-sm leading-6 text-muted">
+                    <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">
                         {group.description}
                     </p>
                 </div>
@@ -39,7 +39,7 @@ export default function GroupHeader({
                 <button
                     type="button"
                     onClick={onMenu}
-                    className="shrink-0 rounded-xl p-2 text-muted hover:bg-surface-hover hover:text-foreground"
+                    className="shrink-0 rounded-xl p-2 text-muted-foreground hover:bg-surface-hover hover:text-foreground"
                 >
                     <MoreVertical size={20} />
                 </button>

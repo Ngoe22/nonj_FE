@@ -16,7 +16,7 @@ export default function GroupSubHeader({
             <button
                 type="button"
                 onClick={onBack}
-                className="rounded-xl p-2 text-muted hover:bg-surface-hover hover:text-foreground"
+                className="rounded-xl p-2 text-muted-foreground hover:bg-surface-hover hover:text-foreground"
             >
                 <ArrowLeft size={19} />
             </button>

@@ -4,10 +4,10 @@ import { useState } from 'react';
 
 
 import { testGroupCollectionData } from '@/mock/group';
-import CollectionCard from "@/components/group/CollectionCard.compo";
-import CollectionMenu from "@/components/group/CollectionMenu.compo";
-import CollectionModal from "@/components/group/CollectionModal.compo";
-import ConfirmModal from "@/components/group/ConfirmModal.compo";
+import CollectionCard from "@/components/group/CollectionList/CollectionCard.compo";
+import CollectionMenu from "@/components/group/CollectionList/CollectionMenu.compo";
+import CollectionModal from "@/components/group/CollectionList/CollectionModal.compo";
+import ConfirmModal from "@/components/group/_share/ConfirmModal.compo";
 
 interface CollectionListProps {
     locale: string;

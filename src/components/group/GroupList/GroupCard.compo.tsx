@@ -26,7 +26,7 @@ export default function GroupCard({
         >
             <div className="flex items-start gap-4">
                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-surface-hover">
-                    <Users size={20} className="text-muted" />
+                    <Users size={20} className="text-muted-foreground" />
                 </div>
 
                 <div className="min-w-0 flex-1">
@@ -34,20 +34,20 @@ export default function GroupCard({
                         {group.name}
                     </h3>
 
-                    <p className="mt-0.5 text-sm text-muted">
+                    <p className="mt-0.5 text-sm text-muted-foreground">
                         @{group.slug}
                     </p>
 
-                    <p className="mt-2 line-clamp-2 text-sm text-muted">
+                    <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">
                         {group.description}
                     </p>
 
                     <div className="mt-4 flex flex-wrap gap-2">
-                        <span className="rounded-full bg-surface-hover px-2.5 py-1 text-xs text-muted">
+                        <span className="rounded-full bg-surface-hover px-2.5 py-1 text-xs text-muted-foreground">
                             {group.view_mode}
                         </span>
 
-                        <span className="rounded-full bg-surface-hover px-2.5 py-1 text-xs text-muted">
+                        <span className="rounded-full bg-surface-hover px-2.5 py-1 text-xs text-muted-foreground">
                             {group.join_mode}
                         </span>
                     </div>

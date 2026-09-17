@@ -19,12 +19,12 @@ export default function GroupJoinRequests() {
                             @{joinrequestTest.sender.user_name}
                         </p>
 
-                        <p className="text-sm text-muted">
+                        <p className="text-sm text-muted-foreground">
                             {joinrequestTest.sender.nickname}
                         </p>
                     </div>
 
-                    <div className="text-sm text-muted">
+                    <div className="text-sm text-muted-foreground">
                         {joinrequestTest.created_time}
                     </div>
 

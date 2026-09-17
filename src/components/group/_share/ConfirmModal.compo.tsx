@@ -1,6 +1,6 @@
 'use client';
 
-import Modal from "../_share/common_model/CommonModel.compo";
+import Modal from "../../_share/common_model/CommonModel.compo";
 
 
 interface ConfirmModalProps {
@@ -20,7 +20,7 @@ export default function ConfirmModal({open, title, description, confirmText = 'D
             title={title}
             onClose={onClose}
         >
-            <p className="text-sm leading-6 text-muted">
+            <p className="text-sm leading-6 text-muted-foreground">
                 {description}
             </p>
 

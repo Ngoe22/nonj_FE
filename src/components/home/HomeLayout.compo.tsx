@@ -20,7 +20,7 @@ export default function HomeLayout({ children }: HomeLayoutProps) {
     }, [initTheme]);
 
     return (
-        <div className="min-h-screen  p-2  sm:p-4 md:p-5">
+        <div className="min-h-screen  p-2  sm:p-4 md:p-5 bg-background ">
             <div
                 className="relative flex gap-4 h-[calc(100vh-1.5rem)] overflow-hidden sm:h-[calc(100vh-2rem)] md:h-[calc(100vh-3rem)]"
             >

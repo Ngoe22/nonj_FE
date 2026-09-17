@@ -8,15 +8,15 @@ import { useParams } from 'next/navigation';
 import {
     testGroupData,
 } from '@/mock/group';
-import GroupSubHeader from "@/components/group/GroupSubHeader.compo";
-import GroupSettings from "@/components/group/GroupSettings.compo";
-import GroupJoinRequests from "@/components/group/GroupJoinRequests.compo";
-import GroupMembers from "@/components/group/GroupMembers.compo";
-import GroupHeader from "@/components/group/GroupHeader.compo";
-import GroupMenu from "@/components/group/GroupMenu.compo";
-import CollectionList from "@/components/group/CollectionList.compo";
-import CollectionModal from "@/components/group/CollectionModal.compo";
-import ConfirmModal from "@/components/group/ConfirmModal.compo";
+import GroupSubHeader from "@/components/group/GroupInner/GroupSubHeader.compo";
+import GroupSettings from "@/components/group/GroupInner/GroupSetting/GroupSettings.compo";
+import GroupJoinRequests from "@/components/group/GroupInner/GroupJoinReq/GroupJoinRequests.compo";
+import GroupMembers from "@/components/group/GroupInner/GroupMember/GroupMembers.compo";
+import GroupHeader from "@/components/group/GroupInner/GroupHeader.compo";
+import GroupMenu from "@/components/group/GroupInner/GroupMenu.compo";
+import CollectionList from "@/components/group/CollectionList/CollectionList.compo";
+import CollectionModal from "@/components/group/CollectionList/CollectionModal.compo";
+import ConfirmModal from "@/components/group/_share/ConfirmModal.compo";
 
 type View =
     | 'overview'

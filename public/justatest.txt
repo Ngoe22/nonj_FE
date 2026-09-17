@@ -77,3 +77,75 @@ nội dung mục member
 
 ====================
 ghi nho cac nut action deu phu thuoc vao permission de render
+
+
+code cho toi trang friend
+
+
+|------------------------------------------|
+              search
+|------------------------------------------------------|
+            co 3 trang  nho
+   myfriend     outging Req   ingoing Req
+
+ 3 trang nay kha tuong dong
+
+ deu hien thi ban  , nguoi gui nguoi nhan  , thoi gian
+ riêng cái ingoing thì có thêm nút action như accept hay reject
+
+
+ phần search thi có 1 thanh imput và 1 cái icon khi nhập xong ấn icon thì thực hiên tìm kiếm ( func này tôi làm sau , bạn giả lập là được  ) , thực hiện tìm kiếm xong thì hiện cái drop down có thong tin
+     id: 'balbal',
+     user_name: 'balbal',
+     nickname: 'balbal',
+     avatar_url: 'balbal.link',
+
+     giúp hiển thị thông tin và thêm nút add friend  , nếu add rồi thì hiện thị pending
+
+
+page(endpoint ) search_grop
+
+|------------------------------------------------------|
+       search    |      outging  to group
+-------------------------------------------------------
+
+trong search
+
+|------------------------------------------------------|
+    icon :| search bar  | search btn
+-------------------------------------------------------
+list of group
+
+ấn vào icon hiện ra 2 option search by slug  , search by name , mặc định là slug
+
+du liệu thì vẫn giống trong
+export const testGroupData = {
+    id: 'awyqiuwe1283913',
+    founder: {
+        id: '123akdasdjasd',
+        user_name: 'mumu',
+        nickname: 'momo',
+    },
+    slug: 'chicken',
+    name: 'jolibe',
+    description: 'pls dont',
+    join_mode: Group_Join_Mode.BY_REQUEST,
+    view_mode: Group_View_Mode.PRIVATE,
+    isjoined : true // them trương này
+
+    neu joined false
+
+    view_mode  PRIVATE  => khong the mo group
+
+    join_mode === BY_REQUEST thi hiện request  , public thì hiện tham gia ngay
+
+
+trong  outging  to group
+
+hien thị thông tin cơ bản kèm theo pending
+
+======================================
+
+  id: ['SA', 'me', 'other'],
+    title: ['SA', 'me', 'other'],
+    desc : ['SA', 'me', 'other'],

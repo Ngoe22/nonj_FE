@@ -88,7 +88,7 @@ export default function LanguageSelector() {
                                 {txt('header')}
                             </h2>
 
-                            <p className="mt-1 text-xs text-muted">
+                            <p className="mt-1 text-xs text-muted-foreground">
                                 {txt('header_desc')}
                             </p>
                         </div>
@@ -96,7 +96,7 @@ export default function LanguageSelector() {
                         <button
                             type="button"
                             onClick={close}
-                            className="flex h-9 w-9 items-center justify-center rounded-full text-muted transition hover:bg-surface-hover hover:text-foreground"
+                            className="flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground transition hover:bg-surface-hover hover:text-foreground"
                             aria-label="Close"
                         >
                             <X size={18} />
@@ -154,7 +154,7 @@ export default function LanguageSelector() {
                                                     ${
                                                     isSelected
                                                         ? 'text-background/70'
-                                                        : 'text-muted'
+                                                        : 'text-muted-foreground'
                                                 }
                                                 `}
                                             >

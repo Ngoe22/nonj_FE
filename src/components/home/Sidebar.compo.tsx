@@ -8,7 +8,7 @@ import {
     Home, Languages,
     LogOut,
     Moon,
-    Sun,
+    Sun, Telescope,
     UserGroup,
     UserRound,
     Users,
@@ -52,7 +52,7 @@ export default function Sidebar() {
                     type="button"
                     onClick={toggleSidebar}
                     aria-label="Close sidebar"
-                    className=" flex h-9 w-9 items-center justify-center rounded-lg text-muted transition hover:bg-surface-hover  "
+                    className=" flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition hover:bg-surface-hover  "
                 >
                     {isOpen ? <ChevronLeft size={20} /> : <ChevronRight size={20} /> }
                 </button>
@@ -65,6 +65,7 @@ export default function Sidebar() {
                     isOpen={isOpen}
                     onClick={()=>router.push('/')}
                 />
+                {/*txt('group')*/}
                 <SidebarButton
                     icon={< Handshake size={19} />}
                     label={txt('group')}
@@ -72,10 +73,18 @@ export default function Sidebar() {
                     onClick={()=>router.push('/group')}
                 />
                 <SidebarButton
+                    icon={< Telescope size={19} />}
+                    label={ "Discover new group" }
+                    isOpen={isOpen}
+                    onClick={()=>router.push('/group_search')}
+                />
+
+
+                <SidebarButton
                     icon={< UserGroup size={19} />}
                     label={txt('friend')}
                     isOpen={isOpen}
-                    onClick={()=>router.push('/friend')}
+                    onClick={()=>router.push('/friends')}
 
                 />
                 <SidebarButton
@@ -123,7 +132,7 @@ function SidebarButton({icon, label, onClick, isOpen}: {
             type="button"
             onClick={onClick}
             title={!isOpen ? label : undefined}
-            className={` flex w-full items-center rounded-xl py-2.5 text-sm font-medium text-muted transition hover:bg-surface-hover hover:text-foreground ${
+            className={` flex w-full items-center rounded-xl py-2.5 text-sm font-medium text-muted-foreground transition hover:bg-surface-hover hover:text-foreground ${
                 isOpen ? "gap-3 px-3" : "justify-center px-0"
             } `}
         >

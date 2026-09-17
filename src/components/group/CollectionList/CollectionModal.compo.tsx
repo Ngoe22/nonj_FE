@@ -45,8 +45,8 @@ export default function CollectionModal({
             open={open}
             title={
                 mode === 'create'
-                    ? 'Create Collection'
-                    : 'Edit Collection'
+                    ? 'Create CollectionList'
+                    : 'Edit CollectionList'
             }
             onClose={onClose}
         >

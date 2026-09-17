@@ -17,7 +17,7 @@ export default function CollectionDetailPage() {
             <div className="flex items-center gap-3 border-b border-border pb-5">
                 <Link
                     href={`/${locale}/group/${groupId}`}
-                    className="rounded-xl p-2 text-muted hover:bg-surface-hover hover:text-foreground"
+                    className="rounded-xl p-2 text-muted-foreground hover:bg-surface-hover hover:text-foreground"
                 >
                     <ArrowLeft size={19} />
                 </Link>
@@ -33,7 +33,7 @@ export default function CollectionDetailPage() {
                         No posts yet
                     </h2>
 
-                    <p className="mt-2 text-sm text-muted">
+                    <p className="mt-2 text-sm text-muted-foreground">
                         Posts in this collection will appear here.
                     </p>
                 </div>

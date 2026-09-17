@@ -35,7 +35,7 @@ export default function CollectionCard({
                     {collection.title}
                 </h3>
 
-                <p className="mt-2 text-sm leading-6 text-muted">
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">
                     {collection.desc}
                 </p>
             </Link>
@@ -43,7 +43,7 @@ export default function CollectionCard({
             <button
                 type="button"
                 onClick={onMenu}
-                className="absolute right-3 top-3 rounded-lg p-2 text-muted hover:bg-surface-hover hover:text-foreground"
+                className="absolute right-3 top-3 rounded-lg p-2 text-muted-foreground hover:bg-surface-hover hover:text-foreground"
             >
                 <MoreVertical size={18} />
             </button>

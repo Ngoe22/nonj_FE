@@ -5,7 +5,7 @@ import { Plus } from 'lucide-react';
 import { useParams } from 'next/navigation';
 
 import { testGroupData } from '@/mock/group';
-import GroupCard from "@/components/group/GroupCard.compo";
+import GroupCard from "@/components/group/GroupList/GroupCard.compo";
 
 type Tab = 'all' | 'my';
 
@@ -41,7 +41,7 @@ export default function GroupList() {
                         Groups
                     </h1>
 
-                    <p className="mt-1 text-sm text-muted">
+                    <p className="mt-1 text-sm text-muted-foreground">
                         Manage your groups and collections.
                     </p>
                 </div>
@@ -62,7 +62,7 @@ export default function GroupList() {
                     className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
                         tab === 'all'
                             ? 'bg-surface text-foreground shadow-sm'
-                            : 'text-muted'
+                            : 'text-muted-foreground'
                     }`}
                 >
                     All Groups
@@ -74,7 +74,7 @@ export default function GroupList() {
                     className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
                         tab === 'my'
                             ? 'bg-surface text-foreground shadow-sm'
-                            : 'text-muted'
+                            : 'text-muted-foreground'
                     }`}
                 >
                     My Groups

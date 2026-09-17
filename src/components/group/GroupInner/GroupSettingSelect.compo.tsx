@@ -50,7 +50,7 @@ export default function SettingSelect<T extends string>({
 
                 <ChevronDown
                     size={17}
-                    className={`text-muted transition-transform ${
+                    className={`text-muted-foreground transition-transform ${
                         open ? 'rotate-180' : ''
                     }`}
                 />
@@ -77,7 +77,7 @@ export default function SettingSelect<T extends string>({
                                     ${
                                     selected
                                         ? 'bg-surface-hover font-medium text-foreground'
-                                        : 'text-muted hover:bg-surface-hover hover:text-foreground'
+                                        : 'text-muted-foreground hover:bg-surface-hover hover:text-foreground'
                                 }
                                 `}
                             >

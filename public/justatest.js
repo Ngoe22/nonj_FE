@@ -79,5 +79,57 @@ const member = {
     demote_mem : true ,
   }
 }
+//============================
+
+
+
+const outgoingReq = {
+  id: 'balbal',
+  receiver: {
+    id: 'balbal',
+    user_name: 'balbal',
+    nickname: 'balbal',
+    avatar_url: 'balbal.link',
+  },
+  status: 'pending',
+  created_at: "send time 2026-7-9"
+}
+
+const ingoingReq = {
+  id: 'balbal',
+  sender: {
+    id: 'balbal',
+    user_name: 'balbal',
+    nickname: 'balbal',
+    avatar_url: 'balbal.link',
+  },
+  status: 'pending',
+  created_at: "send time 2026-7-9"
+}
+
+const friendList = {
+  id: ['admin', 'me'],
+  user_friend: {
+    id: 'balbal',
+    user_name: 'balbal',
+    nickname: 'balbal',
+    avatar_url: 'balbal.link',
+  },
+  updated_at: "send time 2026-7-9"
+}
+
+const MyExamPreparationCollection  = {
+  id: 'eqwe1231q12312l',
+  title: 'Some exam preparation',
+  desc :  'blabla ',
+};
+
+
+const ExamPreparation = {
+  id: 'eqwe1231q12312l',
+  title: 'Some exam preparation',
+  exercise_content : {},  // code sau
+  collection : { id : 'eqwe1231q12312asdl'  , name: 'eqwe1231q12312asdl' },
+}
 
 

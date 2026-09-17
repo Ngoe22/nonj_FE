@@ -1,4 +1,4 @@
-import GroupDetail from "@/components/group/GroupDetail.compo";
+import GroupDetail from "@/components/group/GroupInner/GroupDetail.compo";
 
 export default function GroupDetailPage() {
     return <GroupDetail />;

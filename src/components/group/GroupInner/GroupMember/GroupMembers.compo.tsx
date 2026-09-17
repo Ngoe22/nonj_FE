@@ -7,7 +7,7 @@ export default function GroupMembers() {
     return (
         <div className="pt-6">
             <div className="overflow-hidden rounded-2xl border border-border">
-                <div className="hidden grid-cols-[auto_1fr_1fr_140px_100px_50px] gap-4 border-b border-border bg-surface-hover px-4 py-3 text-xs font-medium uppercase tracking-wide text-muted md:grid">
+                <div className="hidden grid-cols-[auto_1fr_1fr_140px_100px_50px] gap-4 border-b border-border bg-surface-hover px-4 py-3 text-xs font-medium uppercase tracking-wide text-muted-foreground md:grid">
                     <span />
                     <span>User</span>
                     <span>Nickname</span>
@@ -29,11 +29,11 @@ export default function GroupMembers() {
                         </p>
                     </div>
 
-                    <div className="text-sm text-muted">
+                    <div className="text-sm text-muted-foreground">
                         {member.user.nickname}
                     </div>
 
-                    <div className="text-sm text-muted">
+                    <div className="text-sm text-muted-foreground">
                         {member.updated_at}
                     </div>
 
@@ -46,7 +46,7 @@ export default function GroupMembers() {
                     <div className="relative">
                         <button
                             type="button"
-                            className="rounded-lg p-2 text-muted hover:bg-surface-hover"
+                            className="rounded-lg p-2 text-muted-foreground hover:bg-surface-hover"
                         >
                             <MoreVertical size={18} />
                         </button>
