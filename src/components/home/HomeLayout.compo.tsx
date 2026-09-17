@@ -42,6 +42,7 @@ export default function HomeLayout({ children }: HomeLayoutProps) {
 
                     {/* Header */}
                     <header className="flex shrink-0 items-center justify-between bg-surface  md:justify-end p-4 rounded-2xl">
+
                         {/* Toggle sidebar */}
                         <button
                             type="button"
