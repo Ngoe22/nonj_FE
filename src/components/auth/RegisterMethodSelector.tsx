@@ -29,7 +29,7 @@ export default function RegisterMethodSelector({method, onChange,}: AuthMethodSe
                         ${
                         method === 'manual'
                             ? 'border-border-strong bg-surface-hover text-foreground'
-                            : 'border-border text-muted hover:bg-surface-hover hover:text-foreground'
+                            : 'border-border text-muted-foreground hover:bg-surface-hover hover:text-foreground'
                     }
                     `}
                 >
@@ -45,7 +45,7 @@ export default function RegisterMethodSelector({method, onChange,}: AuthMethodSe
                         ${
                         method === 'google'
                             ? 'border-border-strong bg-surface-hover text-foreground'
-                            : 'border-border text-muted hover:bg-surface-hover hover:text-foreground'
+                            : 'border-border text-muted-foreground hover:bg-surface-hover hover:text-foreground'
                     }
                     `}
                 >

@@ -31,7 +31,7 @@ export default function LoginForm() {
                     {txt('login_welcome_txt')}
                 </h2>
 
-                <p className="mt-2 text-sm text-muted">
+                <p className="mt-2 text-sm text-muted-foreground">
                     {txt('login_welcome_desc')}
                 </p>
             </div>
@@ -50,7 +50,7 @@ export default function LoginForm() {
                         value={email}
                         onChange={(e) => setUsername(e.target.value)}
                         placeholder={txt('login_email_plh')}
-                        className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition placeholder:text-muted"
+                        className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition placeholder:text-muted-foreground"
                     />
                 </div>
 
@@ -64,7 +64,7 @@ export default function LoginForm() {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="••••••••"
-                        className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition placeholder:text-muted focus:border-border-strong"
+                        className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-border-strong"
                     />
                 </div>
 

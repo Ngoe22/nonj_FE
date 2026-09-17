@@ -15,14 +15,14 @@ export  function GoogleRegister() {
                 {txt('register_with_gg')}
             </h2>
 
-            <p className="mt-2 text-sm leading-6 text-muted">
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">
                 Google registration sẽ được tích hợp sau.
             </p>
 
             <button
                 type="button"
                 disabled
-                className="mt-5 w-full rounded-xl border border-border bg-surface-hover px-4 py-3 text-sm font-medium text-muted"
+                className="mt-5 w-full rounded-xl border border-border bg-surface-hover px-4 py-3 text-sm font-medium text-muted-foreground"
             >
                 {txt('register_continue_with_gg')}
             </button>

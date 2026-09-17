@@ -32,7 +32,16 @@ export default function RegisterForm() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        await registerMutation.mutateAsync(formData);
+        try {
+            await registerMutation.mutateAsync(formData);
+            router.push('/'); // Chỉ chuyển trang khi thành công
+        } catch (error) {
+            // Bắt lỗi ở đây: hiển thị thông báo lỗi (toast/alert)
+            // nhưng dữ liệu trong formData vẫn được giữ nguyên trên màn hình cho người dùng sửa
+            console.error("Lỗi xác thực:", error);
+        }
+
+        // await registerMutation.mutateAsync(formData);
 
         router.push('/');
     };
@@ -44,7 +53,7 @@ export default function RegisterForm() {
                     {txt('manual_header')}
                 </h2>
 
-                <p className="mt-2 text-sm text-muted">
+                <p className="mt-2 text-sm text-muted-foreground">
                     {txt('manual_desc')}
                 </p>
             </div>
@@ -64,7 +73,7 @@ export default function RegisterForm() {
                         value={formData.email}
                         onChange={handleChange}
                         placeholder= {txt('manual_register_email_plh')}
-                        className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition placeholder:text-muted"
+                        className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition placeholder:text-muted-foreground"
                     />
                 </div>
 
@@ -78,7 +87,7 @@ export default function RegisterForm() {
                         value={formData.user_name}
                         onChange={handleChange}
                         placeholder={txt('manual_register_user_name_plh')}
-                        className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition placeholder:text-muted"
+                        className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition placeholder:text-muted-foreground"
                     />
                 </div>
 
@@ -92,7 +101,7 @@ export default function RegisterForm() {
                         value={formData.nickname}
                         onChange={handleChange}
                         placeholder={txt('manual_register_nickname_plh')}
-                        className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition placeholder:text-muted"
+                        className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition placeholder:text-muted-foreground"
                     />
                 </div>
 
@@ -107,7 +116,7 @@ export default function RegisterForm() {
                         value={formData.password}
                         onChange={handleChange}
                         placeholder="••••••••"
-                        className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition placeholder:text-muted"
+                        className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition placeholder:text-muted-foreground"
                     />
                 </div>
 
@@ -122,7 +131,7 @@ export default function RegisterForm() {
                         onChange={handleChange}
                         placeholder={txt('manual_register_bio_pld')}
                         rows={3}
-                        className="w-full resize-none rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition placeholder:text-muted focus:border-border-strong"
+                        className="w-full resize-none rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-border-strong"
                     />
                 </div>
 

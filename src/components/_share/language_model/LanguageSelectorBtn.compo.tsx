@@ -16,7 +16,7 @@ export function LanguageButton() {
         <button
             type="button"
             onClick={() => open(currentLanguage)}
-            className="flex h-9 w-9 items-center justify-center rounded-full text-muted transition hover:bg-surface-hover hover:text-foreground"
+            className="flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground transition hover:bg-surface-hover hover:text-foreground"
             aria-label="Change language"
         >
             <Languages size={18} />

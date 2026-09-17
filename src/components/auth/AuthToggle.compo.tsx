@@ -24,7 +24,7 @@ export default function AuthToggle({mode, onChange}: AuthToggleProps) {
                     ${
                     mode === 'login'
                         ? 'bg-surface text-foreground shadow-sm'
-                        : 'text-muted hover:text-foreground'
+                        : 'text-muted-foreground hover:text-foreground'
                 }
                 `}
             >
@@ -40,7 +40,7 @@ export default function AuthToggle({mode, onChange}: AuthToggleProps) {
                     ${
                     mode === 'register'
                         ? 'bg-surface text-foreground shadow-sm'
-                        : 'text-muted hover:text-foreground'
+                        : 'text-muted-foreground hover:text-foreground'
                 }
                 `}
             >

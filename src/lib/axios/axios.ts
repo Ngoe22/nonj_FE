@@ -41,7 +41,7 @@ api.interceptors.response.use(
 
                 return api(originalRequest); // Gửi lại request cũ, trình duyệt tự đính kèm cookie mới
             } catch (refreshError) {
-                window.location.href = '/login';
+                window.location.href = '/auth';
                 return Promise.reject(refreshError);
             } finally {
                 isRefreshing = false;
