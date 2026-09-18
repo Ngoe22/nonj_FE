@@ -16,7 +16,7 @@ export default function HomeLayout({ children }: HomeLayoutProps) {
     const { isOpen, toggleSidebar } = useSidebarStore();
     const initTheme = useThemeStore((state) => state.initTheme);
 
-    const user = useGetUserProfile()
+    const { data: user, isLoading } = useGetUserProfile();
 
     useEffect(() => {
         initTheme();
@@ -57,10 +57,10 @@ export default function HomeLayout({ children }: HomeLayoutProps) {
                             <Menu size={19} />
                         </button>
 
-                        <div>
-
-                            {/*<p>{user.nickname}</p>*/}
-
+                        <div className={`flex items-center gap-4`} >
+                            <p
+                                className={'text-muted-foreground'}
+                            >@{user?.user_name}</p>
                             {/* Avatar */}
                             <a
                                 href="/profile"

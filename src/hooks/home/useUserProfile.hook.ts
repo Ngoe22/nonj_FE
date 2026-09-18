@@ -5,10 +5,13 @@ import {api} from "@/lib/axios/axios";
 
 interface UserProfile {
     id: string;
-    username: string;
+    user_name: string;
     nickname: string;
     email: string;
     bio: string;
+    avatar_url: string | null;
+    role: string;
+    status: string;
 }
 
 interface Res {
@@ -18,13 +21,13 @@ interface Res {
 
 // useGetUserProfile
 export function useGetUserProfile() {
-
-    return useQuery( {
+    return useQuery({
         queryKey: ['user_profile'],
         queryFn: async () => {
-            const res :Res = await  api.get( 'user/me' )
-            return res.data;
-        } ,
-        staleTime: 60 * 60 * 1000, // 60 phút
-    })
+            const res = await api.get<Res>('user/me');
+
+            return res.data.data;
+        },
+        staleTime: 60 * 60 * 1000,
+    });
 }
