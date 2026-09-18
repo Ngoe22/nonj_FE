@@ -76,7 +76,7 @@ export default function Sidebar() {
                 />
                 <SidebarButton
                     icon={< Telescope size={19} />}
-                    label={ "Discover new group" }
+                    label={ txt('group_search') }
                     isOpen={isOpen}
                     onClick={()=>router.push('/group_search')}
                 />

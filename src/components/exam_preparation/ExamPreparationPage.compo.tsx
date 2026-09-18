@@ -7,8 +7,12 @@ import {
     examPreparationCollections,
 } from '@/mock/group';
 import ExamCollectionCard from "@/components/exam_preparation/ExamCollectionCard.compo";
+import {useTranslations} from "next-intl";
 
 export default function ExamPreparationPage() {
+
+    const txt = useTranslations('Exam_preparation')
+
     const params = useParams();
 
     const locale = String(params.locale);
@@ -17,11 +21,11 @@ export default function ExamPreparationPage() {
         <div className="mx-auto w-full max-w-4xl px-4 py-6 sm:px-6">
             <div>
                 <h1 className="text-2xl font-bold tracking-tight">
-                    My Exam Preparation
+                    {txt('title')}
                 </h1>
 
                 <p className="mt-1 text-sm text-muted-foreground">
-                    Your exam preparation collections.
+                    {txt('description')}
                 </p>
             </div>
 

@@ -2,20 +2,26 @@
 
 import { MoreVertical } from 'lucide-react';
 import { member } from '@/mock/group';
+import {useTranslations} from "next-intl";
 
 export default function GroupMembers() {
+
+    const txt = useTranslations('Group')
+
     return (
         <div className="pt-6">
             <div className="overflow-hidden rounded-2xl border border-border">
                 <div className="hidden grid-cols-[auto_1fr_1fr_140px_100px_50px] gap-4 border-b border-border bg-surface-hover px-4 py-3 text-xs font-medium uppercase tracking-wide text-muted-foreground md:grid">
                     <span />
-                    <span>User</span>
-                    <span>Nickname</span>
-                    <span>Joined</span>
-                    <span>Role</span>
+                    <span>{txt('user')}</span>
+                    <span>{txt('name_column')}</span>
+                    <span>{txt('joined')}</span>
+                    <span>{txt('role')}</span>
                     <span />
                 </div>
 
+
+                list
                 <div className="relative flex flex-col gap-4 p-4 md:grid md:grid-cols-[auto_1fr_1fr_140px_100px_50px] md:items-center md:gap-4">
                     <img
                         src={member.user.avatar_url}
@@ -39,18 +45,19 @@ export default function GroupMembers() {
 
                     <div>
                         <span className="rounded-full bg-surface-hover px-2.5 py-1 text-xs">
-                            {member.role}
+                            {/*{member.role}*/}
+                            {txt( member.role as string )}
                         </span>
                     </div>
 
-                    <div className="relative">
-                        <button
-                            type="button"
-                            className="rounded-lg p-2 text-muted-foreground hover:bg-surface-hover"
-                        >
-                            <MoreVertical size={18} />
-                        </button>
-                    </div>
+                    {/*<div className="relative">*/}
+                    {/*    <button*/}
+                    {/*        type="button"*/}
+                    {/*        className="rounded-lg p-2 text-muted-foreground hover:bg-surface-hover"*/}
+                    {/*    >*/}
+                    {/*        <MoreVertical size={18} />*/}
+                    {/*    </button>*/}
+                    {/*</div>*/}
 
                     <div className="flex flex-wrap gap-2 md:col-span-full">
                         {member._permission.kick_mem && (
@@ -58,7 +65,7 @@ export default function GroupMembers() {
                                 type="button"
                                 className="rounded-lg border border-border px-3 py-2 text-xs text-red-600"
                             >
-                                Kick
+                                {txt('kick')}
                             </button>
                         )}
 
@@ -67,7 +74,7 @@ export default function GroupMembers() {
                                 type="button"
                                 className="rounded-lg border border-border px-3 py-2 text-xs"
                             >
-                                Promote
+                                {txt('promote')}
                             </button>
                         )}
 
@@ -76,7 +83,7 @@ export default function GroupMembers() {
                                 type="button"
                                 className="rounded-lg border border-border px-3 py-2 text-xs"
                             >
-                                Demote
+                                {txt('demote')}
                             </button>
                         )}
                     </div>

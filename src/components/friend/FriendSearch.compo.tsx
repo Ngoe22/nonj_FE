@@ -13,6 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import {searchUser} from "@/mock/group";
 import FriendUserInfo from "@/components/friend/FriendUserInfo.compo";
+import {useTranslations} from "next-intl";
 
 
 
@@ -20,6 +21,8 @@ import FriendUserInfo from "@/components/friend/FriendUserInfo.compo";
 export default function FriendSearch() {
     const [keyword, setKeyword] = useState('');
     const [searched, setSearched] = useState(false);
+
+    const txt = useTranslations('Friend')
 
     const [requestStatus, setRequestStatus] = useState<
         'idle' | 'pending'
@@ -71,7 +74,7 @@ export default function FriendSearch() {
                                 handleSearch();
                             }
                         }}
-                        placeholder="Search username..."
+                        placeholder={txt('search_pld')}
                         className="h-11 pl-10"
                     />
                 </div>

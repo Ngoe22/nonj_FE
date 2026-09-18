@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import {SearchGroupData} from "@/mock/group";
+import {useTranslations} from "next-intl";
 
 
 
@@ -22,6 +23,10 @@ export default function SearchGroupCard({
                                             onJoin,
                                             onRequest,
                                         }: SearchGroupCardProps) {
+
+
+   const txt = useTranslations('Group_search')
+
     const [joined, setJoined] =
         useState(group.isjoined);
 
@@ -63,18 +68,25 @@ export default function SearchGroupCard({
                     </p>
 
                     <div className="mt-3 flex flex-wrap gap-2">
-                        <Badge variant="secondary">
-                            {group.view_mode}
-                        </Badge>
+                        {/*<Badge variant="secondary">*/}
+                        {/*    {group.view_mode}*/}
+                        {/*</Badge>*/}
 
-                        <Badge variant="secondary">
-                            {group.join_mode}
-                        </Badge>
+                        {/*<Badge variant="secondary">*/}
+                        {/*    {group.join_mode}*/}
+                        {/*</Badge>*/}
+
+                        {joined && (
+                            <Badge variant="secondary">
+                                {txt('isMem')}
+                            </Badge>
+                        )}
                     </div>
                 </div>
 
                 <div className="flex shrink-0 gap-2 sm:flex-col sm:items-stretch">
-                    {joined && (
+                    {joined ?
+                        ( // if join
                         <Button
                             asChild
                             className="w-full sm:w-36"
@@ -83,63 +95,64 @@ export default function SearchGroupCard({
                                 href={`/group/${group.id}`}
                             >
                                 <ExternalLink size={16} />
-                                View group
+                                {txt('view_group_btn')}
                             </a>
                         </Button>
-                    )}
+                    ) :
+                    ( // if not join
+                        <div
+                            className={'flex flex-col gap-2 items-end'}
+                        >
+                            {
+                                group.view_mode === 'PUBLIC' && <Button
+                                    asChild
+                                    className="w-full sm:w-36"
+                                >
+                                    <a
+                                        href={`/group/${group.id}`}
+                                    >
+                                        <ExternalLink size={16} />
+                                        {txt('view_group_btn')}
+                                    </a>
+                                </Button>
 
-                    {!joined &&
-                        group.view_mode ===
-                        'PRIVATE' && (
-                            <Button
-                                type="button"
-                                variant="secondary"
-                                disabled
-                                className="w-full sm:w-36"
-                            >
-                                Private group
-                            </Button>
-                        )}
-
-                    {!joined &&
-                        group.view_mode ===
-                        'PUBLIC' &&
-                        group.join_mode ===
-                        'PUBLIC' && (
-                            <Button
-                                type="button"
-                                disabled={pending}
-                                onClick={handleJoin}
-                                className="w-full sm:w-36"
-                            >
-                                <UserPlus size={16} />
-                                {pending
-                                    ? 'Joining...'
-                                    : 'Join now'}
-                            </Button>
-                        )}
-
-                    {!joined &&
-                        group.view_mode ===
-                        'PUBLIC' &&
-                        group.join_mode ===
-                        'BY_REQUEST' && (
-                            <Button
-                                type="button"
-                                variant={
-                                    pending
-                                        ? 'secondary'
-                                        : 'default'
-                                }
-                                disabled={pending}
-                                onClick={handleRequest}
-                                className="w-full sm:w-36"
-                            >
-                                {pending
-                                    ? 'Pending'
-                                    : 'Request to join'}
-                            </Button>
-                        )}
+                            }
+                            {
+                                group.join_mode === 'BY_REQUEST' &&
+                                <Button
+                                    type="button"
+                                    variant={
+                                        pending
+                                            ? 'secondary'
+                                            : 'default'
+                                    }
+                                    disabled={pending}
+                                    onClick={handleRequest}
+                                    className="w-full "
+                                >
+                                    <UserPlus size={16} />
+                                    {pending
+                                        ? txt('pending')
+                                        : txt('request_to_join')}
+                                </Button>
+                            }
+                            {
+                                group.join_mode === 'PUBLIC' &&
+                                <Button
+                                    type="button"
+                                    disabled={pending}
+                                    onClick={handleJoin}
+                                    className="w-full sm:w-36"
+                                >
+                                    <UserPlus size={16} />
+                                    {pending
+                                        ? '.....'
+                                        : txt('join_now_btn')}
+                                </Button>
+                            }
+                        </div>
+                    )
+                    }
                 </div>
             </div>
         </Card>

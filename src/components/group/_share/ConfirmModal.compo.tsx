@@ -1,6 +1,7 @@
 'use client';
 
 import Modal from "../../_share/common_model/CommonModel.compo";
+import {useTranslations} from "next-intl";
 
 
 interface ConfirmModalProps {
@@ -14,6 +15,9 @@ interface ConfirmModalProps {
 }
 
 export default function ConfirmModal({open, title, description, confirmText = 'Delete', cancelText = 'Cancel', onConfirm, onClose}: ConfirmModalProps) {
+
+    const txt = useTranslations('Post_collections')
+
     return (
         <Modal
             open={open}
@@ -30,7 +34,7 @@ export default function ConfirmModal({open, title, description, confirmText = 'D
                     onClick={onClose}
                     className="rounded-xl border border-border px-4 py-2 text-sm font-medium hover:bg-surface-hover"
                 >
-                    {cancelText}
+                    {txt('cancel')}
                 </button>
 
                 <button
@@ -38,7 +42,7 @@ export default function ConfirmModal({open, title, description, confirmText = 'D
                     onClick={onConfirm}
                     className="rounded-xl bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
                 >
-                    {confirmText}
+                    {txt('confirm')}
                 </button>
             </div>
         </Modal>

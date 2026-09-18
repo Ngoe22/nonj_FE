@@ -5,6 +5,7 @@ import { Clock3 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import {OutgoingGroupRequest} from "@/mock/group";
+import {useTranslations} from "next-intl";
 
 
 
@@ -15,6 +16,9 @@ interface OutgoingGroupRequestItemProps {
 export default function OutgoingGroupRequestItem({
                                                      request,
                                                  }: OutgoingGroupRequestItemProps) {
+
+    const txt = useTranslations('Group_search')
+
     const group = request.group;
 
     return (
@@ -48,7 +52,8 @@ export default function OutgoingGroupRequestItem({
                         className="gap-1"
                     >
                         <Clock3 size={13} />
-                        {request.status}
+                        {txt('pending')}
+                        {/*{request.status}*/}
                     </Badge>
                 </div>
             </div>

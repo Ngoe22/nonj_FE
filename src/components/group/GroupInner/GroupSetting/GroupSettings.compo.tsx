@@ -8,6 +8,7 @@ import {
     Group_View_Mode,
 } from '@/mock/group';
 import SettingSelect from "@/components/group/GroupInner/GroupSettingSelect.compo";
+import {useTranslations} from "next-intl";
 
 interface GroupSettingsProps {
     group: typeof import('@/mock/group').testGroupData;
@@ -24,14 +25,14 @@ export default function GroupSettings({group}: GroupSettingsProps) {
 
     const [ isEditing ,setIsEditing ] = useState(false);
 
-
+    const txt = useTranslations('Group')
 
     return (
         <div className="space-y-8 pt-6">
             <section>
                 <div className="flex items-center justify-between">
                     <h3 className="text-lg font-semibold">
-                        Group information
+                        {txt('group_information')}
                     </h3>
 
                     {group.permission.edit_setting && (
@@ -62,7 +63,7 @@ export default function GroupSettings({group}: GroupSettingsProps) {
                 <div className="mt-5 space-y-5">
                     <div>
                         <p className="text-xs uppercase tracking-wide text-muted-foreground">
-                            Name
+                            {txt('name')}
                         </p>
 
                         {
@@ -83,7 +84,7 @@ export default function GroupSettings({group}: GroupSettingsProps) {
 
                     <div>
                         <p className="text-xs uppercase tracking-wide text-muted-foreground">
-                            Description
+                            {txt('description_label')}
                         </p>
 
                         {
@@ -108,7 +109,7 @@ export default function GroupSettings({group}: GroupSettingsProps) {
             <section className="space-y-5 border-t border-border pt-6">
 
                     <SettingSelect
-                        label="Join mode"
+                        label={txt('join_mode')}
                         value={info.join_mode}
                         options={Object.values(Group_Join_Mode)}
                         disabled={!isEditing}
@@ -120,7 +121,7 @@ export default function GroupSettings({group}: GroupSettingsProps) {
                     />
 
                     <SettingSelect
-                        label="View mode"
+                        label={txt('view_mode')}
                         value={info.view_mode}
                         options={Object.values(Group_View_Mode)}
                         disabled={!isEditing}

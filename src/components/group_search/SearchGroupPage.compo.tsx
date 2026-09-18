@@ -18,10 +18,14 @@ import GroupSearchBar from "@/components/group_search/GroupSearchBar.compo";
 import SearchGroupResults from "@/components/group_search/SearchGroupResults.compo";
 import {outgoingGroupRequests} from "@/mock/group";
 import OutgoingGroupRequestItem from "@/components/group_search/OutgoingGroupRequestItem.compo";
+import {useTranslations} from "next-intl";
 
 
 
 export default function SearchGroupPage() {
+
+    const txt = useTranslations('Group_search')
+
     const [searchMode, setSearchMode] =
         useState<SearchGroupMode>('slug');
 
@@ -32,11 +36,11 @@ export default function SearchGroupPage() {
         <div className="mx-auto w-full max-w-4xl px-4 py-6 sm:px-6">
             <div>
                 <h1 className="text-2xl font-bold tracking-tight">
-                    Search Groups
+                    {txt('title')}
                 </h1>
 
                 <p className="mt-1 text-sm text-muted-foreground">
-                    Find groups and manage your group requests.
+                    {txt('description')}
                 </p>
             </div>
 
@@ -46,11 +50,11 @@ export default function SearchGroupPage() {
             >
                 <TabsList className="grid h-auto w-full grid-cols-2">
                     <TabsTrigger value="search">
-                        Search
+                        {txt('search')}
                     </TabsTrigger>
 
                     <TabsTrigger value="outgoing">
-                        Outgoing to Group
+                        {txt('join_group_request')}
                     </TabsTrigger>
                 </TabsList>
 

@@ -43,7 +43,7 @@
     "group" : "Nhóm" ,
     "friend" : "Bạn bè",
     "exam_preparation" : "Soạn bài ",
-    "group_search" : "Khám phá nhóm mới",
+    "group_search" : "Khám phá ",
 
     "language" : "Ngôn ngữ",
     "theme_light" : "Sáng",
@@ -57,21 +57,26 @@
     "confirm" : "Xác nhận"
   },
   "Group_search": {
-    "title": "Tìm kiếm nhóm",
-    "description": "Tìm nhóm và quản lý yêu cầu tham gia nhóm của bạn.",
+    "title": "Tìm kiếm cộng đồng",
+    "description": "Tìm và quản lý yêu cầu tham gia cộng đồng của bạn.",
     "search": "Tìm kiếm",
     "join_group_request": "Yêu cầu tham gia nhóm",
     "search_by_name": "Tìm kiếm theo tên",
     "search_by_group_code": "Tìm kiếm theo @group_code",
     "requested_at": "Yêu cầu lúc",
-    "pending": "Đang chờ",
+    "pending": "Đang chờ phản hồi",
     "no_results": "Tìm kiếm nhóm để xem kết quả.",
     "no_groups_found": "Không tìm thấy nhóm nào",
-    "try_another_keyword": "Thử từ khóa khác."
+    "try_another_keyword": "Thử từ khóa khác." ,
+    "view_group_btn" : "Xem nhóm",
+    "join_now_btn" : "Tham gia ngay",
+    "request_to_join" : "Gửi yêu cầu tham gia ",
+    "isMem" : "Đã là thành viên"
+
   },
   "Group": {
     "title": "Nhóm",
-    "description": "Quản lý nhóm và bộ sưu tập của bạn.",
+    "description": "Tham gia và làm bài tập .",
     "all_groups": "Tất cả nhóm",
     "my_groups": "Nhóm của tôi",
     "create_group": "Tạo nhóm",
@@ -80,16 +85,16 @@
     "name": "Tên",
     "description_label": "Mô tả",
     "join_mode": "Chế độ tham gia",
-    "by_request": "Theo yêu cầu",
-    "public": "Công khai",
+    "BY_REQUEST": "Theo yêu cầu",
+    "PUBLIC": "Công khai",
     "view_mode": "Chế độ xem",
-    "private": "Riêng tư",
+    "PRIVATE": "Riêng tư",
     "join_requests": "Yêu cầu tham gia",
-    "pending": "Đang chờ",
+    "pending": "Chờ phản hồi",
     "approve": "Chấp nhận",
     "reject": "Từ chối",
     "members": "Thành viên",
-    "user": "Người dùng",
+    "user": "Thành viên",
     "name_column": "Tên",
     "joined": "Ngày tham gia",
     "role": "Vai trò",
@@ -103,27 +108,55 @@
     "delete_group": "Xóa nhóm"
   },
   "Post_collections": {
-    "title": "Bộ sưu tập",
-    "new_collection": "Bộ sưu tập mới",
+    "title": "Thư mục",
+    "new_collection": "Thêm thư mục ",
     "edit": "Chỉnh sửa",
     "delete": "Xóa",
     "title_label": "Tiêu đề",
     "description": "Mô tả",
     "no_posts_yet": "Chưa có bài viết nào",
-    "no_posts_description": "Các bài viết trong bộ sưu tập này sẽ xuất hiện ở đây."
+    "no_posts_description": "Các bài viết trong bộ sưu tập này sẽ xuất hiện ở đây.",
+
+    "modal_title_create" : "Tạo thư mục",
+    "modal_title_edit" : "Chỉnh sửa",
+
+    "cancel" : "Hủy" ,
+    "confirm" : "Xác nhận"
+
+  },
+  "Friend" : {
+    "search_pld" : "Nhập @username...",
+    "title": "Bạn bè",
+    "description": "Quản lý bạn bè và lời mời kết bạn của bạn.",
+    "my_friends": "Bạn bè của tôi",
+    "friend": "Bạn bè",
+    "since": "Từ",
+    "sent": "Đã gửi",
+    "send_at": "Gửi lúc",
+    "pending": "Đang chờ phản hồi ",
+    "received_at": "Nhận lúc",
+    "accept": "Chấp nhận",
+    "accepted": "Đã chấp nhận",
+    "reject": "Từ chối",
+    "rejected": "Đã từ chối",
+    "cancel" : "Hủy",
+    "outgoing_req": "Yêu cầu đã gửi",
+    "incoming_req": "Yêu cầu đã nhận"
   },
   "Exam_preparation": {
-    "title": "Chuẩn bị thi của tôi",
-    "description": "Bộ sưu tập chuẩn bị thi của bạn.",
-    "exams": "Bài thi",
+    "title": "Soạn bài tập cho nhóm",
+    "description": "Cảm ơn vì đóng góp .",
+    "exams": "Bài tập",
     "information": "Thông tin",
     "title_label": "Tiêu đề",
-    "collection": "Bộ sưu tập",
+    "collection": "Thư mục",
     "exercise_content": "Nội dung bài tập",
     "exercise_content_placeholder": "Nội dung bài tập",
     "implementation_note": "Phần này sẽ được triển khai sau.",
     "back": "Quay lại",
     "create": "Tạo",
-    "delete": "Xóa"
+    "delete": "Xóa",
+    "edit" : "Bắt đầu chỉnh "
+
   }
 }

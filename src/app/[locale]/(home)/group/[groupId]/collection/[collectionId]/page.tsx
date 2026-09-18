@@ -5,12 +5,15 @@ import { ArrowLeft } from 'lucide-react';
 import { useParams } from 'next/navigation';
 
 import { testGroupCollectionData } from '@/mock/group';
+import {useTranslations} from "next-intl";
 
 export default function CollectionDetailPage() {
     const params = useParams();
 
     const locale = String(params.locale);
     const groupId = String(params.groupId);
+
+    const txt =  useTranslations('Post_collections')
 
     return (
         <div className="mx-auto w-full max-w-5xl px-4 py-6 sm:px-6">
@@ -27,14 +30,14 @@ export default function CollectionDetailPage() {
                 </h1>
             </div>
 
-            <div className="flex min-h-[300px] items-center justify-center">
+            <div className="flex min-h-75 items-center justify-center">
                 <div className="text-center">
                     <h2 className="font-medium">
-                        No posts yet
+                        {txt('no_posts_yet')}
                     </h2>
 
                     <p className="mt-2 text-sm text-muted-foreground">
-                        Posts in this collection will appear here.
+                        {txt('no_posts_description')}
                     </p>
                 </div>
             </div>

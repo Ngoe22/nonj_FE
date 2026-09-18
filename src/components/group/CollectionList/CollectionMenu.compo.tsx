@@ -1,5 +1,7 @@
 'use client';
 
+import {useTranslations} from "next-intl";
+
 interface CollectionMenuProps {
     open: boolean;
     canEdit: boolean;
@@ -15,6 +17,8 @@ export default function CollectionMenu({
                                            onEdit,
                                            onDelete,
                                        }: CollectionMenuProps) {
+
+    const txt = useTranslations('Post_collections')
     if (!open) {
         return null;
     }
@@ -27,7 +31,7 @@ export default function CollectionMenu({
                     onClick={onEdit}
                     className="w-full rounded-lg px-3 py-2 text-left text-sm hover:bg-surface-hover"
                 >
-                    Edit
+                    {txt('edit')}
                 </button>
             )}
 
@@ -37,7 +41,7 @@ export default function CollectionMenu({
                     onClick={onDelete}
                     className="w-full rounded-lg px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50"
                 >
-                    Delete
+                    {txt('delete')}
                 </button>
             )}
         </div>

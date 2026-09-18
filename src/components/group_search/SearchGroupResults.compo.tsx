@@ -7,14 +7,17 @@ import { useMemo } from 'react';
 import type { SearchGroupMode } from './SearchGroupTypes';
 import {testSearchGroups} from "@/mock/group";
 import SearchGroupCard from "@/components/group_search/SearchGroupCard.compo";
+import {useTranslations} from "next-intl";
 
 interface SearchGroupResultsProps {
     keyword: string;
     mode: SearchGroupMode;
 }
 
-export default function SearchGroupResults({keyword, mode }: SearchGroupResultsProps)
-{
+export default function SearchGroupResults({keyword, mode }: SearchGroupResultsProps) {
+
+    const txt = useTranslations('Group_search')
+
     const groups = useMemo(() => {
         if (!keyword) {
             return [];
@@ -40,7 +43,7 @@ export default function SearchGroupResults({keyword, mode }: SearchGroupResultsP
         return (
             <div className="flex min-h-56 items-center justify-center rounded-2xl border border-dashed border-border">
                 <p className="text-sm text-muted-foreground">
-                    Search for a group to see results.
+                    {txt('no_results')}
                 </p>
             </div>
         );
@@ -51,11 +54,11 @@ export default function SearchGroupResults({keyword, mode }: SearchGroupResultsP
             <div className="flex min-h-56 items-center justify-center rounded-2xl border border-dashed border-border">
                 <div className="text-center">
                     <p className="text-sm font-medium">
-                        No groups found
+                        {txt('no_groups_found')}
                     </p>
 
                     <p className="mt-1 text-sm text-muted-foreground">
-                        Try another keyword.
+                        {txt('try_another_keyword')}
                     </p>
                 </div>
             </div>

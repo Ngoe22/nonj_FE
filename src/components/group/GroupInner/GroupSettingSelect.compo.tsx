@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Check, ChevronDown } from 'lucide-react';
+import {useTranslations} from "next-intl";
 
 interface SettingSelectProps<T extends string> {
     label: string;
@@ -18,6 +19,8 @@ export default function SettingSelect<T extends string>({
                                                             disabled = false,
                                                             onChange,
                                                         }: SettingSelectProps<T>) {
+
+    const txt = useTranslations('Group')
     const [open, setOpen] = useState(false);
 
     return (
@@ -45,7 +48,7 @@ export default function SettingSelect<T extends string>({
                 `}
             >
                 <span className="text-sm font-medium text-foreground">
-                    {value}
+                    {txt(value as string)}
                 </span>
 
                 <ChevronDown
@@ -81,7 +84,7 @@ export default function SettingSelect<T extends string>({
                                 }
                                 `}
                             >
-                                <span>{option}</span>
+                                <span>{txt(option as string)}</span>
 
                                 {selected && (
                                     <Check

@@ -21,6 +21,7 @@ import {
 
 
 import type { SearchGroupMode } from './SearchGroupTypes';
+import {useTranslations} from "next-intl";
 
 
 
@@ -37,6 +38,8 @@ const modeLabel: Record<SearchGroupMode, string> = {
 
 export default function GroupSearchBar({mode, onModeChange, onSearch}: GroupSearchBarProps) {
     const [keyword, setKeyword] = useState('');
+
+    const txt = useTranslations('Group_search')
 
     const handleSearch = () => {
         onSearch(keyword.trim());
@@ -64,7 +67,7 @@ export default function GroupSearchBar({mode, onModeChange, onSearch}: GroupSear
                                 onModeChange('slug')
                             }
                         >
-                            <span>Search by slug</span>
+                            <span>{txt('search_by_group_code')}</span>
 
                             {mode === 'slug' && (
                                 <Check
@@ -79,7 +82,7 @@ export default function GroupSearchBar({mode, onModeChange, onSearch}: GroupSear
                                 onModeChange('name')
                             }
                         >
-                            <span>Search by name</span>
+                            <span>{txt('search_by_name')}</span>
 
                             {mode === 'name' && (
                                 <Check
@@ -103,8 +106,8 @@ export default function GroupSearchBar({mode, onModeChange, onSearch}: GroupSear
                     }}
                     placeholder={
                         mode === 'slug'
-                            ? 'Search group by slug...'
-                            : 'Search group by name...'
+                            ? `${txt('search_by_group_code')} ...`
+                            : `${txt('search_by_name')} ...`
                     }
                     className="h-11 pl-5 pr-5"
                 />
@@ -118,7 +121,7 @@ export default function GroupSearchBar({mode, onModeChange, onSearch}: GroupSear
                 disabled={!keyword.trim()}
                 className="h-11"
             >
-                Search
+                {txt('search')}
             </Button>
         </div>
     );

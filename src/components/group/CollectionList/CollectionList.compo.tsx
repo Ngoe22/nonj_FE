@@ -8,6 +8,7 @@ import CollectionCard from "@/components/group/CollectionList/CollectionCard.com
 import CollectionMenu from "@/components/group/CollectionList/CollectionMenu.compo";
 import CollectionModal from "@/components/group/CollectionList/CollectionModal.compo";
 import ConfirmModal from "@/components/group/_share/ConfirmModal.compo";
+import {useTranslations} from "next-intl";
 
 interface CollectionListProps {
     locale: string;
@@ -32,6 +33,8 @@ export default function CollectionList({locale, groupId}: CollectionListProps) {
         );
 
     const [createOpen, setCreateOpen] = useState(false);
+
+    const txt = useTranslations('Post_collections')
 
     const canAdd = collections.some(
         (item) => item._permission.add
@@ -74,6 +77,7 @@ export default function CollectionList({locale, groupId}: CollectionListProps) {
             return;
         }
 
+        // fake
         setCollections((prev) =>
             prev.filter(
                 (item) => item.id !== selectedCollection.id
@@ -89,7 +93,7 @@ export default function CollectionList({locale, groupId}: CollectionListProps) {
             <section className="mt-6">
                 <div className="mb-4 flex items-center justify-between">
                     <h2 className="text-lg font-semibold">
-                        Collections
+                        {txt('title')}
                     </h2>
 
                     {canAdd && (
@@ -100,7 +104,7 @@ export default function CollectionList({locale, groupId}: CollectionListProps) {
                             }
                             className="text-sm font-medium text-foreground underline-offset-4 hover:underline"
                         >
-                            + New Collection
+                           + {txt('new_collection')}
                         </button>
                     )}
                 </div>

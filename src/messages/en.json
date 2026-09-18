@@ -56,12 +56,16 @@
       "search": "Search",
       "join_group_request": "Join group request",
       "search_by_name": "Search by name",
-      "search_by_group_code": "Search by @group_code",
+      "search_by_group_code": "Search by @group_code ",
       "requested_at": "Requested at",
       "pending": "Pending",
       "no_results": "Search for a group to see results.",
       "no_groups_found": "No groups found",
-      "try_another_keyword": "Try another keyword."
+      "try_another_keyword": "Try another keyword.",
+      "view_group_btn" : "View group",
+      "join_now_btn" : "Join now",
+      "request_to_join" : "Request to join"
+
     },
     "Group": {
       "title": "Groups",
@@ -104,7 +108,32 @@
       "title_label": "Title",
       "description": "Description",
       "no_posts_yet": "No posts yet",
-      "no_posts_description": "Posts in this collection will appear here."
+      "no_posts_description": "Posts in this collection will appear here.",
+
+      "modal_title_create" : "Create CollectionList",
+      "modal_title_edit" : "Edit CollectionList",
+
+      "cancel" : "Cancel" ,
+      "confirm" : "Confirm"
+    },
+    "Friend" : {
+      "search_pld" : "Search username...",
+        "title": "Friends",
+        "description": "Manage your friends and friend requests.",
+        "my_friends": "My Friends",
+        "friend": "Friend",
+        "since": "Since",
+        "sent": "Sent",
+        "send_at": "Send at",
+        "pending": "Pending",
+        "received_at": "Received at",
+        "accept": "Accept",
+        "accepted": "Accepted",
+        "reject": "Reject",
+        "rejected": "Rejected",
+      "cancel" : "Cancel",
+        "outgoing_req": "Outgoing Req",
+        "incoming_req": "Incoming Req"
     },
     "Exam_preparation": {
       "title": "My Exam Preparation",
@@ -118,7 +147,8 @@
       "implementation_note": "This section will be implemented later.",
       "back": "Back",
       "create": "Create",
-      "delete": "Delete"
+      "delete": "Delete",
+      "edit" : "Start editing"
     }
 
 }

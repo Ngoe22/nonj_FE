@@ -18,17 +18,21 @@ import FriendSearch from "@/components/friend/FriendSearch.compo";
 import FriendListItem from "@/components/friend/FriendListItem.compo";
 import OutgoingRequestItem from "@/components/friend/OutgoingRequestItem.compo";
 import IncomingRequestItem from "@/components/friend/IncomingRequestItem.compo";
+import {useTranslations} from "next-intl";
 
 export default function FriendsPage() {
+
+    const txt = useTranslations('Friend')
+
     return (
         <div className="mx-auto w-full max-w-4xl px-4 py-6 sm:px-6">
             <div>
                 <h1 className="text-2xl font-bold tracking-tight">
-                    Friends
+                    {txt('title')}
                 </h1>
 
                 <p className="mt-1 text-sm text-muted-foreground">
-                    Manage your friends and friend requests.
+                    {txt('description')}
                 </p>
             </div>
 
@@ -42,15 +46,15 @@ export default function FriendsPage() {
             >
                 <TabsList className="grid h-auto w-full grid-cols-3">
                     <TabsTrigger value="friends">
-                        My Friends
+                        {txt('my_friends')}
                     </TabsTrigger>
 
                     <TabsTrigger value="outgoing">
-                        Outgoing Req
+                        {txt('outgoing_req')}
                     </TabsTrigger>
 
                     <TabsTrigger value="incoming">
-                        Incoming Req
+                        {txt('incoming_req')}
                     </TabsTrigger>
                 </TabsList>
 

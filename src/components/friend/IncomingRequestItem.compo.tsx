@@ -9,6 +9,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import FriendUserInfo from "@/components/friend/FriendUserInfo.compo";
+import {useTranslations} from "next-intl";
 
 
 interface IncomingRequestItemProps {
@@ -27,6 +28,10 @@ interface IncomingRequestItemProps {
 export default function IncomingRequestItem({
                                                 request,
                                             }: IncomingRequestItemProps) {
+
+
+    const txt = useTranslations('Friend')
+
     const [status, setStatus] = useState<
         'pending' | 'accepted' | 'rejected'
     >(request.status as
@@ -55,15 +60,15 @@ export default function IncomingRequestItem({
             <div className="flex flex-col gap-3 sm:items-end">
                 <div className="flex flex-wrap items-center gap-3">
                     <div className="text-xs text-muted-foreground sm:text-right">
-                        <p>Received</p>
                         <p className="mt-1">
-                            {request.created_at}
+                            {txt('received_at')} {request.created_at}
                         </p>
                     </div>
 
-                    <Badge variant="secondary">
-                        {status}
-                    </Badge>
+                    {/*<Badge variant="secondary">*/}
+                    {/*    {txt( status as string )}*/}
+                    {/*    /!*{status}*!/*/}
+                    {/*</Badge>*/}
                 </div>
 
                 {status === 'pending' && (
@@ -73,7 +78,7 @@ export default function IncomingRequestItem({
                             onClick={handleAccept}
                         >
                             <Check size={15} />
-                            Accept
+                            {txt('accept')}
                         </Button>
 
                         <Button
@@ -82,7 +87,7 @@ export default function IncomingRequestItem({
                             onClick={handleReject}
                         >
                             <X size={15} />
-                            Reject
+                            {txt('reject')}
                         </Button>
                     </div>
                 )}

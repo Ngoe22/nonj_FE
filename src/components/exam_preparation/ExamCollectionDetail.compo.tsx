@@ -10,10 +10,12 @@ import {
     examPreparationCollections,
     examPreparationList,
 } from '@/mock/group';
+import {useTranslations} from "next-intl";
 
 export default function ExamCollectionDetail() {
-    const params = useParams();
 
+    const txt = useTranslations('Exam_preparation')
+    const params = useParams();
     const locale = String(params.locale);
     const collectionId = String(
         params.collectionId
@@ -43,7 +45,7 @@ export default function ExamCollectionDetail() {
                     className="inline-flex items-center gap-2 text-sm text-muted-foreground transition hover:text-foreground"
                 >
                     <ArrowLeft size={17} />
-                    Back
+                    {txt('back')}
                 </Link>
 
                 <h1 className="mt-4 text-2xl font-bold">
@@ -58,7 +60,7 @@ export default function ExamCollectionDetail() {
             {/* Exam list */}
             <section className="mt-6">
                 <h2 className="text-lg font-semibold">
-                    Exams
+                    {txt('exams')}
                 </h2>
 
                 <div className="mt-4 space-y-3">

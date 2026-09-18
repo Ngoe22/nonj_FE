@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Modal from "@/components/_share/common_model/CommonModel.compo";
+import {useTranslations} from "next-intl";
 
 interface CollectionModalProps {
     open: boolean;
@@ -23,6 +24,9 @@ export default function CollectionModal({
                                             onClose,
                                             onSubmit,
                                         }: CollectionModalProps) {
+
+    const  txt = useTranslations('Post_collections')
+
     const [title, setTitle] = useState(initialTitle);
     const [desc, setDesc] = useState(initialDesc);
 
@@ -45,8 +49,8 @@ export default function CollectionModal({
             open={open}
             title={
                 mode === 'create'
-                    ? 'Create CollectionList'
-                    : 'Edit CollectionList'
+                    ? txt('modal_title_create')
+                    : txt('modal_title_edit')
             }
             onClose={onClose}
         >
@@ -56,7 +60,7 @@ export default function CollectionModal({
             >
                 <div>
                     <label className="mb-2 block text-sm font-medium">
-                        Title
+                        {txt('title_label')}
                     </label>
 
                     <input
@@ -70,7 +74,7 @@ export default function CollectionModal({
 
                 <div>
                     <label className="mb-2 block text-sm font-medium">
-                        Description
+                        {txt('description')}
                     </label>
 
                     <textarea
@@ -89,16 +93,14 @@ export default function CollectionModal({
                         onClick={onClose}
                         className="rounded-xl border border-border px-4 py-2 text-sm font-medium hover:bg-surface-hover"
                     >
-                        Cancel
+                        {txt('cancel')}
                     </button>
 
                     <button
                         type="submit"
                         className="rounded-xl bg-foreground px-4 py-2 text-sm font-medium text-background"
                     >
-                        {mode === 'create'
-                            ? 'Create'
-                            : 'Save'}
+                        {txt('confirm')}
                     </button>
                 </div>
             </form>

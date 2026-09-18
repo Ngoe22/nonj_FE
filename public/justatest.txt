@@ -239,5 +239,23 @@ Create
 Delete
 
 
+-------------------------
+friend:
+Friends
+Manage your friends and friend requests.
+My Friends
+Friend
+since
+Sent
+send at
+pending
+received at
+accept
+accepted
+reject
+rejected
+Outgoing Req
+Incoming Req
+
 
 

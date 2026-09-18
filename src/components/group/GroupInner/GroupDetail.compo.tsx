@@ -17,15 +17,19 @@ import GroupMenu from "@/components/group/GroupInner/GroupMenu.compo";
 import CollectionList from "@/components/group/CollectionList/CollectionList.compo";
 import CollectionModal from "@/components/group/CollectionList/CollectionModal.compo";
 import ConfirmModal from "@/components/group/_share/ConfirmModal.compo";
+import {useTranslations} from "next-intl";
 
 type View =
     | 'overview'
     | 'settings'
-    | 'requests'
+    | 'join_requests'
     | 'members';
 
 export default function GroupDetail() {
+
+
     const params = useParams();
+    const txt = useTranslations('Group')
 
     const groupId = String(params.groupId);
     const locale = String(params.locale);
@@ -53,24 +57,11 @@ export default function GroupDetail() {
     };
 
     if (view !== 'overview') {
-        let title = '';
-
-        if (view === 'settings') {
-            title = 'Settings';
-        }
-
-        if (view === 'requests') {
-            title = 'Join Requests';
-        }
-
-        if (view === 'members') {
-            title = 'Members';
-        }
 
         return (
             <div className="mx-auto w-full max-w-5xl px-4 py-6 sm:px-6">
                 <GroupSubHeader
-                    title={title}
+                    title={txt(view as string )}
                     onBack={goOverview}
                 />
 
@@ -80,7 +71,7 @@ export default function GroupDetail() {
                     />
                 )}
 
-                {view === 'requests' && (
+                {view === 'join_requests' && (
                     <GroupJoinRequests />
                 )}
 
@@ -132,7 +123,7 @@ export default function GroupDetail() {
                         setView('settings')
                     }
                     onRequests={() =>
-                        setView('requests')
+                        setView('join_requests')
                     }
                     onMembers={() =>
                         setView('members')
