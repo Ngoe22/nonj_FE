@@ -149,6 +149,14 @@
       "create": "Create",
       "delete": "Delete",
       "edit" : "Start editing"
-    }
-
+    },
+  "Shema" : {
+    "invalid_email": "Invalid email address",
+    "enter_something": "Please enter something",
+    "at_least_char_3": "Must be at least 3 characters",
+    "at_least_char_6": "Must be at least 6 characters",
+    "max_char_50": "Must not exceed 50 characters",
+    "max_char_100": "Must not exceed 100 characters",
+    "only_letter_and_number_and_underscore": "Only letters, numbers, and underscores are allowed , no need @"
+  }
 }

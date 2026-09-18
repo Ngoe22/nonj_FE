@@ -15,9 +15,9 @@ export default function RegisterMethodSelector({method, onChange,}: AuthMethodSe
 
     return (
         <div>
-            <p className="mb-3 text-sm font-medium text-foreground">
-                {txt("register_method_text")}
-            </p>
+            {/*<p className="mb-3 text-sm font-medium text-foreground">*/}
+            {/*    {txt("register_method_text")}*/}
+            {/*</p>*/}
 
             <div className="grid grid-cols-2 gap-2">
                 <button

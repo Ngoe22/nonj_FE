@@ -4,47 +4,36 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {useRegister} from "@/hooks/auth/useRegister";
 import {useTranslations} from "next-intl";
+import {useForm} from "react-hook-form";
+import {LoginFormValues, loginSchema} from "@/schemas/auth/login.schemas";
+import {zodResolver} from "@hookform/resolvers/zod";
+import {RegisterFormValues, registerSchema} from "@/schemas/auth/register.schemas";
+import {InvalidInput} from "@/components/_share/FormErrorWarning/FormErrorWarning.compo";
 
 export default function RegisterForm() {
     const router = useRouter();
     const txt = useTranslations('Auth')
-    const [formData, setFormData] = useState({
-        email: '',
-        password: '',
-        user_name: '',
-        nickname: '',
-        bio: '',
+
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm<RegisterFormValues>({
+        resolver: zodResolver(registerSchema),
     });
 
     const registerMutation = useRegister();
 
-    const handleChange = (
-        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    ) => {
-        const { name, value } = e.target;
 
-        setFormData((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
-    };
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-
+    const registerSubmit = async (data:RegisterFormValues) => {
         try {
-            await registerMutation.mutateAsync(formData);
+            await registerMutation.mutateAsync(data);
             router.push('/'); // Chỉ chuyển trang khi thành công
         } catch (error) {
-            // Bắt lỗi ở đây: hiển thị thông báo lỗi (toast/alert)
-            // nhưng dữ liệu trong formData vẫn được giữ nguyên trên màn hình cho người dùng sửa
-            console.error("Lỗi xác thực:", error);
+            console.error( error);
         }
+    }
 
-        // await registerMutation.mutateAsync(formData);
-
-        router.push('/');
-    };
 
     return (
         <div>
@@ -59,7 +48,7 @@ export default function RegisterForm() {
             </div>
 
             <form
-                onSubmit={handleSubmit}
+                onSubmit={handleSubmit( registerSubmit )}
                 className="space-y-4"
             >
                 <div>
@@ -68,13 +57,12 @@ export default function RegisterForm() {
                     </label>
 
                     <input
+                        {...register('email')}
                         type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
                         placeholder= {txt('manual_register_email_plh')}
                         className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition placeholder:text-muted-foreground"
                     />
+                    {errors.email && <InvalidInput msg = {errors.email.message}  />}
                 </div>
 
                 <div>
@@ -83,12 +71,12 @@ export default function RegisterForm() {
                     </label>
 
                     <input
-                        name="user_name"
-                        value={formData.user_name}
-                        onChange={handleChange}
+                        {...register('user_name')}
                         placeholder={txt('manual_register_user_name_plh')}
                         className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition placeholder:text-muted-foreground"
                     />
+                    {errors.user_name && <InvalidInput msg = {errors.user_name.message}  />}
+
                 </div>
 
                 <div>
@@ -97,12 +85,12 @@ export default function RegisterForm() {
                     </label>
 
                     <input
-                        name="nickname"
-                        value={formData.nickname}
-                        onChange={handleChange}
+                        {...register('nickname')}
                         placeholder={txt('manual_register_nickname_plh')}
                         className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition placeholder:text-muted-foreground"
                     />
+                    {errors.nickname && <InvalidInput msg = {errors.nickname.message}  />}
+
                 </div>
 
                 <div>
@@ -111,13 +99,13 @@ export default function RegisterForm() {
                     </label>
 
                     <input
+                        {...register('password')}
                         type="password"
-                        name="password"
-                        value={formData.password}
-                        onChange={handleChange}
                         placeholder="••••••••"
                         className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition placeholder:text-muted-foreground"
                     />
+                    {errors.password && <InvalidInput msg = {errors.password.message}  />}
+
                 </div>
 
                 <div>
@@ -126,13 +114,13 @@ export default function RegisterForm() {
                     </label>
 
                     <textarea
-                        name="bio"
-                        value={formData.bio}
-                        onChange={handleChange}
+                        {...register('bio')}
                         placeholder={txt('manual_register_bio_pld')}
                         rows={3}
                         className="w-full resize-none rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-border-strong"
                     />
+                    {errors.bio && <InvalidInput msg = {errors.bio.message}  />}
+
                 </div>
 
                 <button

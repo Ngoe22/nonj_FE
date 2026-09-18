@@ -5,6 +5,7 @@ import { Menu } from 'lucide-react';
 import Sidebar from "@/components/home/Sidebar.compo";
 import {useSidebarStore} from "@/stores/side_bar/side_bar.store";
 import {useThemeStore} from "@/stores/theme/theme.store";
+import {useGetUserProfile} from "@/hooks/home/useUserProfile.hook";
 
 interface HomeLayoutProps {
     children: ReactNode;
@@ -14,6 +15,8 @@ export default function HomeLayout({ children }: HomeLayoutProps) {
 
     const { isOpen, toggleSidebar } = useSidebarStore();
     const initTheme = useThemeStore((state) => state.initTheme);
+
+    const user = useGetUserProfile()
 
     useEffect(() => {
         initTheme();
@@ -54,17 +57,22 @@ export default function HomeLayout({ children }: HomeLayoutProps) {
                             <Menu size={19} />
                         </button>
 
-                        {/* Avatar */}
-                        <a
-                            href="/profile"
-                            className="block h-8 w-8 overflow-hidden rounded-full"
-                        >
-                            <img
-                                src="https://i.pinimg.com/736x/01/ac/5b/01ac5b864a6c29efb24c1145aeb9c7be.jpg"
-                                alt="Profile"
-                                className="h-full w-full object-cover"
-                            />
-                        </a>
+                        <div>
+
+                            {/*<p>{user.nickname}</p>*/}
+
+                            {/* Avatar */}
+                            <a
+                                href="/profile"
+                                className="block h-8 w-8 overflow-hidden rounded-full"
+                            >
+                                <img
+                                    src="https://i.pinimg.com/736x/01/ac/5b/01ac5b864a6c29efb24c1145aeb9c7be.jpg"
+                                    alt="Profile"
+                                    className="h-full w-full object-cover"
+                                />
+                            </a>
+                        </div>
                     </header>
 
                     {/* Body */}

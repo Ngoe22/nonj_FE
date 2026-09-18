@@ -158,5 +158,15 @@
     "delete": "Xóa",
     "edit" : "Bắt đầu chỉnh "
 
+  },
+
+  "Shema": {
+    "invalid_email": "Email không hợp lệ",
+    "enter_something": "Vui lòng nhập nội dung",
+    "at_least_char_3": "Phải có ít nhất 3 ký tự",
+    "at_least_char_6": "Phải có ít nhất 6 ký tự",
+    "max_char_50": "Không được vượt quá 50 ký tự",
+    "max_char_100": "Không được vượt quá 100 ký tự",
+    "only_letter_and_number_and_underscore": "Chỉ cho phép chữ cái, số và dấu gạch dưới ,không cần @"
   }
 }

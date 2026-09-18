@@ -259,3 +259,13 @@ Incoming Req
 
 
 
+-----------------------
+
+invalid_email
+enter_something
+at_least_char_3
+at_least_char_6
+max_char_50
+max_char_100
+only_letter_and_number_and_underscore
+
