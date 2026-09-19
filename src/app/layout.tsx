@@ -12,8 +12,25 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="vi" className={cn("font-sans", figtree.variable)}>
-      <body>
+    <html lang="vi" className={cn("font-sans", figtree.variable)} suppressHydrationWarning>
+
+    <head>
+        <script
+            dangerouslySetInnerHTML={{
+                __html: `
+              (function() {
+                try {
+                  const theme = localStorage.getItem('theme');
+                  const isDark = theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches);
+                  if (isDark) document.documentElement.classList.add('dark');
+                } catch (e) {}
+              })();
+            `,
+            }}
+        />
+        <title>NONJ</title>
+    </head>
+    <body>
       <TanStackQueryProvider>
           {children}
 

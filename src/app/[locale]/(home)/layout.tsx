@@ -1,6 +1,7 @@
 
 import HomeLayout from "@/components/home/HomeLayout.compo";
 import LanguageSelector from "@/components/_share/language_model/LanguageSelector.compo";
+import {ToastContainer} from "react-toastify";
 
 
 export default function Layout(
@@ -11,5 +12,6 @@ export default function Layout(
       <HomeLayout>
           {children}
           <LanguageSelector/>
+          <ToastContainer />
       </HomeLayout>);
 }

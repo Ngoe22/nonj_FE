@@ -7,5 +7,10 @@ export function InvalidInput({ msg }: { msg?: string }) {
 
     const txt = useTranslations( 'Shema' )
     if (!msg) return null
-    return <Badge variant="destructive">{txt(msg)}</Badge>
+    return <Badge
+        variant="destructive"
+        className={'mt-2'}
+    >
+        {txt(msg)}
+    </Badge>
 }

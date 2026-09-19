@@ -15,11 +15,11 @@ export function useLogin () {
     return useMutation( {
         mutationFn : async (login_info:LoginInfo ) => {
             const res = await  api.post( 'auth/login' ,  login_info)
-            return res.data;
+            return res.data.data;
         } ,
         onSuccess : (data:LoginInfo) => {
-            console.log(data)
-            queryClient.setQueryData([ 'user_profile' ] ,data )
+            // console.log(data)
+            queryClient.setQueryData([ 'my_profile' ] ,data )
             router.push('/');
         }
     } )

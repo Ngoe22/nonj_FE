@@ -5,7 +5,7 @@ import { Menu } from 'lucide-react';
 import Sidebar from "@/components/home/Sidebar.compo";
 import {useSidebarStore} from "@/stores/side_bar/side_bar.store";
 import {useThemeStore} from "@/stores/theme/theme.store";
-import {useGetUserProfile} from "@/hooks/home/useUserProfile.hook";
+import {useGetMyProfile} from "@/hooks/home/useGetMyProfile.hook";
 
 interface HomeLayoutProps {
     children: ReactNode;
@@ -16,7 +16,7 @@ export default function HomeLayout({ children }: HomeLayoutProps) {
     const { isOpen, toggleSidebar } = useSidebarStore();
     const initTheme = useThemeStore((state) => state.initTheme);
 
-    const { data: user, isLoading } = useGetUserProfile();
+    const { data: user, isLoading } = useGetMyProfile();
 
     useEffect(() => {
         initTheme();
@@ -76,7 +76,13 @@ export default function HomeLayout({ children }: HomeLayoutProps) {
                     </header>
 
                     {/* Body */}
-                    <div className="bg-surface flex-1 p-4 rounded-2xl">
+                    <div className="min-h-0
+                        flex-1
+                        overflow-y-auto
+                        scrollbar-none
+                        rounded-2xl
+                        bg-surface
+                        p-4">
                         {children}
                     </div>
 

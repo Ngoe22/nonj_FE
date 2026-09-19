@@ -19,10 +19,10 @@ interface Res {
 }
 
 
-// useGetUserProfile
-export function useGetUserProfile() {
+// useGetMyProfile
+export function useGetMyProfile() {
     return useQuery({
-        queryKey: ['user_profile'],
+        queryKey: ['my_profile'],
         queryFn: async () => {
             const res = await api.get<Res>('user/me');
 

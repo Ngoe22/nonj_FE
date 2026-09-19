@@ -159,6 +159,16 @@
     "edit" : "Bắt đầu chỉnh "
 
   },
+  "MyProfile": {
+    "my_profile_header": "Trang cá nhân",
+    "my_profile_desc": "Thông tin cá nhân của bạn.",
+    "info_header": "Thông tin",
+    "email": "Email",
+    "user_name": "user_name",
+    "nickname": "Tên",
+    "bio": "Giới thiệu",
+    "logout_btn": "Đăng xuất"
+  },
 
   "Shema": {
     "invalid_email": "Email không hợp lệ",
@@ -168,5 +178,9 @@
     "max_char_50": "Không được vượt quá 50 ký tự",
     "max_char_100": "Không được vượt quá 100 ký tự",
     "only_letter_and_number_and_underscore": "Chỉ cho phép chữ cái, số và dấu gạch dưới ,không cần @"
+  },
+
+  "Toast" : {
+    "profile_update_fail" : "Cập nhập lỗi .. thử lại sau "
   }
 }

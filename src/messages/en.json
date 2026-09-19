@@ -150,6 +150,17 @@
       "delete": "Delete",
       "edit" : "Start editing"
     },
+
+  "MyProfile" : {
+    "my_profile_header" : "My Profile",
+    "my_profile_desc" : "Your personal information." ,
+    "info_header" : "Information" ,
+    "email" : "Email",
+    "user_name" : "Username",
+    "nickname" : "Name",
+    "bio" : "Bio",
+    "logout_btn" : "Logout"
+  },
   "Shema" : {
     "invalid_email": "Invalid email address",
     "enter_something": "Please enter something",
@@ -158,5 +169,8 @@
     "max_char_50": "Must not exceed 50 characters",
     "max_char_100": "Must not exceed 100 characters",
     "only_letter_and_number_and_underscore": "Only letters, numbers, and underscores are allowed , no need @"
+  },
+  "Toast" : {
+    "profile_update_fail" : "Update fail ... , try again later"
   }
 }

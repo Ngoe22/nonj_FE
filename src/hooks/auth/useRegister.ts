@@ -21,7 +21,7 @@ export function useRegister () {
         } ,
         onSuccess : (user_info :any) => {
             console.log(user_info)
-            queryClient.setQueryData([ 'user_profile' ] ,user_info )
+            queryClient.setQueryData([ 'my_profile' ] ,user_info )
             router.push('/');
         }
     } )

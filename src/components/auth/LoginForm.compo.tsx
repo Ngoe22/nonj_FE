@@ -6,7 +6,7 @@ import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { LoginFormValues, loginSchema } from '@/schemas/auth/login.schemas';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {InvalidInput} from "@/components/_share/FormErrorWarning/FormErrorWarning.compo";
+import {InvalidInput} from "@/components/_share/form_error_warning/FormErrorWarning.compo";
 
 export default function LoginForm() {
     const txt = useTranslations('Auth');

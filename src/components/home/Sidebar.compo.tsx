@@ -25,7 +25,7 @@ import {useRouter} from "@/i18n/navigation";
 export default function Sidebar() {
 
     const { isOpen, toggleSidebar } = useSidebarStore();
-    const { darkMode, toggleTheme } = useThemeStore();
+    const { theme , toggleTheme } = useThemeStore();
     const openLanguageSelectorFn = useOpenLanguageSelector();
     const router = useRouter();
 
@@ -109,8 +109,8 @@ export default function Sidebar() {
                 />
 
                 <SidebarButton
-                    icon={darkMode ? <Sun size={19} /> : <Moon size={19} />}
-                    label={darkMode ? txt('theme_light') : txt('theme_dark') }
+                    icon={theme === 'dark' ? <Sun size={19} /> : <Moon size={19} />}
+                    label={theme === 'dark' ? txt('theme_light') : txt('theme_dark') }
                     onClick={toggleTheme}
                     isOpen={isOpen}
                 />
