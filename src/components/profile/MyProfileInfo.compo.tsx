@@ -45,8 +45,7 @@ export function MyProfileInfo(
     });
 
     const onSubmit = async (data :any) => {
-
-        console.log(data)
+        // console.log(data)
         await mutateAsync(data)
         setIsEditing(false)
 
@@ -68,46 +67,6 @@ export function MyProfileInfo(
                     onConfirm={() => handleSubmit(onSubmit)()}
                     onCancel={ () => {  reset(editAble); setIsEditing(false)}}
                 />
-
-                {/*<div>*/}
-                {/*    { isEditing?*/}
-                {/*        <div*/}
-                {/*            className="flex items-center gap-3"*/}
-                {/*        >*/}
-                {/*            <button*/}
-                {/*                type="button"*/}
-                {/*                onClick={ () => handleSubmit(onSubmit)()}*/}
-                {/*                className="flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground transition hover:bg-surface-hover hover:text-foreground"*/}
-                {/*                aria-label="Change language"*/}
-                {/*            >*/}
-                {/*                <SaveCheck/>*/}
-                {/*            </button>*/}
-
-                {/*            <button*/}
-                {/*                type="button"*/}
-                {/*                onClick={ () => {*/}
-                {/*                    reset(editAble);*/}
-                {/*                    setIsEditing(false)*/}
-                {/*                }}*/}
-                {/*                className="flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground transition hover:bg-surface-hover hover:text-foreground"*/}
-                {/*                aria-label="Change language"*/}
-                {/*            >*/}
-                {/*                <Ban/>*/}
-                {/*            </button>*/}
-
-                {/*        </div>*/}
-                {/*        :*/}
-                {/*        <button*/}
-                {/*            type="button"*/}
-                {/*            onClick={ () => setIsEditing(true)}*/}
-                {/*            className="flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground transition hover:bg-surface-hover hover:text-foreground"*/}
-                {/*            aria-label="Change language"*/}
-                {/*        >*/}
-                {/*            <SquarePen/>*/}
-                {/*        </button>*/}
-                {/*    }*/}
-                {/*</div>*/}
-
             </div>
 
             <div className="mt-5 space-y-5">
@@ -148,30 +107,12 @@ export function MyProfileInfo(
                     <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                         {txt('nickname')}
                     </p>
-
-
                     <InfoAndInput
                         isEditing={isEditing}
                         value={editAble.nickname}
                         register={register('nickname')}
                         error={errors.nickname}
                     />
-
-                    {/*<div>*/}
-                    {/*    { isEditing ?*/}
-                    {/*        <div>*/}
-                    {/*            <input*/}
-                    {/*                {...register('nickname')}*/}
-                    {/*                className={ `mt-1 text-sm font-medium rounded-md p-2 w-full border-2 border-status-info` }*/}
-                    {/*            />*/}
-                    {/*            {errors.nickname && <InvalidInput msg = {errors.nickname.message}  />}*/}
-
-                    {/*        </div> :*/}
-                    {/*        <p className="mt-1 text-sm font-medium">*/}
-                    {/*            {editAble.nickname}*/}
-                    {/*        </p>*/}
-                    {/*    }*/}
-                    {/*</div>*/}
                 </div>
 
                 {/* Bio */}
@@ -188,27 +129,6 @@ export function MyProfileInfo(
                         type="textarea"
                         infoStyle='whitespace-pre-wrap text-sm leading-6 text-foreground rounded-xl bg-surface-hover p-4 mt-2'
                     />
-
-                    {/*<div>*/}
-                    {/*    { isEditing ?*/}
-                    {/*        <div>*/}
-                    {/*            <textarea*/}
-                    {/*                {...register('bio')}*/}
-                    {/*                className={ `mt-1 text-sm font-medium w-full rounded-md p-2 border-4 border-status-info` }*/}
-                    {/*            />*/}
-                    {/*            {errors.bio && <InvalidInput msg = {errors.bio.message}  />}*/}
-
-                    {/*        </div> :*/}
-                    {/*        <div className="mt-2 rounded-xl bg-surface-hover p-4">*/}
-                    {/*            <p className="whitespace-pre-wrap text-sm leading-6 text-foreground">*/}
-                    {/*                {editAble.bio ||*/}
-                    {/*                    ' '}*/}
-                    {/*            </p>*/}
-                    {/*        </div>*/}
-                    {/*    }*/}
-                    {/*</div>*/}
-
-
                 </div>
             </div>
         </Card>
