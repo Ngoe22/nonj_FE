@@ -1,27 +1,16 @@
-// lib/axios.ts
+
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
-import {authStore} from "@/stores/auth/auth.store";
 
 const BE_URL = process.env.NEXT_PUBLIC_BE_URL || 'http://localhost:4000';
 
 export const api = axios.create({
     baseURL: BE_URL,
-    withCredentials: true, // gửi HttpOnly refresh cookie
-});
-
-// ============ REQUEST: gắn access token vào header ============
-api.interceptors.request.use((config) => {
-    const token = authStore.getAccessToken();
-    if (token) {
-        config.headers = config.headers ?? {};
-        config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
+    withCredentials: true,
 });
 
 // ============ RESPONSE: refresh khi 401 ============
 let isRefreshing = false;
-let pendingQueue: Array<(token: string | null) => void> = [];
+let pendingQueue: Array<() => void> = [];
 
 interface RetryConfig extends InternalAxiosRequestConfig {
     _retry?: boolean;
@@ -31,6 +20,10 @@ api.interceptors.response.use(
     (res) => res,
     async (error: AxiosError) => {
         const originalRequest = error.config as RetryConfig | undefined;
+
+        if (originalRequest?.url?.includes('auth/refresh')) {
+            return Promise.reject(error);
+        }
 
         if (
             error.response?.status !== 401 ||
@@ -42,48 +35,26 @@ api.interceptors.response.use(
 
         originalRequest._retry = true;
 
-        // Nếu đang refresh → xếp hàng chờ
         if (isRefreshing) {
-            return new Promise((resolve, reject) => {
-                pendingQueue.push((newToken) => {
-                    if (!newToken) {
-                        reject(error);
-                        return;
-                    }
-                    originalRequest.headers = originalRequest.headers ?? {};
-                    originalRequest.headers.Authorization = `Bearer ${newToken}`;
-                    resolve(api(originalRequest));
-                });
+            return new Promise((resolve) => {
+                pendingQueue.push(() => resolve(api(originalRequest)));
             });
         }
 
         isRefreshing = true;
 
         try {
-            // Gọi refresh — BE set cookie refresh mới, trả access token mới trong body
-            const { data } = await axios.post<{
-                data: any;
-                newAccessToken: string }>(
-                `${BE_URL}auth/refresh`,
+            await axios.post(
+                `${BE_URL}/auth/refresh`,
                 {},
                 { withCredentials: true },
             );
 
-            const newAccessToken = data.data.newAccessToken;
-            authStore.setAccessToken(newAccessToken);
-
-            // Chạy hàng đợi
-            pendingQueue.forEach((cb) => cb(newAccessToken));
+            pendingQueue.forEach((cb) => cb());
             pendingQueue = [];
 
-            // Retry request gốc với token mới
-            originalRequest.headers = originalRequest.headers ?? {};
-            originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
             return api(originalRequest);
         } catch (refreshError) {
-            // Refresh fail → xoá token + đá về login
-            authStore.clear();
-            pendingQueue.forEach((cb) => cb(null));
             pendingQueue = [];
 
             if (typeof window !== 'undefined') {

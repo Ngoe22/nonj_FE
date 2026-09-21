@@ -68,7 +68,7 @@ export default function CollectionModal({
                         onChange={(e) =>
                             setTitle(e.target.value)
                         }
-                        className="w-full rounded-xl border border-border bg-transparent px-3 py-2.5 outline-none focus:border-border-strong"
+                        className="w-full rounded-xl border border-border bg-transparent px-3 py-2.5 outline-none"
                     />
                 </div>
 
@@ -83,7 +83,7 @@ export default function CollectionModal({
                             setDesc(e.target.value)
                         }
                         rows={4}
-                        className="w-full resize-none rounded-xl border border-border bg-transparent px-3 py-2.5 outline-none focus:border-border-strong"
+                        className="w-full resize-none rounded-xl border border-border bg-transparent px-3 py-2.5 outline-none"
                     />
                 </div>
 

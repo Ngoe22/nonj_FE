@@ -1,7 +1,6 @@
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {useRouter} from "next/navigation";
 import {api} from "@/lib/axios/axios";
-import {authStore} from "@/stores/auth/auth.store";
 
 //----------------------------------------------------------------
 
@@ -15,13 +14,12 @@ export function useLogin () {
     const router = useRouter();
     return useMutation( {
         mutationFn : async (login_info:LoginInfo ) => {
-            const res = await  api.post( 'auth/login' ,  login_info)
+            const res = await  api.post( '/auth/login' ,  login_info)
             return res.data.data;
         } ,
-        onSuccess : (res :any) => {
+        onSuccess : (user :any) => {
             // console.log(data)
-            queryClient.setQueryData([ 'my_profile' ] ,res.info )
-            authStore.setAccessToken(res.accessToken);
+            queryClient.setQueryData([ 'my_profile' ] ,user )
             router.push('/');
         }
     } )

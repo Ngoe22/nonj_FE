@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import {useRegister} from "@/hooks/auth/useRegister";
 import {useTranslations} from "next-intl";
 import {useForm} from "react-hook-form";
-import {LoginFormValues, loginSchema} from "@/schemas/auth/login.schemas";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {RegisterFormValues, registerSchema} from "@/schemas/auth/register.schemas";
 import {InvalidInput} from "@/components/_share/form_error_warning/FormErrorWarning.compo";

@@ -105,7 +105,29 @@
     "promote": "Thăng chức",
     "demote": "Giáng chức",
     "leave_group": "Rời nhóm",
-    "delete_group": "Xóa nhóm"
+    "delete_group": "Xóa nhóm",
+
+    "create_group_modal_title": "Tạo nhóm",
+    "create_group_label_name": "Tên nhóm",
+    "create_group_name_placeholder": "Nhập tên nhóm",
+    "create_group_label_slug": "Mã nhóm",
+    "create_group_slug_placeholder": "vd: toan_2024",
+
+    "create_group_label_description": "Mô tả",
+    "create_group_description_placeholder": "Giới thiệu về nhóm này",
+
+    "create_group_join_mode": "Cách tham gia",
+    "create_group_join_mode_public": "Công khai",
+    "create_group_join_mode_private": "Cần duyệt",
+
+    "create_group_view_mode": "Quyền xem",
+    "create_group_view_mode_public": "Công khai",
+    "create_group_view_mode_private": "Sau khi tham gia",
+
+    "create_group_cancel": "Huỷ",
+    "create_group_create": "Tạo",
+    "create_group_creating": "Đang tạo...",
+    "create_group_confirm_discard": "Bạn có thay đổi chưa lưu. Bỏ thay đổi?"
   },
   "Post_collections": {
     "title": "Thư mục",
@@ -177,6 +199,7 @@
     "at_least_char_6": "Phải có ít nhất 6 ký tự",
     "max_char_50": "Không được vượt quá 50 ký tự",
     "max_char_100": "Không được vượt quá 100 ký tự",
+    "max_char_500": "Không được vượt quá 500 ký tự",
     "only_letter_and_number_and_underscore": "Chỉ cho phép chữ cái, số và dấu gạch dưới ,không cần @"
   },
 

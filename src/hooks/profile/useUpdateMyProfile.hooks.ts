@@ -30,26 +30,20 @@ export function useUpdateMyProfile() {
             return res.data.data;
         },
 
-        // 1. Chạy TRƯỚC khi request gửi đi
         onMutate: async (body) => {
-            // Hủy query đang chạy để tránh ghi đè dữ liệu optimistic
             await queryClient.cancelQueries({ queryKey: ['my_profile'] });
 
-            // Lưu snapshot để rollback
             const previousProfile = queryClient.getQueryData<Profile>([
                 'my_profile',
             ]);
 
-            // Cập nhật cache ngay lập tức
             queryClient.setQueryData<Profile>(['my_profile'], (old) =>
                 old ? { ...old, ...body } : old,
             );
 
-            // Trả context cho onError / onSettled
             return { previousProfile };
         },
 
-        // 2. Nếu lỗi → rollback
         onError: (error, variables, context) => {
             if (context?.previousProfile) {
                 queryClient.setQueryData(
@@ -60,7 +54,6 @@ export function useUpdateMyProfile() {
             toast.error(txt('profile_update_fail'));
         },
 
-        // 3. Dù thành công hay lỗi → đồng bộ lại với server
         onSettled: async () => {
             await queryClient.invalidateQueries({
                 queryKey: ['my_profile'],

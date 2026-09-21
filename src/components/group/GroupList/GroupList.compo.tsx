@@ -3,12 +3,14 @@
 import { useMemo, useState } from 'react';
 import { Plus } from 'lucide-react';
 import { useParams } from 'next/navigation';
-
-import { testGroupData } from '@/mock/group';
 import GroupCard from "@/components/group/GroupList/GroupCard.compo";
 import {useTranslations} from "next-intl";
+import {useGetJoinedGroup} from "@/hooks/group/useGetGroupBy.hook";
+import {CreateGroupModal} from "@/components/group/GroupList/GroupCreateModal.compo";
 
 type Tab = 'all' | 'my';
+
+
 
 export default function GroupList() {
 
@@ -19,23 +21,19 @@ export default function GroupList() {
     const locale = String(params.locale);
 
     const [tab, setTab] = useState<Tab>('all');
+    const [ isCreating, setIsCreating ] = useState<boolean>(false);
+
+    const myJoinedGroups = useGetJoinedGroup()
+    const myMineGroups = useGetJoinedGroup()
 
     const groups = useMemo(() => {
-        const group = {
-            id: testGroupData.id,
-            name: testGroupData.name,
-            slug: testGroupData.slug,
-            description: testGroupData.description,
-            join_mode: testGroupData.join_mode,
-            view_mode: testGroupData.view_mode,
-        };
-
-        if (tab === 'my') {
-            return [group];
-        }
-
-        return [group];
+        if (tab === 'my') return myMineGroups;
+        return myJoinedGroups;
     }, [tab]);
+
+    function handleCreateGroup() {
+        console.log('create group');
+    }
 
     return (
         <div className="mx-auto w-full max-w-5xl px-4 py-6 sm:px-6">
@@ -51,6 +49,7 @@ export default function GroupList() {
                 </div>
 
                 <button
+                    onClick={ ()=> setIsCreating(true) }
                     type="button"
                     className="flex items-center gap-2 rounded-xl bg-foreground px-4 py-2.5 text-sm font-medium text-background"
                 >
@@ -86,14 +85,24 @@ export default function GroupList() {
             </div>
 
             <div className="mt-6 grid gap-4">
-                {groups.map((group) => (
-                    <GroupCard
-                        key={group.id}
-                        locale={locale}
-                        group={group}
-                    />
-                ))}
+                {/*{groups.map((group) => (*/}
+                {/*    <GroupCard*/}
+                {/*        key={group.id}*/}
+                {/*        locale={locale}*/}
+                {/*        group={group}*/}
+                {/*    />*/}
+                {/*))}*/}
             </div>
+
+
+            <CreateGroupModal
+                open={isCreating}
+                onClose={() => setIsCreating(false)}
+                onSubmit={handleCreateGroup}
+                // isSubmitting={mutation.isPending}
+            />
+
+
         </div>
     );
 }

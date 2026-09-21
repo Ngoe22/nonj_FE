@@ -98,7 +98,32 @@
       "promote": "Promote",
       "demote": "Demote",
       "leave_group": "Leave Group",
-      "delete_group": "Delete Group"
+      "delete_group": "Delete Group",
+
+
+      "create_group_modal_title": "Create group",
+      "create_group_label_name": "Name",
+      "create_group_name_placeholder": "Enter group name",
+      "create_group_label_slug": "Slug",
+      "create_group_slug_placeholder": "group_code",
+
+      "create_group_label_description": "Description",
+      "create_group_description_placeholder": "Tell us about this group",
+
+      "create_group_join_mode": "Join mode",
+      "create_group_join_mode_public": "Public",
+      "create_group_join_mode_private": "Must request",
+
+      "create_group_view_mode": "Visibility",
+      "create_group_view_mode_public": "Public",
+      "create_group_view_mode_private": "After join",
+
+
+      "create_group_cancel": "Cancel",
+      "create_group_create": "Create",
+      "create_group_creating": "Creating...",
+      "create_group_confirm_discard": "You have unsaved changes. Discard?"
+
     },
     "Post_collections": {
       "title": "Collections",
@@ -168,6 +193,7 @@
     "at_least_char_6": "Must be at least 6 characters",
     "max_char_50": "Must not exceed 50 characters",
     "max_char_100": "Must not exceed 100 characters",
+    "max_char_500": "Must not exceed 500 characters",
     "only_letter_and_number_and_underscore": "Only letters, numbers, and underscores are allowed , no need @"
   },
   "Toast" : {

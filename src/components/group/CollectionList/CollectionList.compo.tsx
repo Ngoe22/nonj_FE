@@ -99,8 +99,11 @@ export default function CollectionList({locale, groupId}: CollectionListProps) {
                     {canAdd && (
                         <button
                             type="button"
-                            onClick={() =>
+                            onClick={() => {
+                                console.log('button clicked');
                                 setCreateOpen(true)
+                            }
+
                             }
                             className="text-sm font-medium text-foreground underline-offset-4 hover:underline"
                         >

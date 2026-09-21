@@ -15,10 +15,11 @@ interface GroupCardProps {
     };
 }
 
-export default function GroupCard({
-                                      locale,
-                                      group,
-                                  }: GroupCardProps) {
+export default function GroupCard({locale, group}: GroupCardProps) {
+
+
+
+
     return (
         <Link
             href={`/${locale}/group/${group.id}`}
