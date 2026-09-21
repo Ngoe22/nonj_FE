@@ -2,6 +2,7 @@
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {useRouter} from "next/navigation";
 import {api} from "@/lib/axios/axios";
+import {authStore} from "@/stores/auth/auth.store";
 
 interface RegisterInfo {
     email: string;
@@ -19,9 +20,10 @@ export function useRegister () {
             const res = await  api.post( 'auth/register' ,  login_info)
             return res.data;
         } ,
-        onSuccess : (user_info :any) => {
-            console.log(user_info)
-            queryClient.setQueryData([ 'my_profile' ] ,user_info )
+        onSuccess : (res :any) => {
+            console.log(res)
+            queryClient.setQueryData([ 'my_profile' ] ,res.info )
+            authStore.setAccessToken(res.accessToken);
             router.push('/');
         }
     } )
