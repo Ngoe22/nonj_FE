@@ -8,4 +8,13 @@ export type Group = {
     view_mode : Group_View_Mode
     created_at : Date
     description: string;
+
+    permission : {
+        view_setting: boolean ,
+        view_join_req :boolean ,
+        view_member :boolean ,
+        edit_setting: boolean ,
+        able_to_leave : boolean ,
+        able_to_delete :boolean ,
+    }
 }

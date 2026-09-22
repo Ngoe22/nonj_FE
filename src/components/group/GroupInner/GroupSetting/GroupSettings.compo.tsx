@@ -11,11 +11,11 @@ import SettingSelect from "@/components/group/GroupInner/GroupSettingSelect.comp
 import {useTranslations} from "next-intl";
 import {Group} from "@/types/group/group.type";
 
-// interface GroupSettingsProps {
-//     group: typeof import('@/mock/group').testGroupData;
-// }
+interface GroupSettingsProps {
+    group: Group;
+}
 
-export default function GroupSettings(group: Group) {
+export default function GroupSettings({ group }: GroupSettingsProps) {
 
     const [ info , setInfo ] = useState( {
         name : group.name ,

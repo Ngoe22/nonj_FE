@@ -2,27 +2,28 @@
 
 import Link from 'next/link';
 import { Users } from 'lucide-react';
+import {useCurrentGroupStore} from "@/stores/group/currentGroup.store";
+import {useRouter} from "@/i18n/navigation";
+import {Group} from "@/types/group/group.type";
 
 interface GroupCardProps {
     locale: string;
-    group: {
-        id: string;
-        name: string;
-        slug: string;
-        description: string;
-        join_mode: string;
-        view_mode: string;
-    };
+    group : Group;
 }
 
 export default function GroupCard({locale, group}: GroupCardProps) {
 
+    const router = useRouter();
+    const setCurrentGroup = useCurrentGroupStore((s) => s.setCurrentGroup);
 
-
+    const handleClick = () => {
+        setCurrentGroup(group);
+        router.push(`/group/${group.id}`);
+    };
 
     return (
-        <Link
-            href={`/${locale}/group/${group.id}`}
+        <div
+            onClick={handleClick}
             className="block rounded-2xl border border-border bg-surface p-5 transition hover:border-border-strong hover:shadow-sm"
         >
             <div className="flex items-start gap-4">
@@ -54,6 +55,6 @@ export default function GroupCard({locale, group}: GroupCardProps) {
                     </div>
                 </div>
             </div>
-        </Link>
+        </div>
     );
 }

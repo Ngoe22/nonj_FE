@@ -1,13 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import {useEffect, useState} from 'react';
 import { useParams } from 'next/navigation';
-
-
-//
-// import {
-//     testGroupData,
-// } from '@/mock/group';
 import GroupSubHeader from "@/components/group/GroupInner/GroupSubHeader.compo";
 import GroupSettings from "@/components/group/GroupInner/GroupSetting/GroupSettings.compo";
 import GroupJoinRequests from "@/components/group/GroupInner/GroupJoinReq/GroupJoinRequests.compo";
@@ -18,6 +12,8 @@ import CollectionList from "@/components/group/CollectionList/CollectionList.com
 import CollectionModal from "@/components/group/CollectionList/CollectionModal.compo";
 import ConfirmModal from "@/components/group/_share/ConfirmModal.compo";
 import {useTranslations} from "next-intl";
+import {useRouter} from "@/i18n/navigation";
+import {useCurrentGroupStore} from "@/stores/group/currentGroup.store";
 
 type View =
     | 'overview'
@@ -26,6 +22,19 @@ type View =
     | 'members';
 
 export default function GroupDetail() {
+
+
+    const router = useRouter();
+    const currentGroup = useCurrentGroupStore((s) => s.currentGroup);
+
+    useEffect(() => {
+        if (!currentGroup) {
+            router.replace('/group');
+        }
+    }, [currentGroup, router]);
+
+    if (!currentGroup) return null;
+
 
 
     const params = useParams();
@@ -67,7 +76,7 @@ export default function GroupDetail() {
 
                 {view === 'settings' && (
                     <GroupSettings
-                        group={testGroupData}
+                        group={currentGroup}
                     />
                 )}
 
@@ -86,7 +95,7 @@ export default function GroupDetail() {
         <>
             <div className="relative mx-auto w-full max-w-5xl px-4 py-6 sm:px-6">
                 <GroupHeader
-                    group={testGroupData}
+                    group={currentGroup}
                     canAddCollection={canAddCollection}
                     onMenu={() =>
                         setMenuOpen((value) => !value)
@@ -99,23 +108,23 @@ export default function GroupDetail() {
                 <GroupMenu
                     open={menuOpen}
                     canViewSetting={
-                        testGroupData.permission
+                        currentGroup.permission
                             .view_setting
                     }
                     canViewRequests={
-                        testGroupData.permission
+                        currentGroup.permission
                             .view_join_req
                     }
                     canViewMembers={
-                        testGroupData.permission
+                        currentGroup.permission
                             .view_member
                     }
                     AbleToLeave={
-                        testGroupData.permission
+                        currentGroup.permission
                             .able_to_leave
                     }
                     AbleToDelete={
-                        testGroupData.permission
+                        currentGroup.permission
                             .able_to_delete
                     }
 
