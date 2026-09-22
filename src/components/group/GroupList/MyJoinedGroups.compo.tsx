@@ -3,7 +3,7 @@
 import GroupCard from "@/components/group/GroupList/GroupCard.compo";
 import {useParams} from "next/navigation";
 import {useGetJoinedGroup} from "@/hooks/group/useGetMyGroup.hook";
-import {InfiniteScrollList} from "@/components/group/_share/InfiniteScrollList.compo";
+import {InfiniteScrollList} from "@/components/_share/infinity_scroll/InfiniteScrollList.compo";
 
 export function JoinedGroupList() {
     const {

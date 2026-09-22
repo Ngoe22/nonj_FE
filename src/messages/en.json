@@ -127,7 +127,7 @@
     },
     "Post_collections": {
       "title": "Collections",
-      "new_collection": "+ New Collection",
+      "new_collection": "New Collection",
       "edit": "Edit",
       "delete": "Delete",
       "title_label": "Title",
@@ -199,5 +199,12 @@
   "Toast" : {
     "action_fail" : "Something went wrong ... , try again later",
     "profile_update_fail" : "Update fail ... , try again later"
+  },
+
+  "Share_component": {
+    "infinity_scroll_loading": "Loading...",
+    "infinity_scroll_error": "Something went wrong. Please try again.",
+    "infinity_scroll_is_nodata": "No data available",
+    "infinity_scroll_is_end_of_data": "— End of list —"
   }
 }

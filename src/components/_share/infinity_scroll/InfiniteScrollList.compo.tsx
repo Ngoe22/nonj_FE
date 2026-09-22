@@ -3,6 +3,7 @@
 import { ReactNode } from 'react';
 import { Loader2 } from 'lucide-react';
 import {useInfiniteScroll} from "@/hooks/_share/infinityScroll/infinityScroll.hook";
+import {useTranslations} from "next-intl";
 
 interface Props<T> {
     /** Mảng đã flatten từ data.pages */
@@ -45,6 +46,8 @@ export function InfiniteScrollList<T>({
                   itemClassName,
     }: Props<T>) {
 
+    const txt = useTranslations('Share_component')
+
     const sentinelRef = useInfiniteScroll({
         hasNextPage,
         isFetchingNextPage,
@@ -70,7 +73,7 @@ export function InfiniteScrollList<T>({
             <>
                 {errorComponent ?? (
                     <p className="py-6 text-center text-sm text-red-500">
-                        Đã xảy ra lỗi khi tải dữ liệu
+                        {txt('infinity_scroll_error')}
                     </p>
                 )}
             </>
@@ -83,7 +86,7 @@ export function InfiniteScrollList<T>({
             <>
                 {emptyComponent ?? (
                     <p className="py-10 text-center text-sm text-muted-foreground">
-                        Không có dữ liệu
+                        {txt('infinity_scroll_is_nodata')}
                     </p>
                 )}
             </>
@@ -114,7 +117,7 @@ export function InfiniteScrollList<T>({
                 <>
                     {endComponent ?? (
                         <p className="py-4 text-center text-xs text-muted-foreground">
-                            — Đã hết —
+                            {txt('infinity_scroll_is_end_of_data')}
                         </p>
                     )}
                 </>

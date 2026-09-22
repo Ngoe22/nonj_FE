@@ -1,6 +1,6 @@
 'use client';
 
-import {useEffect, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import { useParams } from 'next/navigation';
 import GroupSubHeader from "@/components/group/GroupInner/GroupSubHeader.compo";
 import GroupSettings from "@/components/group/GroupInner/GroupSetting/GroupSettings.compo";
@@ -14,6 +14,9 @@ import ConfirmModal from "@/components/group/_share/ConfirmModal.compo";
 import {useTranslations} from "next-intl";
 import {useRouter} from "@/i18n/navigation";
 import {useCurrentGroupStore} from "@/stores/group/currentGroup.store";
+import {api} from "@/lib/axios/axios";
+import {useQuery} from "@tanstack/react-query";
+import {useGetGroup} from "@/hooks/group/useGetCurrentGroup.hook";
 
 type View =
     | 'overview'
@@ -21,27 +24,24 @@ type View =
     | 'join_requests'
     | 'members';
 
-export default function GroupDetail() {
+export default  function GroupDetail() {
 
 
-    const router = useRouter();
-    const currentGroup = useCurrentGroupStore((s) => s.currentGroup);
-
-    useEffect(() => {
-        if (!currentGroup) {
-            router.replace('/group');
-        }
-    }, [currentGroup, router]);
-
-    if (!currentGroup) return null;
-
+    const txt = useTranslations('Group')
 
 
     const params = useParams();
-    const txt = useTranslations('Group')
-
     const groupId = String(params.groupId);
     const locale = String(params.locale);
+
+
+    const {
+        data: currentGroup,
+        isLoading,
+        isError,
+    } = useGetGroup(groupId);
+
+
 
     const [view, setView] =
         useState<View>('overview');
@@ -64,6 +64,9 @@ export default function GroupDetail() {
         setView('overview');
         setMenuOpen(false);
     };
+
+    if (!currentGroup) return <div>...</div>;   // ⬅️ BẮT BUỘC
+
 
     if (view !== 'overview') {
 

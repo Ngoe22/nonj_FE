@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Modal from "@/components/_share/common_model/CommonModel.compo";
+import Modal from "@/components/_share/common_modal/CommonModal.compo";
 import {useTranslations} from "next-intl";
 
 interface CollectionModalProps {

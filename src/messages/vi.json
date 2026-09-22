@@ -205,5 +205,11 @@
   "Toast" : {
     "action_fail" : "Thao tác thất bại , ... thử lại sau",
     "profile_update_fail" : "Cập nhập lỗi .. thử lại sau "
+  },
+  "Share_component": {
+    "infinity_scroll_loading": "Đang tải...",
+    "infinity_scroll_error": "Đã xảy ra lỗi. Vui lòng thử lại.",
+    "infinity_scroll_is_nodata": "Không có dữ liệu",
+    "infinity_scroll_is_end_of_data": "— Đã hết —"
   }
 }
