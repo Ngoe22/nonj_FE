@@ -6,5 +6,6 @@ export type Group = {
     slug: string;
     join_mode : Group_Join_Mode
     view_mode : Group_View_Mode
-
+    created_at : Date
+    description: string;
 }

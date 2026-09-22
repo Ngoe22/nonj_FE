@@ -4,10 +4,10 @@ import { useState } from 'react';
 import { useParams } from 'next/navigation';
 
 
-
-import {
-    testGroupData,
-} from '@/mock/group';
+//
+// import {
+//     testGroupData,
+// } from '@/mock/group';
 import GroupSubHeader from "@/components/group/GroupInner/GroupSubHeader.compo";
 import GroupSettings from "@/components/group/GroupInner/GroupSetting/GroupSettings.compo";
 import GroupJoinRequests from "@/components/group/GroupInner/GroupJoinReq/GroupJoinRequests.compo";
