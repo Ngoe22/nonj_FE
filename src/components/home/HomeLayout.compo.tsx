@@ -5,7 +5,7 @@ import { Menu } from 'lucide-react';
 import Sidebar from "@/components/home/Sidebar.compo";
 import {useSidebarStore} from "@/stores/side_bar/side_bar.store";
 import {useThemeStore} from "@/stores/theme/theme.store";
-import {useGetMyProfile} from "@/hooks/home/useGetMyProfile.hook";
+import {useGetMyProfile} from "@/hooks/profile/useGetMyProfile.hook";
 
 interface HomeLayoutProps {
     children: ReactNode;

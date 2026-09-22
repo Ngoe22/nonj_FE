@@ -104,7 +104,7 @@
       "create_group_modal_title": "Create group",
       "create_group_label_name": "Name",
       "create_group_name_placeholder": "Enter group name",
-      "create_group_label_slug": "Slug",
+      "create_group_label_slug": "Group code",
       "create_group_slug_placeholder": "group_code",
 
       "create_group_label_description": "Description",
@@ -197,6 +197,7 @@
     "only_letter_and_number_and_underscore": "Only letters, numbers, and underscores are allowed , no need @"
   },
   "Toast" : {
+    "action_fail" : "Something went wrong ... , try again later",
     "profile_update_fail" : "Update fail ... , try again later"
   }
 }

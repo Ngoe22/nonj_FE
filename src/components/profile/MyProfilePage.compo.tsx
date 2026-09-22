@@ -3,7 +3,7 @@
 
 
 import { Card } from '@/components/ui/card';
-import {useGetMyProfile} from "@/hooks/home/useGetMyProfile.hook";
+import {useGetMyProfile} from "@/hooks/profile/useGetMyProfile.hook";
 import {ProfileSkeleton} from "@/components/profile/ProfileSkeletons.compo";
 import {ProfileError} from "@/components/profile/ProfileError.compo";
 import {Button} from "@/components/ui/button";

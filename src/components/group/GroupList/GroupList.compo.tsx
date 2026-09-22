@@ -5,8 +5,11 @@ import { Plus } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import GroupCard from "@/components/group/GroupList/GroupCard.compo";
 import {useTranslations} from "next-intl";
-import {useGetJoinedGroup} from "@/hooks/group/useGetGroupBy.hook";
+import {useGetJoinedGroup} from "@/hooks/group/useGetMyGroup.hook";
 import {CreateGroupModal} from "@/components/group/GroupList/GroupCreateModal.compo";
+import {OwnGroupList} from "@/components/group/GroupList/MyOwnGroups.compo";
+import {JoinedGroupList} from "@/components/group/GroupList/MyJoinedGroups.compo";
+import {useCreateGroup} from "@/hooks/group/useCreateGroup.hook";
 
 type Tab = 'all' | 'my';
 
@@ -16,23 +19,15 @@ export default function GroupList() {
 
     const txt = useTranslations('Group')
 
-    const params = useParams();
-
-    const locale = String(params.locale);
-
     const [tab, setTab] = useState<Tab>('all');
     const [ isCreating, setIsCreating ] = useState<boolean>(false);
 
-    const myJoinedGroups = useGetJoinedGroup()
-    const myMineGroups = useGetJoinedGroup()
+    const { mutateAsync , isError , isPending } = useCreateGroup()
 
-    const groups = useMemo(() => {
-        if (tab === 'my') return myMineGroups;
-        return myJoinedGroups;
-    }, [tab]);
-
-    function handleCreateGroup() {
-        console.log('create group');
+    const  handleCreateGroup = async (body: any)=>  {
+        const data =  await mutateAsync(body)
+        console.log(data)
+        setIsCreating(false)
     }
 
     return (
@@ -85,13 +80,7 @@ export default function GroupList() {
             </div>
 
             <div className="mt-6 grid gap-4">
-                {/*{groups.map((group) => (*/}
-                {/*    <GroupCard*/}
-                {/*        key={group.id}*/}
-                {/*        locale={locale}*/}
-                {/*        group={group}*/}
-                {/*    />*/}
-                {/*))}*/}
+                { tab === 'my' ?  <JoinedGroupList/> : <OwnGroupList/> }
             </div>
 
 
