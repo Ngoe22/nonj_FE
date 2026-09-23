@@ -1,32 +1,72 @@
 'use client';
 
 import { useState } from 'react';
-import {MoreVertical, SaveCheck, SquarePen} from 'lucide-react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useTranslations } from 'next-intl';
+import { Group_Join_Mode, Group_View_Mode } from '@/enum/group/group_mode.enum';
+import SettingSelect from '@/components/group/GroupInner/GroupSettingSelect.compo';
+import { ActionBtnGroup } from '@/components/_share/about_form/action_btn_group/actionBtnGroup.compo';
+import type { Group } from '@/types/group/group.type';
+import {InfoAndInput} from "@/components/_share/about_form/info_and_input/infoAndInput.compo";
+import {getUpdateGroupDefaults, UpdateGroupFormValues, updateGroupSchema} from "@/schemas/group/update_group.schema";
+import {useUpdateGroup} from "@/hooks/group/Current/openingGroup.hook";
 
-import {
-    Group_Join_Mode,
-    Group_View_Mode,
-} from '@/mock/group';
-import SettingSelect from "@/components/group/GroupInner/GroupSettingSelect.compo";
-import {useTranslations} from "next-intl";
-import {Group} from "@/types/group/group.type";
 
-interface GroupSettingsProps {
+// ===========================================
+
+interface Props {
     group: Group;
 }
 
-export default function GroupSettings({ group }: GroupSettingsProps) {
+const JOIN_MODE_OPTIONS = Object.values(Group_Join_Mode);
+const VIEW_MODE_OPTIONS = Object.values(Group_View_Mode);
 
-    const [ info , setInfo ] = useState( {
-        name : group.name ,
-        description : group.description ,
-        join_mode : group.join_mode ,
-        view_mode : group.view_mode ,
-    } )
 
-    const [ isEditing ,setIsEditing ] = useState(false);
+export default function GroupSettings({ group }: Props) {
 
-    const txt = useTranslations('Group')
+
+    const [isEditing, setIsEditing] = useState(false);
+    const txt = useTranslations('Group');
+
+    const defaults = getUpdateGroupDefaults({
+        name: group.name,
+        description: group.description,
+        join_mode: group.join_mode as Group_Join_Mode,
+        view_mode: group.view_mode as Group_View_Mode,
+    });
+
+    const {
+        register,
+        handleSubmit,
+        reset,
+        setValue,
+        watch,
+        formState: { errors },
+    } = useForm<UpdateGroupFormValues>({
+        resolver: zodResolver(updateGroupSchema),
+        defaultValues: defaults,
+        mode: 'onBlur',
+    });
+
+    const joinMode = watch('join_mode');
+    const viewMode = watch('view_mode');
+
+
+    const handleCancel = () => {
+        reset(defaults);
+        setIsEditing(false);
+    };
+
+
+    const { mutateAsync ,  mutate , isError , isPending } = useUpdateGroup()
+
+    const submit = handleSubmit(async (body) => {
+        // await onSubmit(values);
+
+        await mutateAsync( {id :group.id , body} )
+        setIsEditing(false);
+    });
 
     return (
         <div className="space-y-8 pt-6">
@@ -35,110 +75,65 @@ export default function GroupSettings({ group }: GroupSettingsProps) {
                     <h3 className="text-lg font-semibold">
                         {txt('group_information')}
                     </h3>
-
-                    {group.permission.edit_setting && (
-                        isEditing ?
-                            <button
-                                type="button"
-                                className="rounded-xl p-2 text-muted-foreground hover:bg-surface-hover hover:text-foreground"
-                                onClick={()=> {
-                                    console.log("save")
-                                    setIsEditing(false)
-                                }
-                            }
-
-                            >
-                                <SaveCheck size={18} />
-                            </button> :
-
-                            <button
-                                type="button"
-                                className="rounded-xl p-2  text-muted-foreground hover:bg-surface-hover hover:text-foreground"
-                                onClick={()=>setIsEditing(!isEditing)}
-                            >
-                                <SquarePen size={18} />
-                            </button>
-                    )}
+                    <ActionBtnGroup
+                        isEditing={isEditing}
+                        onEdit={() => setIsEditing(true)}
+                        onConfirm={submit}
+                        onCancel={handleCancel}
+                    />
                 </div>
 
                 <div className="mt-5 space-y-5">
+                    {/* Name */}
                     <div>
                         <p className="text-xs uppercase tracking-wide text-muted-foreground">
                             {txt('name')}
                         </p>
-
-                        {
-                            isEditing ? (
-                                <input
-                                    className = "mt-3 border-2 p-2 border-blue-300 rounded-xl "
-                                    type="text"
-                                    value={info.name}
-                                    onChange={e => setInfo({ ...info, name: e.target.value })}
-                                />
-                            ) : (
-                                <p className="mt-1 text-sm font-medium">
-                                    {info.name}
-                                </p>
-                            )
-                        }
+                        <InfoAndInput
+                            isEditing={isEditing}
+                            value={group.name}
+                            register={register('name')}
+                            error={errors.name}
+                            placeholder={txt('create_group_name_placeholder')}
+                        />
                     </div>
 
+                    {/* Description */}
                     <div>
                         <p className="text-xs uppercase tracking-wide text-muted-foreground">
                             {txt('description_label')}
                         </p>
-
-                        {
-                            isEditing ? (
-                                <input
-                                    className = "mt-3 border-2 p-2 border-blue-300 rounded-xl "
-                                    type="text"
-                                    value={info.description}
-                                    onChange={e => setInfo({ ...info, name: e.target.value })}
-                                />
-                            ) : (
-                                <p className="mt-1 text-sm font-medium">
-                                    {info.description}
-                                </p>
-                            )
-                        }
-
+                        <InfoAndInput
+                            isEditing={isEditing}
+                            value={group.description ?? ''}
+                            register={register('description')}
+                            error={errors.description}
+                            type="textarea"
+                            placeholder={txt('create_group_description_placeholder')}
+                        />
                     </div>
                 </div>
             </section>
 
             <section className="space-y-5 border-t border-border pt-6">
+                <SettingSelect
+                    label={txt('join_mode')}
+                    value={joinMode}
+                    options={JOIN_MODE_OPTIONS}
+                    disabled={!isEditing}
+                    error={errors.join_mode}
+                    onChange={(v) => setValue('join_mode', v as Group_Join_Mode)}
+                />
 
-                    <SettingSelect
-                        label={txt('join_mode')}
-                        value={info.join_mode}
-                        options={Object.values(Group_Join_Mode)}
-                        disabled={!isEditing}
-                        onChange={(value) =>
-                            // setJoinMode(value as Group_Join_Mode)
-                            setInfo({ ...info, join_mode: value })
-                    }
-
-                    />
-
-                    <SettingSelect
-                        label={txt('view_mode')}
-                        value={info.view_mode}
-                        options={Object.values(Group_View_Mode)}
-                        disabled={!isEditing}
-                        onChange={(value) =>
-                            // setViewMode(value as Group_View_Mode)
-                            setInfo({ ...info, view_mode: value })
-                        }
-
-                    />
-
-
-
+                <SettingSelect
+                    label={txt('view_mode')}
+                    value={viewMode}
+                    options={VIEW_MODE_OPTIONS}
+                    disabled={!isEditing}
+                    error={errors.view_mode}
+                    onChange={(v) => setValue('view_mode', v as Group_View_Mode)}
+                />
             </section>
-
-        {/*  hidden modal  */}
-
         </div>
     );
 }

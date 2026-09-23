@@ -1,23 +1,31 @@
 'use client';
 
-import Link from 'next/link';
 import { Users } from 'lucide-react';
-import {useCurrentGroupStore} from "@/stores/group/currentGroup.store";
 import {useRouter} from "@/i18n/navigation";
 import {Group} from "@/types/group/group.type";
+import {useQueryClient} from "@tanstack/react-query";
+
+
+
+
+
+// =====================================================================
+
+
+
 
 interface GroupCardProps {
-    locale: string;
     group : Group;
 }
 
-export default function GroupCard({locale, group}: GroupCardProps) {
+export default function GroupCard({ group}: GroupCardProps) {
 
     const router = useRouter();
-    const setCurrentGroup = useCurrentGroupStore((s) => s.setCurrentGroup);
+    const queryClient = useQueryClient();
+
 
     const handleClick = () => {
-        setCurrentGroup(group);
+        queryClient.setQueryData(['current_group'] ,group )
         router.push(`/group/${group.id}`);
     };
 

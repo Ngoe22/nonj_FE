@@ -106,6 +106,10 @@
     "demote": "Giáng chức",
     "leave_group": "Rời nhóm",
     "delete_group": "Xóa nhóm",
+    "leave_group_title" : "Rời nhóm",
+    "leave_group_desc"  : "Bạn có chắc chắn muốn rời nhóm này không?",
+    "delete_group_title" : "Xóa nhóm",
+    "delete_group_desc"  : "Bạn có chắc chắn muốn xóa nhóm này không?",
 
     "create_group_modal_title": "Tạo nhóm",
     "create_group_label_name": "Tên nhóm",
@@ -210,6 +214,9 @@
     "infinity_scroll_loading": "Đang tải...",
     "infinity_scroll_error": "Đã xảy ra lỗi. Vui lòng thử lại.",
     "infinity_scroll_is_nodata": "Không có dữ liệu",
-    "infinity_scroll_is_end_of_data": "— Đã hết —"
+    "infinity_scroll_is_end_of_data": "— Đã hết —",
+    "infinity_scroll_group_have_not_joined_any" : "Bạn chưa tham gia nhóm nào",
+    "infinity_scroll_group_have_not_owned_any" : "Bạn chưa sở hữu nhóm nào"
+
   }
 }

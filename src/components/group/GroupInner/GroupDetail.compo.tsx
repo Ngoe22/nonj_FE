@@ -12,11 +12,10 @@ import CollectionList from "@/components/group/CollectionList/CollectionList.com
 import CollectionModal from "@/components/group/CollectionList/CollectionModal.compo";
 import ConfirmModal from "@/components/group/_share/ConfirmModal.compo";
 import {useTranslations} from "next-intl";
-import {useRouter} from "@/i18n/navigation";
-import {useCurrentGroupStore} from "@/stores/group/currentGroup.store";
-import {api} from "@/lib/axios/axios";
-import {useQuery} from "@tanstack/react-query";
-import {useGetGroup} from "@/hooks/group/useGetCurrentGroup.hook";
+import {useDeleteGroup, useGetGroup, useQuitGroup} from "@/hooks/group/Current/openingGroup.hook";
+import {useMutation} from "@tanstack/react-query";
+import {toast} from "react-toastify";
+
 
 type View =
     | 'overview'
@@ -35,12 +34,41 @@ export default  function GroupDetail() {
     const locale = String(params.locale);
 
 
+    //
+
     const {
         data: currentGroup,
         isLoading,
         isError,
     } = useGetGroup(groupId);
 
+
+    const { mutate : deleteGroup } = useDeleteGroup()
+    const deleteHandler = async () =>{
+
+        console.log(currentGroup)
+
+        if(currentGroup?.id) {
+            deleteGroup(currentGroup.id)
+        } else {
+            toast.error("action_fail");
+        }
+        setGroupDeleteOpen(false);
+    }
+
+    const { mutate : quitGroup } = useQuitGroup()
+    const quitHandler = async () =>{
+        if(currentGroup?.id) {
+            quitGroup(currentGroup.id)
+        } else {
+            toast.error("action_fail");
+        }
+        setGroupDeleteOpen(false);
+
+
+    }
+
+    //
 
 
     const [view, setView] =
@@ -173,29 +201,19 @@ export default  function GroupDetail() {
             />
 
             <ConfirmModal
-                open={quitOpen}
-                title="Leave group"
-                description="Are you sure you want to leave this group?"
-                confirmText="Leave"
+                open={ groupDeleteOpen}
+                title={ txt('delete_group_title') }
+                description={ txt('delete_group_desc') }
                 onClose={() => setQuitOpen(false)}
-                onConfirm={() => {
-                    console.log('LEAVE GROUP');
-
-                    setQuitOpen(false);
-                }}
+                onConfirm={deleteHandler}
             />
 
             <ConfirmModal
-                open={groupDeleteOpen}
-                title="Leave group"
-                description="Are you sure you want to leave this group?"
-                confirmText="Leave"
+                open={quitOpen}
+                title={ txt('leave_group_title') }
+                description= { txt('leave_group_desc') }
                 onClose={() => setGroupDeleteOpen(false)}
-                onConfirm={() => {
-                    console.log('LEAVE GROUP');
-
-                    setGroupDeleteOpen(false);
-                }}
+                onConfirm={quitHandler}
             />
         </>
     );

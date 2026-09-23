@@ -2,17 +2,17 @@
 
 import { useMemo, useState } from 'react';
 import { Plus } from 'lucide-react';
-import { useParams } from 'next/navigation';
-import GroupCard from "@/components/group/GroupList/GroupCard.compo";
 import {useTranslations} from "next-intl";
-import {useGetJoinedGroup} from "@/hooks/group/useGetMyGroup.hook";
-import {CreateGroupModal} from "@/components/group/GroupList/GroupCreateModal.compo";
 import {OwnGroupList} from "@/components/group/GroupList/MyOwnGroups.compo";
 import {JoinedGroupList} from "@/components/group/GroupList/MyJoinedGroups.compo";
-import {useCreateGroup} from "@/hooks/group/useCreateGroup.hook";
+import {CreateGroupModal} from "@/components/group/GroupList/GroupCreateModal.compo";
+import {useCreateGroup} from "@/hooks/group/List /myGroups.hook";
 
 type Tab = 'all' | 'my';
 
+
+
+// ===================================
 
 
 export default function GroupList() {
@@ -80,7 +80,7 @@ export default function GroupList() {
             </div>
 
             <div className="mt-6 grid gap-4">
-                { tab === 'my' ?  <JoinedGroupList/> : <OwnGroupList/> }
+                { tab === 'my' ?   <OwnGroupList/> : <JoinedGroupList/> }
             </div>
 
 

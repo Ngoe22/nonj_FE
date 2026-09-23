@@ -1,4 +1,6 @@
 import {Group_Join_Mode, Group_View_Mode} from "@/enum/group/group_mode.enum";
+import {CreateGroupFormValues} from "@/schemas/group/group.schema";
+import {string} from "zod";
 
 export type Group = {
     id: string;
@@ -17,4 +19,13 @@ export type Group = {
         able_to_leave : boolean ,
         able_to_delete :boolean ,
     }
+}
+
+export type UpdateGroup = {
+
+        name: string;
+        join_mode : Group_Join_Mode
+        view_mode : Group_View_Mode
+        description?: string;
+
 }

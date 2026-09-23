@@ -9,7 +9,7 @@ export type Snapshot<T> = Array<{
 // ============================================================
 // CREATE — prepend vào page đầu
 // ============================================================
-export async function optimisticCreate<T extends { id: string }>(
+export async function optimisticInfinityCreate<T extends { id: string }>(
     queryClient: QueryClient,
     queryKeys: string[][],
     newItem: T,
@@ -45,7 +45,7 @@ export async function optimisticCreate<T extends { id: string }>(
 // ============================================================
 // UPDATE — tìm theo id, merge body
 // ============================================================
-export async function optimisticUpdate<T extends { id: string }>(
+export async function optimisticInfinityUpdate<T extends { id: string }>(
     queryClient: QueryClient,
     queryKeys: string[][],
     id: string,
@@ -78,7 +78,7 @@ export async function optimisticUpdate<T extends { id: string }>(
 // ============================================================
 // DELETE — xoá theo id khỏi mọi page
 // ============================================================
-export async function optimisticDelete<T extends { id: string }>(
+export async function optimisticInfinityDelete<T extends { id: string }>(
     queryClient: QueryClient,
     queryKeys: string[][],
     id: string,

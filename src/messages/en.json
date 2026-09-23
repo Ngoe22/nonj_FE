@@ -77,11 +77,14 @@
       "group_information": "Group information",
       "name": "Name",
       "description_label": "Description",
+
       "join_mode": "Join mode",
-      "by_request": "By Request",
-      "public": "Public",
+      "BY_REQUEST": "By Request",
+      "PUBLIC": "Public",
       "view_mode": "View mode",
-      "private": "Private",
+      "PRIVATE": "Private",
+
+
       "join_requests": "Join Requests",
       "pending": "Pending",
       "approve": "Approve",
@@ -98,8 +101,12 @@
       "promote": "Promote",
       "demote": "Demote",
       "leave_group": "Leave Group",
-      "delete_group": "Delete Group",
+      "leave_group_title" : "Leave Group",
+      "leave_group_desc"  : "Are you sure you want to leave this group?",
 
+      "delete_group": "Delete Group",
+      "delete_group_title" : "Delete Group",
+      "delete_group_desc"  : "Are you sure you want to delete this group?",
 
       "create_group_modal_title": "Create group",
       "create_group_label_name": "Name",
@@ -205,6 +212,8 @@
     "infinity_scroll_loading": "Loading...",
     "infinity_scroll_error": "Something went wrong. Please try again.",
     "infinity_scroll_is_nodata": "No data available",
-    "infinity_scroll_is_end_of_data": "— End of list —"
+    "infinity_scroll_is_end_of_data": "— End of list —",
+    "infinity_scroll_group_have_not_joined_any" : "U haven't joined any group",
+    "infinity_scroll_group_have_not_owned_any" : "U haven't owned any group"
   }
 }

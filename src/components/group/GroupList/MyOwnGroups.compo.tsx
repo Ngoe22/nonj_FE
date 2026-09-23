@@ -2,8 +2,9 @@
 
 import GroupCard from "@/components/group/GroupList/GroupCard.compo";
 import {useParams} from "next/navigation";
-import {useGetJoinedGroup, useGetOwnGroup} from "@/hooks/group/useGetMyGroup.hook";
 import {InfiniteScrollList} from "@/components/_share/infinity_scroll/InfiniteScrollList.compo";
+import {useTranslations} from "next-intl";
+import {useGetOwnGroups} from "@/hooks/group/List /myGroups.hook";
 
 export function OwnGroupList() {
     const {
@@ -13,19 +14,19 @@ export function OwnGroupList() {
         isFetchingNextPage,
         isLoading,
         isError,
-    } = useGetOwnGroup();
+    } = useGetOwnGroups();
 
     const groups = data?.pages.flatMap((page) => page) ?? [];
 
     const params = useParams();
     const locale = String(params.locale);
-
+    const txt = useTranslations('Share_component')
 
     return (
         <InfiniteScrollList
             items={groups}
             getKey={(group) => group.id}
-            renderItem={(group) => <GroupCard group={group} locale={locale} />}
+            renderItem={(group) => <GroupCard group={group} />}
             hasNextPage={hasNextPage}
             isFetchingNextPage={isFetchingNextPage}
             fetchNextPage={fetchNextPage}
@@ -33,7 +34,7 @@ export function OwnGroupList() {
             isError={isError}
             emptyComponent={
                 <p className="py-10 text-center text-sm text-muted-foreground">
-                    Bạn chưa tham gia nhóm nào +!
+                    {txt('infinity_scroll_group_have_not_owned_any')}
                 </p>
             }
         />

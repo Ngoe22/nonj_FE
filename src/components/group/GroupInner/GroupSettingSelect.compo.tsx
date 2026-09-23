@@ -1,101 +1,65 @@
 'use client';
 
-import { useState } from 'react';
-import { Check, ChevronDown } from 'lucide-react';
-import {useTranslations} from "next-intl";
+import { useTranslations } from 'next-intl';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import { FieldError } from 'react-hook-form';
+import { InvalidInput } from '@/components/_share/form_error_warning/FormErrorWarning.compo';
 
-interface SettingSelectProps<T extends string> {
+
+
+interface Props {
     label: string;
-    value: T;
-    options: readonly T[];
+    value: string;
+    options: string[];
     disabled?: boolean;
-    onChange: (value: T) => void;
+    error?: FieldError;
+    onChange: (value: string) => void;
 }
 
-export default function SettingSelect<T extends string>({
-                                                            label,
-                                                            value,
-                                                            options,
-                                                            disabled = false,
-                                                            onChange,
-                                                        }: SettingSelectProps<T>) {
+export default function SettingSelect({
+                                          label,
+                                          value,
+                                          options,
+                                          disabled = false,
+                                          error,
+                                          onChange,
+                                      }: Props) {
+    const txt = useTranslations('Group');
 
-    const txt = useTranslations('Group')
-    const [open, setOpen] = useState(false);
+
 
     return (
-        <div className="relative">
-            <label className="mb-2 block text-sm font-medium text-foreground">
+        <div>
+            <p className="text-xs uppercase tracking-wide text-muted-foreground">
                 {label}
-            </label>
+            </p>
 
-            <button
-                type="button"
-                disabled={disabled}
-                onClick={() => setOpen((prev) => !prev)}
-                className={`
-                    flex w-full items-center justify-between
-                    rounded-xl border border-border
-                    bg-surface
-                    px-4 py-3
-                    text-left
-                    transition
-                    ${
-                    disabled
-                        ? 'cursor-not-allowed opacity-50'
-                        : 'hover:border-border-strong'
-                }
-                `}
-            >
-                <span className="text-sm font-medium text-foreground">
+            {disabled ? (
+                <p className="mt-2 text-sm font-medium">
                     {txt(value as string)}
-                </span>
-
-                <ChevronDown
-                    size={17}
-                    className={`text-muted-foreground transition-transform ${
-                        open ? 'rotate-180' : ''
-                    }`}
-                />
-            </button>
-
-            {open && !disabled && (
-                <div className="absolute left-0 right-0 top-full z-20 mt-2 overflow-hidden rounded-xl border border-border bg-surface p-1 shadow-lg">
-                    {options.map((option) => {
-                        const selected = option === value;
-
-                        return (
-                            <button
-                                key={option}
-                                type="button"
-                                onClick={() => {
-                                    onChange(option);
-                                    setOpen(false);
-                                }}
-                                className={`
-                                    flex w-full items-center justify-between
-                                    rounded-lg px-3 py-2.5
-                                    text-sm
-                                    transition
-                                    ${
-                                    selected
-                                        ? 'bg-surface-hover font-medium text-foreground'
-                                        : 'text-muted-foreground hover:bg-surface-hover hover:text-foreground'
-                                }
-                                `}
-                            >
-                                <span>{txt(option as string)}</span>
-
-                                {selected && (
-                                    <Check
-                                        size={16}
-                                        className="text-foreground"
-                                    />
-                                )}
-                            </button>
-                        );
-                    })}
-                </div>
+                </p>
+            ) : (
+                <>
+                    <Select value={value} onValueChange={onChange}>
+                        <SelectTrigger className="mt-2 w-full">
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {options.map((opt) => (
+                                <SelectItem key={opt} value={opt}>
+                                    {txt(opt)}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                    {error && <InvalidInput msg={txt(error.message as any)} />}
+                </>
             )}
         </div>
     );
