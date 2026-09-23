@@ -146,6 +146,12 @@
     "modal_title_create" : "Tạo thư mục",
     "modal_title_edit" : "Chỉnh sửa",
 
+    "desc_placeholder": "Nhập mô tả (tuỳ chọn)",
+    "title_placeholder": "Nhập tiêu đề",
+
+    "confirm_delete_title": "Xoá bộ sưu tập",
+    "confirm_delete_desc": "Bạn có chắc muốn xoá ?",
+
     "cancel" : "Hủy" ,
     "confirm" : "Xác nhận"
 

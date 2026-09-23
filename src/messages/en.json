@@ -145,6 +145,12 @@
       "modal_title_create" : "Create CollectionList",
       "modal_title_edit" : "Edit CollectionList",
 
+      "desc_placeholder": "Enter description (optional)",
+      "title_placeholder": "Enter title",
+
+      "confirm_delete_title": "Delete collection",
+      "confirm_delete_desc": "Are you sure you want to delete this?",
+
       "cancel" : "Cancel" ,
       "confirm" : "Confirm"
     },

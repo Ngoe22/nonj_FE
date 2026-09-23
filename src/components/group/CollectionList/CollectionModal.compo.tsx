@@ -1,19 +1,26 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import Modal from "@/components/_share/common_modal/CommonModal.compo";
-import {useTranslations} from "next-intl";
+import { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useTranslations } from 'next-intl';
 
-interface CollectionModalProps {
+import Modal from '@/components/_share/common_modal/CommonModal.compo';
+import { Input } from '@/components/_share/about_form/info_and_input/input.compo';
+import {CreateCollectionFormValues, createCollectionSchema} from "@/schemas/post_collection/post_collection.schema";
+
+
+
+// =============================
+
+interface Props {
     open: boolean;
     mode: 'create' | 'edit';
     initialTitle?: string;
     initialDesc?: string;
     onClose: () => void;
-    onSubmit: (data: {
-        title: string;
-        desc: string;
-    }) => void;
+    onSubmit: (data: CreateCollectionFormValues) => void | Promise<void>;
+    isSubmitting?: boolean;
 }
 
 export default function CollectionModal({
@@ -23,26 +30,37 @@ export default function CollectionModal({
                                             initialDesc = '',
                                             onClose,
                                             onSubmit,
-                                        }: CollectionModalProps) {
+                                            isSubmitting = false,
+                                        }: Props) {
+    const txt = useTranslations('Post_collections');
+    const txtErr = useTranslations('Shema');
 
-    const  txt = useTranslations('Post_collections')
-
-    const [title, setTitle] = useState(initialTitle);
-    const [desc, setDesc] = useState(initialDesc);
+    const {
+        register,
+        handleSubmit,
+        reset,
+        formState: { errors },
+    } = useForm<CreateCollectionFormValues>({
+        resolver: zodResolver(createCollectionSchema),
+        defaultValues: { title: initialTitle, desc: initialDesc },
+        mode: 'onBlur',
+    });
 
     useEffect(() => {
-        setTitle(initialTitle);
-        setDesc(initialDesc);
-    }, [initialTitle, initialDesc, open]);
+        if (open) reset({ title: initialTitle, desc: initialDesc });
+    }, [open, initialTitle, initialDesc, reset]);
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
+    const submit = handleSubmit(async (values) => {
+        await onSubmit(values);
+    });
 
-        onSubmit({
-            title,
-            desc,
-        });
-    };
+    const titleError = errors.title?.message
+        ? { ...errors.title, message: txtErr(errors.title.message as any) }
+        : undefined;
+
+    const descError = errors.desc?.message
+        ? { ...errors.desc, message: txtErr(errors.desc.message as any) }
+        : undefined;
 
     return (
         <Modal
@@ -54,21 +72,15 @@ export default function CollectionModal({
             }
             onClose={onClose}
         >
-            <form
-                onSubmit={handleSubmit}
-                className="space-y-5"
-            >
+            <form onSubmit={submit} className="space-y-5">
                 <div>
                     <label className="mb-2 block text-sm font-medium">
                         {txt('title_label')}
                     </label>
-
-                    <input
-                        value={title}
-                        onChange={(e) =>
-                            setTitle(e.target.value)
-                        }
-                        className="w-full rounded-xl border border-border bg-transparent px-3 py-2.5 outline-none"
+                    <Input
+                        register={register('title')}
+                        error={titleError}
+                        placeholder={txt('title_placeholder')}
                     />
                 </div>
 
@@ -76,14 +88,12 @@ export default function CollectionModal({
                     <label className="mb-2 block text-sm font-medium">
                         {txt('description')}
                     </label>
-
-                    <textarea
-                        value={desc}
-                        onChange={(e) =>
-                            setDesc(e.target.value)
-                        }
-                        rows={4}
-                        className="w-full resize-none rounded-xl border border-border bg-transparent px-3 py-2.5 outline-none"
+                    <Input
+                        register={register('desc')}
+                        error={descError}
+                        type="textarea"
+                        placeholder={txt('desc_placeholder')}
+                        inputStyles="mt-1 text-sm font-medium rounded-md p-2 w-full border-2 border-status-info min-h-[100px] resize-y"
                     />
                 </div>
 
@@ -91,16 +101,17 @@ export default function CollectionModal({
                     <button
                         type="button"
                         onClick={onClose}
-                        className="rounded-xl border border-border px-4 py-2 text-sm font-medium hover:bg-surface-hover"
+                        disabled={isSubmitting}
+                        className="rounded-xl border border-border px-4 py-2 text-sm font-medium hover:bg-surface-hover disabled:opacity-50"
                     >
                         {txt('cancel')}
                     </button>
-
                     <button
                         type="submit"
-                        className="rounded-xl bg-foreground px-4 py-2 text-sm font-medium text-background"
+                        disabled={isSubmitting}
+                        className="rounded-xl bg-foreground px-4 py-2 text-sm font-medium text-background disabled:opacity-50"
                     >
-                        {txt('confirm')}
+                        {isSubmitting ? txt('saving') : txt('confirm')}
                     </button>
                 </div>
             </form>

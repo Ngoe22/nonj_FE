@@ -1,196 +1,168 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
+import CollectionCard from '@/components/group/CollectionList/CollectionCard.compo';
+import CollectionMenu from '@/components/group/CollectionList/CollectionMenu.compo';
+import CollectionModal from '@/components/group/CollectionList/CollectionModal.compo';
+import ConfirmModal from '@/components/group/_share/ConfirmModal.compo';
+import {
+    useCreateCollection, useDeleteCollection,
+    useGetCollections,
+    useUpdateCollection
+} from "@/hooks/post_collection/post_collection.hook";
+import {InfiniteScrollList} from "@/components/_share/infinity_scroll/InfiniteScrollList.compo";
+import {Collection} from "@/types/post_collection/post_collection.schema";
 
 
-import { testGroupCollectionData } from '@/mock/group';
-import CollectionCard from "@/components/group/CollectionList/CollectionCard.compo";
-import CollectionMenu from "@/components/group/CollectionList/CollectionMenu.compo";
-import CollectionModal from "@/components/group/CollectionList/CollectionModal.compo";
-import ConfirmModal from "@/components/group/_share/ConfirmModal.compo";
-import {useTranslations} from "next-intl";
 
-interface CollectionListProps {
+
+
+
+
+
+
+
+// =======================================
+
+
+interface Props {
     locale: string;
     groupId: string;
 }
 
-export default function CollectionList({locale, groupId}: CollectionListProps) {
+export default function CollectionList({ locale, groupId }: Props) {
+    const txt = useTranslations('Post_collections');
 
-    const [collections, setCollections] =
-        useState([testGroupCollectionData]);
+    const {
+        data,
+        fetchNextPage,
+        hasNextPage,
+        isFetchingNextPage,
+        isLoading,
+        isError,
+    } = useGetCollections(groupId);
 
-    const [menuId, setMenuId] = useState<string | null>(
-        null
-    );
+    const createMutation = useCreateCollection(groupId);
+    const updateMutation = useUpdateCollection(groupId);
+    const deleteMutation = useDeleteCollection(groupId);
 
+    const [menuId, setMenuId] = useState<string | null>(null);
+    const [createOpen, setCreateOpen] = useState(false);
     const [editOpen, setEditOpen] = useState(false);
     const [deleteOpen, setDeleteOpen] = useState(false);
+    const [selected, setSelected] = useState<Collection | null>(null);
 
-    const [selectedCollection, setSelectedCollection] =
-        useState<typeof testGroupCollectionData | null>(
-            null
-        );
+    // Flatten pages
+    const collections = data?.pages.flatMap((p) => p) ?? [];
 
-    const [createOpen, setCreateOpen] = useState(false);
+    // Check permission
+    const canAdd = collections.some((c) => c._permission.add);
 
-    const txt = useTranslations('Post_collections')
-
-    const canAdd = collections.some(
-        (item) => item._permission.add
-    );
-
-    const handleCreate = (data: {
-        title: string;
-        desc: string;
-    }) => {
-        console.log('CREATE COLLECTION', data);
+    // Handlers
+    const handleCreate = async (values: { title: string }) => {
+        await createMutation.mutateAsync(values);
         setCreateOpen(false);
     };
 
-    const handleEdit = (data: {
-        title: string;
-        desc: string;
-    }) => {
-        if (!selectedCollection) {
-            return;
-        }
-
-        // fake
-        setCollections((prev) =>
-            prev.map((item) =>
-                item.id === selectedCollection.id
-                    ? {
-                        ...item,
-                        title: data.title,
-                        desc: data.desc,
-                    }
-                    : item
-            )
-        );
-
+    const handleEdit = async (values: { title: string }) => {
+        if (!selected) return;
+        await updateMutation.mutateAsync({ id: selected.id, body: values });
         setEditOpen(false);
+        setSelected(null);
     };
 
-    const handleDelete = () => {
-        if (!selectedCollection) {
-            return;
-        }
-
-        // fake
-        setCollections((prev) =>
-            prev.filter(
-                (item) => item.id !== selectedCollection.id
-            )
-        );
-
+    const handleDelete = async () => {
+        if (!selected) return;
+        await deleteMutation.mutateAsync(selected.id);
         setDeleteOpen(false);
-        setSelectedCollection(null);
+        setSelected(null);
     };
 
     return (
         <>
             <section className="mt-6">
                 <div className="mb-4 flex items-center justify-between">
-                    <h2 className="text-lg font-semibold">
-                        {txt('title')}
-                    </h2>
+                    <h2 className="text-lg font-semibold">{txt('title')}</h2>
 
                     {canAdd && (
                         <button
                             type="button"
-                            onClick={() => {
-                                console.log('button clicked');
-                                setCreateOpen(true)
-                            }
-
-                            }
+                            onClick={() => setCreateOpen(true)}
                             className="text-sm font-medium text-foreground underline-offset-4 hover:underline"
                         >
-                           + {txt('new_collection')}
+                            + {txt('new_collection')}
                         </button>
                     )}
                 </div>
 
-                <div className="space-y-3">
-                    {collections.map((collection) => (
-                        <div
-                            key={collection.id}
-                            className="relative"
-                        >
+                <InfiniteScrollList<Collection>
+                    items={collections}
+                    getKey={(c) => c.id}
+                    renderItem={(collection) => (
+                        <div className="relative">
                             <CollectionCard
                                 locale={locale}
                                 groupId={groupId}
                                 collection={collection}
-                                onMenu={() => {
-                                    setMenuId(
-                                        menuId === collection.id
-                                            ? null
-                                            : collection.id
-                                    );
-                                }}
+                                onMenu={() =>
+                                    setMenuId(menuId === collection.id ? null : collection.id)
+                                }
                             />
-
                             <CollectionMenu
-                                open={
-                                    menuId === collection.id
-                                }
-                                canEdit={
-                                    collection._permission.edit
-                                }
-                                canDelete={
-                                    collection._permission.delete
-                                }
+                                open={menuId === collection.id}
+                                canEdit={collection._permission.edit}
+                                canDelete={collection._permission.delete}
                                 onEdit={() => {
-                                    setSelectedCollection(
-                                        collection
-                                    );
+                                    setSelected(collection);
                                     setMenuId(null);
                                     setEditOpen(true);
                                 }}
                                 onDelete={() => {
-                                    setSelectedCollection(
-                                        collection
-                                    );
+                                    setSelected(collection);
                                     setMenuId(null);
                                     setDeleteOpen(true);
                                 }}
                             />
                         </div>
-                    ))}
-                </div>
+                    )}
+                    hasNextPage={hasNextPage}
+                    isFetchingNextPage={isFetchingNextPage}
+                    fetchNextPage={fetchNextPage}
+                    isLoading={isLoading}
+                    isError={isError}
+                />
             </section>
 
-
-            {/* Hidden modal */}
+            {/* Modals */}
             <CollectionModal
                 open={createOpen}
                 mode="create"
                 onClose={() => setCreateOpen(false)}
                 onSubmit={handleCreate}
+                isSubmitting={createMutation.isPending}
             />
 
             <CollectionModal
                 open={editOpen}
                 mode="edit"
-                initialTitle={
-                    selectedCollection?.title ?? ''
-                }
-                initialDesc={selectedCollection?.desc ?? ''}
+                initialTitle={selected?.title ?? ''}
+                initialDesc={selected?.desc ?? ''}
                 onClose={() => {
                     setEditOpen(false);
-                    setSelectedCollection(null);
+                    setSelected(null);
                 }}
                 onSubmit={handleEdit}
+                isSubmitting={updateMutation.isPending}
             />
 
             <ConfirmModal
                 open={deleteOpen}
-                title="Delete collection"
-                description={`Are you sure you want to delete "${selectedCollection?.title ?? ''}"?`}
+                title={txt('confirm_delete_title')}
+                description={txt('confirm_delete_desc', { title: selected?.title ?? '' })}
                 onClose={() => {
                     setDeleteOpen(false);
-                    setSelectedCollection(null);
+                    setSelected(null);
                 }}
                 onConfirm={handleDelete}
             />
