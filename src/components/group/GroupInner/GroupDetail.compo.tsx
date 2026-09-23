@@ -93,7 +93,7 @@ export default  function GroupDetail() {
         setMenuOpen(false);
     };
 
-    if (!currentGroup) return <div>...</div>;   // ⬅️ BẮT BUỘC
+    if (!currentGroup) return <div>...</div>;
 
 
     if (view !== 'overview') {
