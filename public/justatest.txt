@@ -269,3 +269,71 @@ max_char_50
 max_char_100
 only_letter_and_number_and_underscore
 
+
+
+        id: string,
+        post_type:Post_Type ,
+        title: string,
+        description: string,
+        question_type : Exercise_Type,
+        question_content: object,
+        deadline_at: Date,
+        retake:bool,
+        view_each_other_answer: View_Each_Other_Answer,
+        user: {
+          id : string ,
+          nickname : string,
+          user_name : string ,
+          avatar_url : string,
+        },
+
+export enum View_Each_Other_Answer {
+    AFTER_DEADLINE = 'AFTER_DEADLINE',
+    NEVER = 'NEVER',
+}
+
+export enum Post_Type {
+    EXERCISE = 'EXERCISE',
+    EXAM = 'EXAM',
+}
+
+export enum Exercise_Type {
+    MULTIPLE_CHOICE = 'MULTIPLE_CHOICE',
+    ESSAY = 'ESSAY',
+}
+
+==============================
+outgoing
+        id: string,
+        receiver:  {
+          id : string,
+          nickname :string,
+          user_name :string,
+          avatar_url :string
+        },
+        status: PENDING,
+        created_at: DATE,
+        updated_at: DATE,
+      },
+
+      export enum UpdateRequestFromReceiverEnum {
+        REJECTED = 'REJECTED',
+        ACCEPTED = 'ACCEPTED',
+      }
+
+
+ingoing
+
+      id: string,
+      sender:  {
+        id : string,
+        nickname :string,
+        user_name :string,
+        avatar_url :string
+      },
+      status: PENDING,
+      created_at: DATE,
+      updated_at: DATE,
+    },
+
+

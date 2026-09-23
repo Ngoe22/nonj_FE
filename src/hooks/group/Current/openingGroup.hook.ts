@@ -36,7 +36,6 @@ export function useUpdateGroup() {
             return res.data.data;
         },
 
-        // ✅ onMutate return snapshot để rollback
         onMutate: async ({ id, body }) => {
             await queryClient.cancelQueries({ queryKey: ['current_group', id] });
 
@@ -50,7 +49,6 @@ export function useUpdateGroup() {
         },
 
         onError: (_err, _vars, ctx) => {
-            // ✅ rollback
             if (ctx?.prev !== undefined) {
                 queryClient.setQueryData(['current_group', ctx.id], ctx.prev);
             }
@@ -58,7 +56,6 @@ export function useUpdateGroup() {
         },
 
         onSettled: async (_data, _err, vars) => {
-            // ✅ refetch current group + list
             await queryClient.invalidateQueries({
                 queryKey: ['current_group', vars.id],
             });
