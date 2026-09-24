@@ -94,7 +94,7 @@ export function useTanCrud<T extends { id: string }>(config: TanCrudConfig<T>) {
                 return transformItem ? transformItem(raw) : raw;
             },
 
-            // Create chỉ dùng onSuccess (theo yêu cầu trước đó)
+            // Create chỉ dùng onSuccess
             onSuccess: async (newItem) => {
                 if (options.invalidate?.pages) await invalidatePages();
                 if (options.invalidate?.one) await invalidateOne(newItem.id);
@@ -114,6 +114,8 @@ export function useTanCrud<T extends { id: string }>(config: TanCrudConfig<T>) {
     const useUpdate = (options: MutationOptions = {}) =>
         useMutation<T, Error, { id: string; body: Record<string, any> }, any>({
             mutationFn: async ({ id, body }) => {
+
+                /**  can linh hoat hon */
                 const res = await api.patch(
                     endpoint.updateOne.replace(':id', id),
                     body,
@@ -193,6 +195,8 @@ export function useTanCrud<T extends { id: string }>(config: TanCrudConfig<T>) {
                     snapshots.one = { prev, id };
                 }
 
+
+
                 return snapshots;
             },
 
@@ -212,6 +216,8 @@ export function useTanCrud<T extends { id: string }>(config: TanCrudConfig<T>) {
                 if (options.invalidate?.pages) await invalidatePages();
                 if (options.invalidate?.one) await invalidateOne(id);
                 if (options.onSuccessCallback) options.onSuccessCallback();
+                /**  them delete key */
+
             },
         });
 
@@ -230,3 +236,55 @@ export function useTanCrud<T extends { id: string }>(config: TanCrudConfig<T>) {
         queryClient,
     };
 }
+
+/**
+ *   const crud = useTanCrud<Collection>({
+ *     keysOfPages: ['collections', groupId],
+ *     keysOfSingle: ['collection'],
+ *     endpoint: {
+ *       getMany: `group/${groupId}/collection`,
+ *       getOne: `group/${groupId}/collection/:id`,
+ *       createOne: `group/${groupId}/collection`,
+ *       updateOne: `group/${groupId}/collection/:id`,
+ *       deleteOne: `group/${groupId}/collection/:id`,
+ *     },
+ *     pageSize: 20,
+ *   });
+ *
+ *
+ *
+ *  // ===== GET =====
+ *   const { data, fetchNextPage, hasNextPage, isLoading } = crud.useGetPages();
+ *
+ *   const collections = data?.pages.flatMap((p) => p) ?? [];
+ *
+ *   // ===== CREATE =====
+ *   const create = crud.useCreate({
+ *     invalidate: { pages: true },
+ *   });
+ *
+ *   // ===== UPDATE =====
+ *   const update = crud.useUpdate({
+ *     optimistic: { pages: 'update' },
+ *     invalidate: { pages: true },
+ *   });
+ *
+ *   // ===== DELETE =====
+ *   const remove = crud.useDelete({
+ *     optimistic: { pages: 'remove' },
+ *     invalidate: { pages: true },
+ *   });
+ *
+ *   // Handlers
+ *   const handleCreate = async (body: { title: string }) => {
+ *     await create.mutateAsync(body);
+ *   };
+ *
+ *   const handleUpdate = async (id: string, body: { title: string }) => {
+ *     await update.mutateAsync({ id, body });
+ *   };
+ *
+ *   const handleDelete = async (id: string) => {
+ *     await remove.mutateAsync(id);
+ *   };
+ * */

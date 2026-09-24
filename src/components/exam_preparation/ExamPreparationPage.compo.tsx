@@ -3,9 +3,11 @@
 import { useParams } from 'next/navigation';
 
 
-import {
-    examPreparationCollections,
-} from '@/mock/group';
+// import {
+//     examPreparationCollections,
+// } from '@/mock/group';
+
+
 import ExamCollectionCard from "@/components/exam_preparation/ExamCollectionCard.compo";
 import {useTranslations} from "next-intl";
 

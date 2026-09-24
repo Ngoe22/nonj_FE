@@ -27,6 +27,9 @@ export interface TanCrudConfig<T extends { id: string }> {
 
 // Options cho từng mutation
 export interface MutationOptions {
+
+    dynamicValueForEndpoints?: Record<string, string>;
+
     optimistic?: {
         pages?: OptimisticMode;
         one?: OptimisticMode;
