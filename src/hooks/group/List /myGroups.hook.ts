@@ -55,7 +55,7 @@ export function useGetJoinedGroups() {
         },
         initialPageParam: 1,
         getNextPageParam: (lastPage) => lastPage?.nextPage ?? undefined,
-        staleTime: 60 * 60 * 1000,
+        staleTime: 15 * 60 * 1000,
     });
 }
 
@@ -71,6 +71,6 @@ export function useGetOwnGroups() {
         },
         initialPageParam: 1,
         getNextPageParam: (lastPage) => lastPage?.nextPage ?? undefined,
-        staleTime: 60 * 60 * 1000,
+        staleTime: 15 * 60 * 1000,
     });
 }
