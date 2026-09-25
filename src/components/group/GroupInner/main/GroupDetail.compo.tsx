@@ -2,18 +2,19 @@
 
 import {useEffect, useRef, useState} from 'react';
 import { useParams } from 'next/navigation';
-import GroupSubHeader from "@/components/group/GroupInner/GroupSubHeader.compo";
+import GroupSubHeader from "@/components/group/GroupInner/main/GroupSubHeader.compo";
 import GroupSettings from "@/components/group/GroupInner/GroupSetting/GroupSettings.compo";
 import GroupJoinRequests from "@/components/group/GroupInner/GroupJoinReq/GroupJoinRequests.compo";
 import GroupMembers from "@/components/group/GroupInner/GroupMember/GroupMembers.compo";
-import GroupHeader from "@/components/group/GroupInner/GroupHeader.compo";
-import GroupMenu from "@/components/group/GroupInner/GroupMenu.compo";
+import GroupHeader from "@/components/group/GroupInner/main/GroupHeader.compo";
+import GroupMenu from "@/components/group/GroupInner/main/GroupMenu.compo";
 import CollectionList from "@/components/group/CollectionList/CollectionList.compo";
 import CollectionModal from "@/components/group/CollectionList/CollectionModal.compo";
 import ConfirmModal from "@/components/group/_share/ConfirmModal.compo";
 import {useTranslations} from "next-intl";
 import {toast} from "react-toastify";
 import {useDeleteGroup, useGetGroup, useQuitGroup} from "@/hooks/group/group_tan.hook";
+import {Group} from "@/types/group/group.type";
 
 
 type View =
@@ -36,7 +37,7 @@ export default  function GroupDetail() {
     //
 
     const {
-        data: currentGroup,
+        data :currentGroup,
         isLoading,
         isError,
     } = useGetGroup(groupId);

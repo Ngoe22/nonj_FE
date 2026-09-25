@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { Group_Join_Mode, Group_View_Mode } from '@/enum/group/group_mode.enum';
-import SettingSelect from '@/components/group/GroupInner/GroupSettingSelect.compo';
+import SettingSelect from '@/components/group/GroupInner/main/GroupSettingSelect.compo';
 import { ActionBtnGroup } from '@/components/_share/about_form/action_btn_group/actionBtnGroup.compo';
 import type { Group } from '@/types/group/group.type';
 import {InfoAndInput} from "@/components/_share/about_form/info_and_input/infoAndInput.compo";

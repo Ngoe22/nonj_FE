@@ -74,9 +74,10 @@ export const member = {
     role: 'admin',
     updated_at: '2026-07-09',
     _permission: {
+        kick_admin: true,
         kick_mem: true,
         promote_mem: false,
-        demote_mem: true,
+        demote_admin: true,
     },
 };
 

@@ -1,25 +1,18 @@
+
 // ============================================================
-// Core
+// Optimistic
 // ============================================================
 export type OptimisticMode = 'add' | 'update' | 'remove';
 
-/** Full query key — vd: ['group', id] */
 export type QueryKey = string[];
 
-export type DynamicValues = Record<string, string | number>;
-
-// ============================================================
-// Optimistic UI config
-// ============================================================
 export interface OptimisticPageTarget {
-    /** Nhiều key — hỗ trợ update nhiều list cùng lúc (move A → B) */
+    /** Nhiều key cùng lúc — vd: move item A → B */
     tags: QueryKey[];
-    /** Mode cho page này */
     type: OptimisticMode;
 }
 
 export interface OptimisticOneTarget {
-    /** Key của single cache — thường 1 */
     tags: QueryKey[];
 }
 
@@ -29,57 +22,18 @@ export interface OptimisticUIConfig {
 }
 
 // ============================================================
-// Update Hook
+// Hook options — chung cho mọi mutation
 // ============================================================
-export interface UpdateHookOptions<T> {
-    onSuccess?: {
-        optimisticUI?: OptimisticUIConfig;
-        /** Full keys cần invalidate */
-        invalidateTags?: QueryKey[];
-        onSuccessCallback?: (data: T) => void;
-    };
+export interface MutationUIOptions<TData, TVars = any> {
     onMutate?: {
-        /** Chạy trước API — dùng data từ variables (id + body) */
         optimisticUI?: OptimisticUIConfig;
-        onMutateCallback?: (vars: { id: string; body: Partial<T> }) => void;
+        onMutateCallback?: (vars: TVars) => void;
     };
-    onError?: {
-        onErrorCallback?: (err: Error) => void;
-    };
-}
-
-// ============================================================
-// Delete Hook
-// ============================================================
-export interface DeleteHookOptions<T> {
     onSuccess?: {
         optimisticUI?: OptimisticUIConfig;
         invalidateTags?: QueryKey[];
-        /** Xoá hẳn cache */
         deleteTags?: QueryKey[];
-        onSuccessCallback?: (id: string) => void;
-    };
-    onMutate?: {
-        optimisticUI?: OptimisticUIConfig;
-        onMutateCallback?: (id: string) => void;
-    };
-    onError?: {
-        onErrorCallback?: (err: Error) => void;
-    };
-}
-
-// ============================================================
-// Create Hook
-// ============================================================
-export interface CreateHookOptions<T> {
-    onSuccess?: {
-        optimisticUI?: OptimisticUIConfig;
-        invalidateTags?: QueryKey[];
-        onSuccessCallback?: (data: T) => void;
-    };
-    onMutate?: {
-        /** Không hỗ trợ optimisticUI — chưa có id/data */
-        onMutateCallback?: (body: any) => void;
+        onSuccessCallback?: (data: TData) => void;
     };
     onError?: {
         invalidateTags?: QueryKey[];
@@ -87,25 +41,34 @@ export interface CreateHookOptions<T> {
     };
 }
 
+// Alias cho đọc dễ — vẫn cùng shape
+export type UpdateHookOptions<T> = MutationUIOptions<T>;
+export type DeleteHookOptions<T> = MutationUIOptions<T>;
+export type CreateHookOptions<T> = MutationUIOptions<T>;
+
 // ============================================================
-// Get hooks
+// Get many config
 // ============================================================
 export interface GetManyConfig<T> {
     queryKey: QueryKey;
     queryFn: (page: number) => Promise<T[]>;
     pageSize?: number;
+    initialPageParam?: number;
+    getNextPageParam?: (lastPage: any, allPages: any[]) => number | undefined;
     enabled?: boolean;
     staleTime?: number;
-    // onSuccessCallback?: (data: any) => void;
-    // onMutateCallback?: () => void;
-    // onErrorCallback?: (err: Error) => void;
-
+    /** Cho phép override thêm bất kỳ option nào của useInfiniteQuery */
+    [key: string]: any;
 }
 
+// ============================================================
+// Get one config
+// ============================================================
 export interface GetOneConfig<T> {
     queryKey: QueryKey;
     queryFn: () => Promise<T>;
     enabled?: boolean;
     staleTime?: number;
-
+    /** Cho phép override thêm bất kỳ option nào của useQuery */
+    [key: string]: any;
 }

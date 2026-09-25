@@ -1,16 +1,79 @@
 'use client';
 
-import { MoreVertical } from 'lucide-react';
-import { member } from '@/mock/group';
-import {useTranslations} from "next-intl";
+import { useState } from 'react';
+import { useParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
+import {useGetGroupMembers, useKickGroupMember, useUpdateGroupMember} from "@/hooks/group/menber/group_member.hook";
+import {GroupMember, GroupMemberUpdateAction} from "@/types/group/group_member.type";
+import {InfiniteScrollList} from "@/components/_share/infinity_scroll/InfiniteScrollList.compo";
+import {GroupMemberCard} from "@/components/group/GroupInner/GroupMember/GroupMemberCard.compo";
+import ConfirmModal from "@/components/group/_share/ConfirmModal.compo";
+
+
 
 export default function GroupMembers() {
+    const txt = useTranslations('Group');
+    const params = useParams();
+    const groupId = String(params?.groupId ?? '');
 
-    const txt = useTranslations('Group')
+    // ============ Queries ============
+    const {
+        data,
+        fetchNextPage,
+        hasNextPage,
+        isFetchingNextPage,
+        isLoading,
+        isError,
+    } = useGetGroupMembers(groupId);
 
+    // ============ Mutations ============
+    const updateMember = useUpdateGroupMember(groupId);
+    const kickMember = useKickGroupMember(groupId);
+
+    // ============ Local state cho confirm kick ============
+    const [kickTarget, setKickTarget] = useState<GroupMember | null>(null);
+
+    // ============ Flatten pages ============
+    const members = data?.pages.flatMap((p) => p) ?? [];
+
+    // ============ Handlers ============
+    const handlePromote = (member: GroupMember) => {
+        updateMember.mutate({
+            group_id: groupId,
+            target_id: member.user.id,
+            action: GroupMemberUpdateAction.PROMOTE,
+        });
+    };
+
+    const handleDemote = (member: GroupMember) => {
+        updateMember.mutate({
+            group_id: groupId,
+            target_id: member.user.id,
+            action: GroupMemberUpdateAction.DEMOTE,
+        });
+    };
+
+    const handleKickClick = (member: GroupMember) => {
+        setKickTarget(member);
+    };
+
+    const handleKickConfirm = async () => {
+        if (!kickTarget) return;
+        await kickMember.mutateAsync({
+            group_id: groupId,
+            user_id: kickTarget.user.id,
+            member_id: kickTarget.id,
+        });
+        setKickTarget(null);
+    };
+
+    const isPending = updateMember.isPending || kickMember.isPending;
+
+    // ============ Render ============
     return (
         <div className="pt-6">
             <div className="overflow-hidden rounded-2xl border border-border">
+                {/* Header — chỉ hiện trên desktop */}
                 <div className="hidden grid-cols-[auto_1fr_1fr_140px_100px_50px] gap-4 border-b border-border bg-surface-hover px-4 py-3 text-xs font-medium uppercase tracking-wide text-muted-foreground md:grid">
                     <span />
                     <span>{txt('user')}</span>
@@ -20,75 +83,43 @@ export default function GroupMembers() {
                     <span />
                 </div>
 
-
-                list
-                <div className="relative flex flex-col gap-4 p-4 md:grid md:grid-cols-[auto_1fr_1fr_140px_100px_50px] md:items-center md:gap-4">
-                    <img
-                        src={member.user.avatar_url}
-                        alt=""
-                        className="h-10 w-10 rounded-full object-cover"
-                    />
-
-                    <div>
-                        <p className="text-sm font-medium">
-                            @{member.user.user_name}
+                {/* List với infinite scroll */}
+                <InfiniteScrollList<GroupMember>
+                    items={members}
+                    getKey={(m) => m.id}
+                    renderItem={(member) => (
+                        <GroupMemberCard
+                            member={member}
+                            onPromote={handlePromote}
+                            onDemote={handleDemote}
+                            onKick={handleKickClick}
+                            isPending={isPending}
+                        />
+                    )}
+                    hasNextPage={hasNextPage}
+                    isFetchingNextPage={isFetchingNextPage}
+                    fetchNextPage={fetchNextPage}
+                    isLoading={isLoading}
+                    isError={isError}
+                    className=""
+                    emptyComponent={
+                        <p className="py-10 text-center text-sm text-muted-foreground">
+                            {txt('no_members')}
                         </p>
-                    </div>
-
-                    <div className="text-sm text-muted-foreground">
-                        {member.user.nickname}
-                    </div>
-
-                    <div className="text-sm text-muted-foreground">
-                        {member.updated_at}
-                    </div>
-
-                    <div>
-                        <span className="rounded-full bg-surface-hover px-2.5 py-1 text-xs">
-                            {/*{member.role}*/}
-                            {txt( member.role as string )}
-                        </span>
-                    </div>
-
-                    {/*<div className="relative">*/}
-                    {/*    <button*/}
-                    {/*        type="button"*/}
-                    {/*        className="rounded-lg p-2 text-muted-foreground hover:bg-surface-hover"*/}
-                    {/*    >*/}
-                    {/*        <MoreVertical size={18} />*/}
-                    {/*    </button>*/}
-                    {/*</div>*/}
-
-                    <div className="flex flex-wrap gap-2 md:col-span-full">
-                        {member._permission.kick_mem && (
-                            <button
-                                type="button"
-                                className="rounded-lg border border-border px-3 py-2 text-xs text-red-600"
-                            >
-                                {txt('kick')}
-                            </button>
-                        )}
-
-                        {member._permission.promote_mem && (
-                            <button
-                                type="button"
-                                className="rounded-lg border border-border px-3 py-2 text-xs"
-                            >
-                                {txt('promote')}
-                            </button>
-                        )}
-
-                        {member._permission.demote_mem && (
-                            <button
-                                type="button"
-                                className="rounded-lg border border-border px-3 py-2 text-xs"
-                            >
-                                {txt('demote')}
-                            </button>
-                        )}
-                    </div>
-                </div>
+                    }
+                />
             </div>
+
+            {/* Confirm kick modal */}
+            <ConfirmModal
+                open={!!kickTarget}
+                title={txt('confirm_kick_title')}
+                description={txt('confirm_kick_desc', {
+                    name: kickTarget?.user.user_name ?? '',
+                })}
+                onClose={() => setKickTarget(null)}
+                onConfirm={handleKickConfirm}
+            />
         </div>
     );
 }

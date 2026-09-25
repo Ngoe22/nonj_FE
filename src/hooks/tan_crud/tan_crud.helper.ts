@@ -1,9 +1,11 @@
 import type { InfiniteData, QueryClient } from '@tanstack/react-query';
-import {OptimisticMode, OptimisticUIConfig} from "@/types/tan_crud/tan_crud.type";
-
+import type {
+    OptimisticMode,
+    OptimisticUIConfig,
+} from '@/types/tan_crud/tan_crud.type';
 
 // ============================================================
-// Cache snapshot
+// Snapshot
 // ============================================================
 export interface CacheSnapshot {
     key: string[];
@@ -30,33 +32,24 @@ export function rollback(queryClient: QueryClient, snapshots: CacheSnapshot[]) {
 }
 
 // ============================================================
-// Page-level operations (InfiniteData)
+// Page-level action (InfiniteData<T[]>)
 // ============================================================
 function addToPage<T>(page: T[], item: T): T[] {
     return [item, ...page];
 }
 
-function updateInPage<T extends { id: string }>(
-    page: T[],
-    id: string,
-    body: Partial<T>,
-): T[] {
-    return page.map((i) => (i.id === id ? { ...i, ...body } : i));
+function updateInPage<T>(page: T[], id: string, body: any): T[] {
+    return page.map((i: any) => (i.id === id ? { ...i, ...body } : i));
 }
 
-function removeFromPage<T extends { id: string }>(page: T[], id: string): T[] {
-    return page.filter((i) => i.id !== id);
+function removeFromPage<T>(page: T[], id: string): T[] {
+    return page.filter((i: any) => i.id !== id);
 }
 
-export function applyInfiniteAction<T extends { id: string }>(
+export function applyInfiniteAction<T>(
     queryClient: QueryClient,
     key: string[],
-    action: {
-        mode: OptimisticMode;
-        item?: T;
-        id?: string;
-        body?: Partial<T>;
-    },
+    action: { mode: OptimisticMode; item?: T; id?: string; body?: any },
 ) {
     queryClient.setQueryData<InfiniteData<T[]>>(key, (old) => {
         if (!old) return old;
@@ -68,12 +61,10 @@ export function applyInfiniteAction<T extends { id: string }>(
                         return action.item ? addToPage(page, action.item) : page;
                     case 'update':
                         return action.id !== undefined
-                            ? updateInPage(page, action.id, action.body ?? ({} as Partial<T>))
+                            ? updateInPage(page, action.id, action.body ?? {})
                             : page;
                     case 'remove':
-                        return action.id !== undefined
-                            ? removeFromPage(page, action.id)
-                            : page;
+                        return action.id !== undefined ? removeFromPage(page, action.id) : page;
                     default:
                         return page;
                 }
@@ -83,23 +74,19 @@ export function applyInfiniteAction<T extends { id: string }>(
 }
 
 // ============================================================
-// One-level operations (single cache)
+// One-level action (single cache)
 // ============================================================
 export function applyOneAction<T>(
     queryClient: QueryClient,
     key: string[],
-    action: {
-        mode: OptimisticMode;
-        item?: T;
-        body?: Partial<T>;
-    },
+    action: { mode: OptimisticMode; item?: T; body?: any },
 ) {
     switch (action.mode) {
         case 'remove':
             queryClient.removeQueries({ queryKey: key });
             return;
         case 'update':
-            queryClient.setQueryData<T>(key, (old) =>
+            queryClient.setQueryData<T>(key, (old: any) =>
                 old ? { ...old, ...action.body } : old,
             );
             return;
@@ -110,19 +97,18 @@ export function applyOneAction<T>(
 }
 
 // ============================================================
-// Apply toàn bộ OptimisticUI config
+// Apply OptimisticUI
 // ============================================================
-export function applyOptimisticUI<T extends { id: string }>(
+export function applyOptimisticUI<T>(
     queryClient: QueryClient,
     config: OptimisticUIConfig,
     context: {
         id?: string;
-        body?: Partial<T>;
+        body?: any;
         item?: T;
         oneMode: OptimisticMode;
     },
 ) {
-    // ----- Page targets -----
     if (config.page) {
         for (const target of config.page) {
             for (const key of target.tags) {
@@ -136,7 +122,6 @@ export function applyOptimisticUI<T extends { id: string }>(
         }
     }
 
-    // ----- One target -----
     if (config.one) {
         for (const key of config.one.tags) {
             applyOneAction<T>(queryClient, key, {
@@ -149,17 +134,13 @@ export function applyOptimisticUI<T extends { id: string }>(
 }
 
 // ============================================================
-// Collect tất cả key có trong OptimisticUI config
+// Collect keys
 // ============================================================
 export function collectKeys(config?: OptimisticUIConfig): string[][] {
     if (!config) return [];
     const keys: string[][] = [];
-    if (config.page) {
-        for (const target of config.page) keys.push(...target.tags);
-    }
-    if (config.one) {
-        keys.push(...config.one.tags);
-    }
+    if (config.page) for (const t of config.page) keys.push(...t.tags);
+    if (config.one) keys.push(...config.one.tags);
     return keys;
 }
 
