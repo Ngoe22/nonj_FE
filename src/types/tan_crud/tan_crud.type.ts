@@ -1,4 +1,4 @@
-import type { InfiniteData, QueryClient } from '@tanstack/react-query';
+import type { InfiniteData } from '@tanstack/react-query';
 
 export type OptimisticMode = 'add' | 'update' | 'remove';
 
@@ -7,37 +7,54 @@ export type Snapshot<T> = Array<{
     old: InfiniteData<T[]> | undefined;
 }>;
 
-export interface CrudEndpoints {
-    getMany: string;
-    getOne: string;
-    createOne: string;
-    updateOne: string;
-    deleteOne: string;
+export type EndpointType =
+    | 'getMany'
+    | 'getOne'
+    | 'createOne'
+    | 'updateOne'
+    | 'deleteOne';
+
+export interface EndpointDef {
+    /** Tag để invalidate/optimistic */
+    tag: string;
+    /** Loại endpoint — quyết định method signature */
+    type: EndpointType;
+    /** URL template: 'group/:groupId/collection/:id' */
+    endpoint: string;
+    /** Key bổ sung khi build queryKey (vd: id của entity cha) */
+    keySuffix?: string[];
 }
+
+/** Endpoint keys là tuỳ ý — mỗi key = 1 method */
+export type Endpoints = Record<string, EndpointDef>;
+
+export type DynamicValues = Record<string, string | number>;
 
 export interface TanCrudConfig<T extends { id: string }> {
-    keysOfPages: string[];
-    keysOfSingle: string[];
-    endpoint: CrudEndpoints;
-    /** Tuỳ chọn: transform response BE → item */
-    transformItem?: (raw: any) => T;
-    /** Tuỳ chọn: số item mỗi page để tính hasNextPage */
+    endpoints: Endpoints;
     pageSize?: number;
+    transformItem?: (raw: any) => T;
+    extraBody?: Record<string, any>;
+    staleTime  ?: number
 }
 
-// Options cho từng mutation
 export interface MutationOptions {
-
-    dynamicValueForEndpoints?: Record<string, string>;
-
+    dynamicValues?: DynamicValues;
     optimistic?: {
-        pages?: OptimisticMode;
-        one?: OptimisticMode;
+        pagesTag?: string;
+        oneTag?: string;
+        pagesMode?: OptimisticMode;
+        oneMode?: OptimisticMode;
     };
-    invalidate?: {
-        pages?: boolean;
-        one?: boolean;
-    };
-    onSuccessCallback?: () => void;
-    onErrorCallback?: () => void;
+    invalidateTags?: string[];
+    invalidateExtraKeys?: string[][];
+    removeTags?: string[];
+    onSuccessCallback?: (data: any) => void;
+    onErrorCallback?: (err: Error) => void;
+}
+
+export interface QueryOptions {
+    dynamicValues?: DynamicValues;
+    extraKeys?: string[];
+    enabled?: boolean;
 }

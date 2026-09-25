@@ -5,59 +5,94 @@ import {
     useMutation,
     useQuery,
     useQueryClient,
+    type UseInfiniteQueryResult,
+    type UseMutationResult,
+    type UseQueryResult,
 } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 import { toast } from 'react-toastify';
 
 import { api } from '@/lib/axios/axios';
-import {
-    optimisticInfinityAction,
-    rollbackSnapshot,
-} from '@/helper/tantack/tanstack_InfinityDataOnAction.helper';
-import {MutationOptions, TanCrudConfig} from "@/types/tan_crud/tan_crud.type";
+import {DynamicValues, EndpointDef, MutationOptions, QueryOptions, TanCrudConfig} from "@/types/tan_crud/tan_crud.type";
+import {buildEndpoint, optimisticInfinityAction, rollbackSnapshot} from "@/hooks/tan_crud/tan_crud.helper";
+
+
+// ============================================================
+// Factory return type — method name = endpoint key
+// ============================================================
+type CrudMethods<T extends { id: string }, E extends Record<string, EndpointDef>> = {
+    [K in keyof E]: E[K]['type'] extends 'getMany'
+        ? (options?: QueryOptions) => UseInfiniteQueryResult<any>
+        : E[K]['type'] extends 'getOne'
+            ? (options?: QueryOptions) => UseQueryResult<T>
+            : E[K]['type'] extends 'createOne'
+                ? (options?: MutationOptions) => UseMutationResult<T, Error, Record<string, any>, any>
+                : E[K]['type'] extends 'updateOne'
+                    ? (options?: MutationOptions) => UseMutationResult<T, Error, { id: string; body: Record<string, any> }, any>
+                    : E[K]['type'] extends 'deleteOne'
+                        ? (options?: MutationOptions) => UseMutationResult<void, Error, string, any>
+                        : never;
+};
+
+
+//=====================================================================================
 
 
 
 
+export function useTanCrud<
+    T extends { id: string },
+    E extends Record<string, EndpointDef>,
+>(config: TanCrudConfig<T> & { endpoints: E }) {
 
 
+    const staleTime = config.staleTime ?? 5 * 6 *1000
 
-
-// ========================================
-
-export function useTanCrud<T extends { id: string }>(config: TanCrudConfig<T>) {
     const queryClient = useQueryClient();
     const txt = useTranslations('Toast');
 
-    const { keysOfPages, keysOfSingle, endpoint, transformItem, pageSize = 20 } = config;
+    const { endpoints, pageSize = 20, transformItem, extraBody } = config;
 
     // ============================================================
     // Helpers
     // ============================================================
-    const invalidatePages = () =>
+    const resolveUrl = (
+        def: EndpointDef,
+        dynamicValues: DynamicValues = {},
+    ) => buildEndpoint(def.endpoint, dynamicValues);
+
+    const invalidateByTags = (tags: string[]) =>
         Promise.all(
-            keysOfPages.map((k) =>
-                queryClient.invalidateQueries({ queryKey: [k] }),
-            ),
+            tags.map((t) => queryClient.invalidateQueries({ queryKey: [t] })),
         );
 
-    const invalidateOne = (id?: string) =>
+    const invalidateByKeys = (keys: string[][]) =>
         Promise.all(
-            keysOfSingle.map((k) =>
-                queryClient.invalidateQueries({
-                    queryKey: id ? [k, id] : [k],
-                }),
-            ),
+            keys.map((k) => queryClient.invalidateQueries({ queryKey: k })),
         );
 
+    const removeByTags = (tags: string[]) =>
+        Promise.all(
+            tags.map((t) => queryClient.removeQueries({ queryKey: [t] })),
+        );
+
+    const runSuccessSideEffects = async (options: MutationOptions, data: any) => {
+        if (options.invalidateTags?.length) await invalidateByTags(options.invalidateTags);
+        if (options.invalidateExtraKeys?.length) await invalidateByKeys(options.invalidateExtraKeys);
+        if (options.removeTags?.length) await removeByTags(options.removeTags);
+        options.onSuccessCallback?.(data);
+    };
+
     // ============================================================
-    // GET — pages (infinite)
+    // Endpoint → method builders
     // ============================================================
-    const useGetPages = (extraKeys: string[] = [], enabled = true) =>
-        useInfiniteQuery({
-            queryKey: [...keysOfPages, ...extraKeys],
+    const buildGetMany = (def: EndpointDef) => (options: QueryOptions = {}) => {
+        const { dynamicValues, extraKeys = [], enabled = true } = options;
+        return useInfiniteQuery({
+            queryKey: [def.tag, ...(def.keySuffix ?? []), ...extraKeys],
             queryFn: async ({ pageParam }) => {
-                const res = await api.get(`${endpoint.getMany}?page=${pageParam}`);
+                const url = resolveUrl(def, dynamicValues);
+                const res = await api.get(`${url}?page=${pageParam}`);
                 const list = res.data.data as any[];
                 return transformItem ? list.map(transformItem) : (list as T[]);
             },
@@ -65,226 +100,267 @@ export function useTanCrud<T extends { id: string }>(config: TanCrudConfig<T>) {
             getNextPageParam: (lastPage, allPages) =>
                 lastPage.length >= pageSize ? allPages.length + 1 : undefined,
             enabled,
-            staleTime: 5 * 60 * 1000,
+            staleTime
         });
+    };
 
-    // ============================================================
-    // GET — one
-    // ============================================================
-    const useGetOne = (id: string, extraKeys: string[] = []) =>
-        useQuery({
-            queryKey: [...keysOfSingle, id, ...extraKeys],
+    const buildGetOne = (def: EndpointDef) => (options: QueryOptions = {}) => {
+        const { dynamicValues, extraKeys = [], enabled = true } = options;
+        return useQuery({
+            queryKey: [def.tag, ...(def.keySuffix ?? []), ...extraKeys],
             queryFn: async () => {
-                const res = await api.get(endpoint.getOne.replace(':id', id));
+                const url = resolveUrl(def, dynamicValues);
+                const res = await api.get(url);
                 const raw = res.data.data;
                 return transformItem ? transformItem(raw) : (raw as T);
             },
-            enabled: !!id,
-            staleTime: 5 * 60 * 1000,
+            enabled,
+            staleTime
         });
+    };
 
-    // ============================================================
-    // CREATE
-    // ============================================================
-    const useCreate = (options: MutationOptions = {}) =>
+    const buildCreateOne = (def: EndpointDef) => (options: MutationOptions = {}) =>
         useMutation<T, Error, Record<string, any>, any>({
             mutationFn: async (body) => {
-                const res = await api.post(endpoint.createOne, body);
+                const url = resolveUrl(def, options.dynamicValues);
+                const res = await api.post(url, { ...extraBody, ...body });
                 const raw = res.data.data;
                 return transformItem ? transformItem(raw) : raw;
             },
-
-            // Create chỉ dùng onSuccess
-            onSuccess: async (newItem) => {
-                if (options.invalidate?.pages) await invalidatePages();
-                if (options.invalidate?.one) await invalidateOne(newItem.id);
-
-                if (options.onSuccessCallback) options.onSuccessCallback();
-            },
-
-            onError: () => {
+            onSuccess: (newItem) => runSuccessSideEffects(options, newItem),
+            onError: (err) => {
                 toast.error(txt('action_fail'));
-                if (options.onErrorCallback) options.onErrorCallback();
+                options.onErrorCallback?.(err);
             },
         });
 
-    // ============================================================
-    // UPDATE
-    // ============================================================
-    const useUpdate = (options: MutationOptions = {}) =>
-        useMutation<T, Error, { id: string; body: Record<string, any> }, any>({
+    const buildUpdateOne = (def: EndpointDef) => (options: MutationOptions = {}) =>
+        useMutation<
+            T,
+            Error,
+            { id: string; body: Record<string, any> },
+            any
+        >({
             mutationFn: async ({ id, body }) => {
-
-                /**  can linh hoat hon */
-                const res = await api.patch(
-                    endpoint.updateOne.replace(':id', id),
-                    body,
-                );
+                const url = resolveUrl(def, { ...options.dynamicValues, id });
+                const res = await api.patch(url, { ...extraBody, ...body });
                 const raw = res.data.data;
                 return transformItem ? transformItem(raw) : raw;
             },
 
             onMutate: async ({ id, body }) => {
-                const snapshots: any = {};
+                const ctx: any = {};
 
-                if (options.optimistic?.pages) {
-                    snapshots.pages = await optimisticInfinityAction<T>(
+                if (options.optimistic?.pagesTag && options.optimistic.pagesMode) {
+                    ctx.pages = await optimisticInfinityAction<T>(
                         queryClient,
-                        keysOfPages.map((k) => [k]),
-                        { mode: options.optimistic.pages, id, body: body as Partial<T> },
+                        [[options.optimistic.pagesTag]],
+                        { mode: options.optimistic.pagesMode, id, body: body as Partial<T> },
                     );
                 }
 
-                if (options.optimistic?.one) {
-                    // Optimistic cho single cache
-                    const prev = queryClient.getQueryData<T>([...keysOfSingle, id]);
-                    if (prev) {
-                        queryClient.setQueryData<T>([...keysOfSingle, id], {
-                            ...prev,
-                            ...body,
-                        });
+                if (options.optimistic?.oneTag && options.optimistic.oneMode) {
+                    const key = [options.optimistic.oneTag];
+                    const prev = queryClient.getQueryData<T>(key);
+                    if (prev && options.optimistic.oneMode === 'update') {
+                        queryClient.setQueryData<T>(key, { ...prev, ...body });
+                    } else if (options.optimistic.oneMode === 'remove') {
+                        queryClient.removeQueries({ queryKey: key });
                     }
-                    snapshots.one = { prev, id };
+                    ctx.one = { key, prev };
                 }
 
-                return snapshots;
+                return ctx;
             },
 
-            onError: (_err, _vars, ctx) => {
+            onError: (err, _vars, ctx) => {
                 rollbackSnapshot(queryClient, ctx?.pages);
                 if (ctx?.one?.prev !== undefined) {
-                    queryClient.setQueryData(
-                        [...keysOfSingle, ctx.one.id],
-                        ctx.one.prev,
-                    );
+                    queryClient.setQueryData(ctx.one.key, ctx.one.prev);
                 }
                 toast.error(txt('action_fail'));
-                if (options.onErrorCallback) options.onErrorCallback();
+                options.onErrorCallback?.(err);
             },
 
-            onSuccess: async (updated) => {
-                if (options.invalidate?.pages) await invalidatePages();
-                if (options.invalidate?.one) await invalidateOne(updated.id);
-                if (options.onSuccessCallback) options.onSuccessCallback();
-            },
+            onSuccess: (updated) => runSuccessSideEffects(options, updated),
         });
 
-    // ============================================================
-    // DELETE
-    // ============================================================
-    const useDelete = (options: MutationOptions = {}) =>
+    const buildDeleteOne =
+        (def: EndpointDef) =>
+        (options: MutationOptions = {}) =>
+
+
         useMutation<void, Error, string, any>({
             mutationFn: async (id) => {
-                await api.delete(endpoint.deleteOne.replace(':id', id));
+                const url = resolveUrl(def, { ...options.dynamicValues, id });
+                await api.delete(url);
             },
 
             onMutate: async (id) => {
-                const snapshots: any = {};
+                const ctx: any = {};
 
-                if (options.optimistic?.pages) {
-                    snapshots.pages = await optimisticInfinityAction<T>(
+                if (options.optimistic?.pagesTag && options.optimistic.pagesMode) {
+                    ctx.pages = await optimisticInfinityAction<T>(
                         queryClient,
-                        keysOfPages.map((k) => [k]),
-                        { mode: options.optimistic.pages, id },
+                        [[options.optimistic.pagesTag]],
+                        { mode: options.optimistic.pagesMode, id },
                     );
                 }
 
-                if (options.optimistic?.one) {
-                    const prev = queryClient.getQueryData<T>([...keysOfSingle, id]);
-                    queryClient.removeQueries({ queryKey: [...keysOfSingle, id] });
-                    snapshots.one = { prev, id };
+                if (options.optimistic?.oneTag && options.optimistic.oneMode) {
+                    const key = [options.optimistic.oneTag];
+                    const prev = queryClient.getQueryData<T>(key);
+                    if (options.optimistic.oneMode === 'remove') {
+                        queryClient.removeQueries({ queryKey: key });
+                    }
+                    ctx.one = { key, prev };
                 }
 
-
-
-                return snapshots;
+                return ctx;
             },
 
-            onError: (_err, _id, ctx) => {
+            onError: (err, _id, ctx) => {
                 rollbackSnapshot(queryClient, ctx?.pages);
                 if (ctx?.one?.prev !== undefined) {
-                    queryClient.setQueryData(
-                        [...keysOfSingle, ctx.one.id],
-                        ctx.one.prev,
-                    );
+                    queryClient.setQueryData(ctx.one.key, ctx.one.prev);
                 }
                 toast.error(txt('action_fail'));
-                if (options.onErrorCallback) options.onErrorCallback();
+                options.onErrorCallback?.(err);
             },
 
-            onSuccess: async (_data, id) => {
-                if (options.invalidate?.pages) await invalidatePages();
-                if (options.invalidate?.one) await invalidateOne(id);
-                if (options.onSuccessCallback) options.onSuccessCallback();
-                /**  them delete key */
-
-            },
+            onSuccess: (_data, id) => runSuccessSideEffects(options, id),
         });
 
     // ============================================================
-    // Return
+    // Loop endpoints → build methods theo tên key
     // ============================================================
+    const methods: Record<string, any> = {};
+
+    for (const [name, def] of Object.entries(endpoints)) {
+        switch (def.type) {
+            case 'getMany':
+                methods[name] = buildGetMany(def);
+                break;
+            case 'getOne':
+                methods[name] = buildGetOne(def);
+                break;
+            case 'createOne':
+                methods[name] = buildCreateOne(def);
+                break;
+            case 'updateOne':
+                methods[name] = buildUpdateOne(def);
+                break;
+            case 'deleteOne':
+                methods[name] = buildDeleteOne(def);
+                break;
+        }
+    }
+
     return {
-        useGetPages,
-        useGetOne,
-        useCreate,
-        useUpdate,
-        useDelete,
-        // expose helpers nếu cần
-        invalidatePages,
-        invalidateOne,
+        ...methods,
         queryClient,
+        invalidateByTags,
+        removeByTags,
+    } as CrudMethods<T, E> & {
+        queryClient: ReturnType<typeof useQueryClient>;
+        invalidateByTags: (tags: string[]) => Promise<any>;
+        removeByTags: (tags: string[]) => Promise<any>;
     };
 }
 
+
+
+
+
+
+
+
 /**
- *   const crud = useTanCrud<Collection>({
- *     keysOfPages: ['collections', groupId],
- *     keysOfSingle: ['collection'],
- *     endpoint: {
- *       getMany: `group/${groupId}/collection`,
- *       getOne: `group/${groupId}/collection/:id`,
- *       createOne: `group/${groupId}/collection`,
- *       updateOne: `group/${groupId}/collection/:id`,
- *       deleteOne: `group/${groupId}/collection/:id`,
- *     },
- *     pageSize: 20,
- *   });
- *
- *
- *
- *  // ===== GET =====
- *   const { data, fetchNextPage, hasNextPage, isLoading } = crud.useGetPages();
- *
- *   const collections = data?.pages.flatMap((p) => p) ?? [];
- *
- *   // ===== CREATE =====
- *   const create = crud.useCreate({
- *     invalidate: { pages: true },
- *   });
- *
- *   // ===== UPDATE =====
- *   const update = crud.useUpdate({
- *     optimistic: { pages: 'update' },
- *     invalidate: { pages: true },
- *   });
- *
- *   // ===== DELETE =====
- *   const remove = crud.useDelete({
- *     optimistic: { pages: 'remove' },
- *     invalidate: { pages: true },
- *   });
- *
- *   // Handlers
- *   const handleCreate = async (body: { title: string }) => {
- *     await create.mutateAsync(body);
- *   };
- *
- *   const handleUpdate = async (id: string, body: { title: string }) => {
- *     await update.mutateAsync({ id, body });
- *   };
- *
- *   const handleDelete = async (id: string) => {
- *     await remove.mutateAsync(id);
- *   };
+
+    const crud = useTanCrud<Collection, typeof endpoints>({
+        endpoints: {
+            getCollections: {
+            tag: 'collections',
+            type: 'getMany',
+            endpoint: 'group/:groupId/collection',
+        },
+        getCollection: {
+            tag: 'collection',
+            type: 'getOne',
+            endpoint: 'group/:groupId/collection/:id',
+        },
+        createCollection: {
+            tag: 'collection',
+            type: 'createOne',
+            endpoint: 'group/:groupId/collection',
+        },
+        updateCollection: {
+            tag: 'collection',
+            type: 'updateOne',
+            endpoint: 'group/:groupId/collection/:id',
+        },
+        deleteCollection: {
+            tag: 'collection',
+            type: 'deleteOne',
+            endpoint: 'group/:groupId/collection/:id',
+        },
+        // ⬇️ Endpoint thứ 6, cùng type `deleteOne`
+        quitCollection: {
+            tag: 'collection',
+            type: 'deleteOne',
+            endpoint: 'group/:groupId/collection/:id/quit',
+        },
+        },
+        pageSize: 20,
+    });
+
+    // ============ GET MANY ============
+    const list = crud.getCollections({ dynamicValues: { groupId } });
+
+    // ============ GET ONE ============
+    const one = crud.getCollection({
+        dynamicValues: { groupId, id: collectionId },
+    });
+
+    // ============ CREATE ============
+    const createMutation = crud.createCollection({
+        dynamicValues: { groupId },
+        invalidateTags: ['collections'],
+    });
+    createMutation.mutate({ title: 'X', desc: 'Y' });
+
+    // ============ UPDATE ============
+    const updateMutation = crud.updateCollection({
+        dynamicValues: { groupId },
+        optimistic: {
+        pagesTag: 'collections',
+        pagesMode: 'update',
+        oneTag: 'collection',
+        oneMode: 'update',
+        },
+        invalidateTags: ['collections'],
+    });
+    updateMutation.mutate({ id, body: { title: 'New' } });
+
+    // ============ DELETE ============
+    const deleteMutation = crud.deleteCollection({
+        dynamicValues: { groupId },
+        optimistic: { pagesTag: 'collections', pagesMode: 'remove' },
+        invalidateTags: ['collections'],
+    });
+    deleteMutation.mutate(id);
+
+    // ============ QUIT (cùng type deleteOne) ============
+    const quitMutation = crud.quitCollection({
+        dynamicValues: { groupId },
+        optimistic: { pagesTag: 'collections', pagesMode: 'remove' },
+        invalidateTags: ['collections', 'my_own_group'],
+        removeTags: ['collection'],  // ✅ xoá cache luôn
+    });
+    quitMutation.mutate(id);
+
+
  * */
+
+
+

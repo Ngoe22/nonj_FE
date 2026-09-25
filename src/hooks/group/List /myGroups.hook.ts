@@ -5,7 +5,7 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import { api } from '@/lib/axios/axios';
 import type { CreateGroupFormValues } from '@/schemas/group/group.schema';
 import {Group} from "@/types/group/group.type";
-import {optimisticInfinityCreate} from "@/helper/tantack/tanstack_InfinityDataOnAction.helper";
+import {optimisticInfinityCreate} from "@/hooks/tan_crud/tan_crud.helper";
 
 
 // ===================================================================

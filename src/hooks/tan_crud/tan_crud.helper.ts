@@ -2,7 +2,7 @@ import type { InfiniteData, QueryClient } from '@tanstack/react-query';
 import {OptimisticMode, Snapshot} from "@/types/tan_crud/tan_crud.type";
 
 // ============================================================
-// Internal list helpers
+// List helpers
 // ============================================================
 function prependInList<T>(old: InfiniteData<T[]> | undefined, newItem: T) {
     if (!old) return old;
@@ -41,10 +41,8 @@ function removeFromList<T extends { id: string }>(
 }
 
 // ============================================================
-// Optimistic helpers — dùng chung cho class/hook CRUD
+// Optimistic dispatcher
 // ============================================================
-
-/** Chạy 1 action optimistic lên nhiều infinite key */
 export async function optimisticInfinityAction<T extends { id: string }>(
     queryClient: QueryClient,
     queryKeys: string[][],
@@ -79,7 +77,6 @@ export async function optimisticInfinityAction<T extends { id: string }>(
     return snapshot;
 }
 
-/** Rollback snapshot */
 export function rollbackSnapshot<T>(
     queryClient: QueryClient,
     snapshot: Snapshot<T> | undefined,
@@ -87,4 +84,17 @@ export function rollbackSnapshot<T>(
     snapshot?.forEach(({ key, old }) => {
         queryClient.setQueryData(key, old);
     });
+}
+
+// ============================================================
+// URL builder — replace :param trong template
+// ============================================================
+export function buildEndpoint(
+    template: string,
+    values: Record<string, string | number>,
+): string {
+    return Object.entries(values).reduce(
+        (acc, [key, val]) => acc.replace(`:${key}`, String(val)),
+        template,
+    );
 }
