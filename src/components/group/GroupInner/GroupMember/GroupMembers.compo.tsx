@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import {useGetGroupMembers, useKickGroupMember, useUpdateGroupMember} from "@/hooks/group/menber/group_member.hook";
+import {useGetGroupMembers, useKickGroupMember, useUpdateGroupMember} from "@/hooks/group/member/group_member.hook";
 import {GroupMember, GroupMemberUpdateAction} from "@/types/group/group_member.type";
 import {InfiniteScrollList} from "@/components/_share/infinity_scroll/InfiniteScrollList.compo";
 import {GroupMemberCard} from "@/components/group/GroupInner/GroupMember/GroupMemberCard.compo";

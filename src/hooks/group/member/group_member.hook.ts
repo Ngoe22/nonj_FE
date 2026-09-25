@@ -3,14 +3,14 @@
 import {InfiniteData, useInfiniteQuery} from '@tanstack/react-query';
 
 import { api } from '@/lib/axios/axios';
-import { useTanUpdate, useTanDelete } from '@/hooks/tan_crud/tan_crud.hook';
+import { useTanUpdate, useTanDelete } from '@/hooks/_share/tan_crud/tan_crud.hook';
 import type {
     GroupMember,
     UpdateGroupMemberVars,
     KickGroupMemberVars,
 } from '@/types/group/group_member.type';
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 10;
 
 // ============================================================
 // GET MANY — infinite scroll
@@ -51,7 +51,7 @@ export function useUpdateGroupMember(groupId: string) {
                     page: [
                         {
                             tags: [['group_members', groupId]],
-                            type: 'update',
+                            type: 'remove',
                         },
                     ],
                 },

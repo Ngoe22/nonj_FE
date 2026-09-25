@@ -3,7 +3,7 @@
 import { api } from '@/lib/axios/axios';
 import {
     useTanUpdate,
-} from '@/hooks/tan_crud/tan_crud.hook';
+} from '@/hooks/_share/tan_crud/tan_crud.hook';
 import type {
     JoinRequest,
     UpdateJoinRequestVars,

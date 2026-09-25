@@ -2,7 +2,7 @@
 
 import { useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import {useGetGroupJoinRequests, useUpdateJoinRequest} from "@/hooks/group/join_request/join_request.hook";
+import {useGetGroupJoinRequests, useUpdateJoinRequest} from "@/hooks/group/join_requests/join_request.hook";
 import {Group_Join_Request_Status_UPDATE, JoinRequest} from "@/types/group/join_request.type";
 import {InfiniteScrollList} from "@/components/_share/infinity_scroll/InfiniteScrollList.compo";
 import {JoinRequestCard} from "@/components/group/GroupInner/GroupJoinReq/JoinRequestCard.compo";

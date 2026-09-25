@@ -7,7 +7,7 @@ import {
     useTanCreate,
     useTanDelete,
     useTanUpdate,
-} from '@/hooks/tan_crud/tan_crud.hook';
+} from '@/hooks/_share/tan_crud/tan_crud.hook';
 
 import type { CreateGroupFormValues } from '@/schemas/group/group.schema';
 import type { Group } from '@/types/group/group.type';
