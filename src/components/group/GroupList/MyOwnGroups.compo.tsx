@@ -4,7 +4,10 @@ import GroupCard from "@/components/group/GroupList/GroupCard.compo";
 import {useParams} from "next/navigation";
 import {InfiniteScrollList} from "@/components/_share/infinity_scroll/InfiniteScrollList.compo";
 import {useTranslations} from "next-intl";
-import {useGetOwnGroups} from "@/hooks/group/List /myGroups.hook";
+import {useGetOwnGroups} from "@/hooks/group/group_tan.hook";
+
+
+
 
 export function OwnGroupList() {
     const {

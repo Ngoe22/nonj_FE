@@ -10,7 +10,7 @@ import { ActionBtnGroup } from '@/components/_share/about_form/action_btn_group/
 import type { Group } from '@/types/group/group.type';
 import {InfoAndInput} from "@/components/_share/about_form/info_and_input/infoAndInput.compo";
 import {getUpdateGroupDefaults, UpdateGroupFormValues, updateGroupSchema} from "@/schemas/group/update_group.schema";
-import {useUpdateGroup} from "@/hooks/group/Current/openingGroup.hook";
+import {useUpdateGroup} from "@/hooks/group/group_tan.hook";
 
 
 // ===========================================
@@ -52,18 +52,14 @@ export default function GroupSettings({ group }: Props) {
     const joinMode = watch('join_mode');
     const viewMode = watch('view_mode');
 
-
     const handleCancel = () => {
         reset(defaults);
         setIsEditing(false);
     };
 
-
-    const { mutateAsync ,  mutate , isError , isPending } = useUpdateGroup()
+    const { mutateAsync ,  mutate , isError , isPending } = useUpdateGroup(group.id)
 
     const submit = handleSubmit(async (body) => {
-        // await onSubmit(values);
-
         await mutateAsync( {id :group.id , body} )
         setIsEditing(false);
     });

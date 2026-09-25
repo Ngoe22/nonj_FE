@@ -1,136 +1,160 @@
-import {useTanCrud} from "@/hooks/tan_crud/tan_crud.hook";
+'use client';
 
-export  function  useGroup ()  {
+import { useQueryClient } from '@tanstack/react-query';
+import { api } from '@/lib/axios/axios';
+import { useRouter } from '@/i18n/navigation';
+import {
+    useTanCreate,
+    useTanDelete,
+    useTanGetMany,
+    useTanGetOne,
+    useTanUpdate,
+} from '@/hooks/tan_crud/tan_crud.hook';
 
-    return useTanCrud({
-        endpoints: {
-            getJoinedGroups: {
-                tag: 'group',
-                type: 'getMany',
-                endpoint: 'group/:groupId/collection',
-                keySuffix : [ 'joined' ]
-            },
-            getOwedGroups: {
-                tag: 'group',
-                type: 'getOne',
-                endpoint: 'group/:groupId/collection/:id',
-                keySuffix : [ 'owed' ]
-            },
-            createGroup: {
-                tag: 'group',
-                type: 'createOne',
-                endpoint: 'group/:groupId/collection',
-            },
-            updateCollection: {
-                tag: 'current_group',
-                type: 'updateOne',
-                endpoint: 'group/:groupId/collection/:id',
-            },
-            deleteCollection: {
-                tag: 'current_group',
-                type: 'deleteOne',
-                endpoint: 'group/:groupId/collection/:id',
-            },
-            quitCollection: {
-                tag: 'current_group',
-                type: 'deleteOne',
-                endpoint: 'group/:groupId/collection/:id/quit',
-            },
+import type { CreateGroupFormValues } from '@/schemas/group/group.schema';
+import type { Group } from '@/types/group/group.type';
+
+// ============================================================
+// GET MANY — joined groups
+// ============================================================
+export function useGetJoinedGroups() {
+    return useTanGetMany<Group>({
+        queryKey: ['my_all_group'],
+        queryFn: async (page) => {
+            const res = await api.get(`group/joined?page=${page}`);
+            return res.data.data;
         },
-        pageSize: 20,
-    })
+        pageSize: 10,
+        staleTime: 15 * 60 * 1000,
+    });
 }
 
+// ============================================================
+// GET MANY — own groups
+// ============================================================
+export function useGetOwnGroups() {
+    return useTanGetMany<Group>({
+        queryKey: ['my_own_group'],
+        queryFn: async (page) => {
+            const res = await api.get(`group/own?page=${page}`);
+            return res.data.data;
+        },
+        pageSize: 10,
+        staleTime: 15 * 60 * 1000,
+    });
+}
 
+// ============================================================
+// GET ONE
+// ============================================================
+export function useGetGroup(groupId: string) {
+    return useTanGetOne<Group>({
+        queryKey: ['current_group', groupId],
+        queryFn: async () => {
+            const res = await api.get(`group/id_search/${groupId}`);
+            return res.data.data;
+        },
+        enabled: !!groupId,
+        staleTime: 10 * 60 * 1000,
+    });
+}
 
+// ============================================================
+// CREATE
+// ============================================================
+export function useCreateGroup() {
+    return useTanCreate<Group, CreateGroupFormValues>({
+        mutationFn: async (body) => {
+            const res = await api.post<{ data: Group }>('group', body);
+            return res.data.data;
+        },
+        options: {
+            onSuccess: {
+                optimisticUI: {
+                    page: [
+                        { tags: [['my_own_group'], ['my_all_group']], type: 'add' },
+                    ],
+                },
+                invalidateTags: [['my_own_group'], ['my_all_group']],
+            },
+        },
+    });
+}
 
+// ============================================================
+// UPDATE — cần groupId cho current_group key
+// ============================================================
+export function useUpdateGroup(groupId: string) {
+    return useTanUpdate<Group>({
+        mutationFn: async ({ id, body }) => {
+            const res = await api.patch<{ data: Group }>(`group/${id}`, body);
+            return res.data.data;
+        },
+        options: {
+            onMutate: {
+                optimisticUI: {
+                    one: { tags: [['current_group', groupId]] },
+                    page: [
+                        {
+                            tags: [['my_own_group'], ['my_all_group']],
+                            type: 'update',
+                        },
+                    ],
+                },
+            },
+            onSuccess: {
+                invalidateTags: [
+                    ['current_group', groupId],
+                    ['my_own_group'],
+                    ['my_all_group'],
+                ],
+            },
+        },
+    });
+}
 
-/**
+// ============================================================
+// DELETE
+// ============================================================
+export function useDeleteGroup() {
+    const router = useRouter();
+    const queryClient = useQueryClient();
 
- const crud = useTanCrud<Collection, typeof endpoints>({
- endpoints: {
- getCollections: {
- tag: 'collections',
- type: 'getMany',
- endpoint: 'group/:groupId/collection',
- },
- getCollection: {
- tag: 'collection',
- type: 'getOne',
- endpoint: 'group/:groupId/collection/:id',
- },
- createCollection: {
- tag: 'collection',
- type: 'createOne',
- endpoint: 'group/:groupId/collection',
- },
- updateCollection: {
- tag: 'collection',
- type: 'updateOne',
- endpoint: 'group/:groupId/collection/:id',
- },
- deleteCollection: {
- tag: 'collection',
- type: 'deleteOne',
- endpoint: 'group/:groupId/collection/:id',
- },
- // ⬇️ Endpoint thứ 6, cùng type `deleteOne`
- quitCollection: {
- tag: 'collection',
- type: 'deleteOne',
- endpoint: 'group/:groupId/collection/:id/quit',
- },
- },
- pageSize: 20,
- });
+    return useTanDelete<Group>({
+        mutationFn: async (id) => {
+            await api.delete(`group/${id}`);
+        },
+        options: {
+            onSuccess: {
+                invalidateTags: [['my_own_group'], ['my_all_group']],
+                onSuccessCallback: (id) => {
+                    queryClient.removeQueries({ queryKey: ['current_group', id] });
+                    router.push('/group');
+                },
+            },
+        },
+    });
+}
 
- // ============ GET MANY ============
- const list = crud.getCollections({ dynamicValues: { groupId } });
+// ============================================================
+// QUIT
+// ============================================================
+export function useQuitGroup() {
+    const router = useRouter();
+    const queryClient = useQueryClient();
 
- // ============ GET ONE ============
- const one = crud.getCollection({
- dynamicValues: { groupId, id: collectionId },
- });
-
- // ============ CREATE ============
- const createMutation = crud.createCollection({
- dynamicValues: { groupId },
- invalidateTags: ['collections'],
- });
- createMutation.mutate({ title: 'X', desc: 'Y' });
-
- // ============ UPDATE ============
- const updateMutation = crud.updateCollection({
- dynamicValues: { groupId },
- optimistic: {
- pagesTag: 'collections',
- pagesMode: 'update',
- oneTag: 'collection',
- oneMode: 'update',
- },
- invalidateTags: ['collections'],
- });
- updateMutation.mutate({ id, body: { title: 'New' } });
-
- // ============ DELETE ============
- const deleteMutation = crud.deleteCollection({
- dynamicValues: { groupId },
- optimistic: { pagesTag: 'collections', pagesMode: 'remove' },
- invalidateTags: ['collections'],
- });
- deleteMutation.mutate(id);
-
- // ============ QUIT (cùng type deleteOne) ============
- const quitMutation = crud.quitCollection({
- dynamicValues: { groupId },
- optimistic: { pagesTag: 'collections', pagesMode: 'remove' },
- invalidateTags: ['collections', 'my_own_group'],
- removeTags: ['collection'],  // ✅ xoá cache luôn
- });
- quitMutation.mutate(id);
-
-
- * */
-
-
-
+    return useTanDelete<Group>({
+        mutationFn: async (id) => {
+            await api.delete(`group_member/quit/${id}`);
+        },
+        options: {
+            onSuccess: {
+                invalidateTags: [['my_own_group'], ['my_all_group']],
+                onSuccessCallback: (id) => {
+                    queryClient.removeQueries({ queryKey: ['current_group', id] });
+                    router.push('/group');
+                },
+            },
+        },
+    });
+}

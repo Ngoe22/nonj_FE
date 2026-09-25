@@ -4,7 +4,7 @@ import GroupCard from "@/components/group/GroupList/GroupCard.compo";
 import {useParams} from "next/navigation";
 import {InfiniteScrollList} from "@/components/_share/infinity_scroll/InfiniteScrollList.compo";
 import {useTranslations} from "next-intl";
-import {useGetJoinedGroups} from "@/hooks/group/List /myGroups.hook";
+import {useGetJoinedGroups} from "@/hooks/group/group_tan.hook";
 
 export function JoinedGroupList() {
     const {
@@ -18,8 +18,6 @@ export function JoinedGroupList() {
 
     const groups = data?.pages.flatMap((page) => page) ?? [];
 
-    const params = useParams();
-    const locale = String(params.locale);
 
     const txt = useTranslations('Share_component')
 

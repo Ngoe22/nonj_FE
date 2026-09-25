@@ -1,100 +1,185 @@
 import type { InfiniteData, QueryClient } from '@tanstack/react-query';
-import {OptimisticMode, Snapshot} from "@/types/tan_crud/tan_crud.type";
+import {OptimisticMode, OptimisticUIConfig} from "@/types/tan_crud/tan_crud.type";
+
 
 // ============================================================
-// List helpers
+// Cache snapshot
 // ============================================================
-function prependInList<T>(old: InfiniteData<T[]> | undefined, newItem: T) {
-    if (!old) return old;
-    return {
-        ...old,
-        pages:
-            old.pages.length > 0
-                ? [[newItem, ...old.pages[0]], ...old.pages.slice(1)]
-                : [[newItem]],
-    };
+export interface CacheSnapshot {
+    key: string[];
+    data: unknown;
 }
 
-function updateInList<T extends { id: string }>(
-    old: InfiniteData<T[]> | undefined,
+export async function prepareOptimistic(
+    queryClient: QueryClient,
+    keys: string[][],
+): Promise<CacheSnapshot[]> {
+    await Promise.all(
+        keys.map((k) => queryClient.cancelQueries({ queryKey: k })),
+    );
+    return keys.map((key) => ({
+        key,
+        data: queryClient.getQueryData(key),
+    }));
+}
+
+export function rollback(queryClient: QueryClient, snapshots: CacheSnapshot[]) {
+    for (const { key, data } of snapshots) {
+        queryClient.setQueryData(key, data);
+    }
+}
+
+// ============================================================
+// Page-level operations (InfiniteData)
+// ============================================================
+function addToPage<T>(page: T[], item: T): T[] {
+    return [item, ...page];
+}
+
+function updateInPage<T extends { id: string }>(
+    page: T[],
     id: string,
     body: Partial<T>,
-) {
-    if (!old) return old;
-    return {
-        ...old,
-        pages: old.pages.map((page) =>
-            page.map((item) => (item.id === id ? { ...item, ...body } : item)),
-        ),
-    };
+): T[] {
+    return page.map((i) => (i.id === id ? { ...i, ...body } : i));
 }
 
-function removeFromList<T extends { id: string }>(
-    old: InfiniteData<T[]> | undefined,
-    id: string,
-) {
-    if (!old) return old;
-    return {
-        ...old,
-        pages: old.pages.map((page) => page.filter((item) => item.id !== id)),
-    };
+function removeFromPage<T extends { id: string }>(page: T[], id: string): T[] {
+    return page.filter((i) => i.id !== id);
 }
 
-// ============================================================
-// Optimistic dispatcher
-// ============================================================
-export async function optimisticInfinityAction<T extends { id: string }>(
+export function applyInfiniteAction<T extends { id: string }>(
     queryClient: QueryClient,
-    queryKeys: string[][],
-    action: { mode: OptimisticMode; item?: T; id?: string; body?: Partial<T> },
-): Promise<Snapshot<T>> {
-    await Promise.all(
-        queryKeys.map((key) => queryClient.cancelQueries({ queryKey: key })),
-    );
-
-    const snapshot: Snapshot<T> = queryKeys.map((key) => ({
-        key,
-        old: queryClient.getQueryData<InfiniteData<T[]>>(key),
-    }));
-
-    for (const key of queryKeys) {
-        queryClient.setQueryData<InfiniteData<T[]>>(key, (old) => {
-            switch (action.mode) {
-                case 'add':
-                    return action.item ? prependInList(old, action.item) : old;
-                case 'update':
-                    return action.id !== undefined
-                        ? updateInList(old, action.id, action.body ?? ({} as Partial<T>))
-                        : old;
-                case 'remove':
-                    return action.id !== undefined ? removeFromList(old, action.id) : old;
-                default:
-                    return old;
-            }
-        });
-    }
-
-    return snapshot;
-}
-
-export function rollbackSnapshot<T>(
-    queryClient: QueryClient,
-    snapshot: Snapshot<T> | undefined,
+    key: string[],
+    action: {
+        mode: OptimisticMode;
+        item?: T;
+        id?: string;
+        body?: Partial<T>;
+    },
 ) {
-    snapshot?.forEach(({ key, old }) => {
-        queryClient.setQueryData(key, old);
+    queryClient.setQueryData<InfiniteData<T[]>>(key, (old) => {
+        if (!old) return old;
+        return {
+            ...old,
+            pages: old.pages.map((page) => {
+                switch (action.mode) {
+                    case 'add':
+                        return action.item ? addToPage(page, action.item) : page;
+                    case 'update':
+                        return action.id !== undefined
+                            ? updateInPage(page, action.id, action.body ?? ({} as Partial<T>))
+                            : page;
+                    case 'remove':
+                        return action.id !== undefined
+                            ? removeFromPage(page, action.id)
+                            : page;
+                    default:
+                        return page;
+                }
+            }),
+        };
     });
 }
 
 // ============================================================
-// URL builder — replace :param trong template
+// One-level operations (single cache)
 // ============================================================
-export function buildEndpoint(
-    template: string,
-    values: Record<string, string | number>,
-): string {
-    return Object.entries(values).reduce(
-        (acc, [key, val]) => acc.replace(`:${key}`, String(val)),
-        template,
+export function applyOneAction<T>(
+    queryClient: QueryClient,
+    key: string[],
+    action: {
+        mode: OptimisticMode;
+        item?: T;
+        body?: Partial<T>;
+    },
+) {
+    switch (action.mode) {
+        case 'remove':
+            queryClient.removeQueries({ queryKey: key });
+            return;
+        case 'update':
+            queryClient.setQueryData<T>(key, (old) =>
+                old ? { ...old, ...action.body } : old,
+            );
+            return;
+        case 'add':
+            if (action.item) queryClient.setQueryData<T>(key, action.item);
+            return;
+    }
+}
+
+// ============================================================
+// Apply toàn bộ OptimisticUI config
+// ============================================================
+export function applyOptimisticUI<T extends { id: string }>(
+    queryClient: QueryClient,
+    config: OptimisticUIConfig,
+    context: {
+        id?: string;
+        body?: Partial<T>;
+        item?: T;
+        oneMode: OptimisticMode;
+    },
+) {
+    // ----- Page targets -----
+    if (config.page) {
+        for (const target of config.page) {
+            for (const key of target.tags) {
+                applyInfiniteAction<T>(queryClient, key, {
+                    mode: target.type,
+                    id: context.id,
+                    body: context.body,
+                    item: context.item,
+                });
+            }
+        }
+    }
+
+    // ----- One target -----
+    if (config.one) {
+        for (const key of config.one.tags) {
+            applyOneAction<T>(queryClient, key, {
+                mode: context.oneMode,
+                item: context.item,
+                body: context.body,
+            });
+        }
+    }
+}
+
+// ============================================================
+// Collect tất cả key có trong OptimisticUI config
+// ============================================================
+export function collectKeys(config?: OptimisticUIConfig): string[][] {
+    if (!config) return [];
+    const keys: string[][] = [];
+    if (config.page) {
+        for (const target of config.page) keys.push(...target.tags);
+    }
+    if (config.one) {
+        keys.push(...config.one.tags);
+    }
+    return keys;
+}
+
+// ============================================================
+// Invalidate / Remove
+// ============================================================
+export function invalidateKeys(
+    queryClient: QueryClient,
+    keys: string[][],
+): Promise<void[]> {
+    return Promise.all(
+        keys.map((key) => queryClient.invalidateQueries({ queryKey: key })),
+    );
+}
+
+export function removeKeys(
+    queryClient: QueryClient,
+    keys: string[][],
+): Promise<void[]> {
+    return Promise.all(
+        keys.map((key) => queryClient.removeQueries({ queryKey: key })),
     );
 }

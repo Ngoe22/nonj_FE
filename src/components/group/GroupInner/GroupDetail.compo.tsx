@@ -12,9 +12,8 @@ import CollectionList from "@/components/group/CollectionList/CollectionList.com
 import CollectionModal from "@/components/group/CollectionList/CollectionModal.compo";
 import ConfirmModal from "@/components/group/_share/ConfirmModal.compo";
 import {useTranslations} from "next-intl";
-import {useDeleteGroup, useGetGroup, useQuitGroup} from "@/hooks/group/Current/openingGroup.hook";
-import {useMutation} from "@tanstack/react-query";
 import {toast} from "react-toastify";
+import {useDeleteGroup, useGetGroup, useQuitGroup} from "@/hooks/group/group_tan.hook";
 
 
 type View =

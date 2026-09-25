@@ -6,7 +6,7 @@ import {useTranslations} from "next-intl";
 import {OwnGroupList} from "@/components/group/GroupList/MyOwnGroups.compo";
 import {JoinedGroupList} from "@/components/group/GroupList/MyJoinedGroups.compo";
 import {CreateGroupModal} from "@/components/group/GroupList/GroupCreateModal.compo";
-import {useCreateGroup} from "@/hooks/group/List /myGroups.hook";
+import {useCreateGroup} from "@/hooks/group/group_tan.hook";
 
 type Tab = 'all' | 'my';
 
