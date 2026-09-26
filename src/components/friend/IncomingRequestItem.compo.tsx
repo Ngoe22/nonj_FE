@@ -1,52 +1,42 @@
 'use client';
 
-import { useState } from 'react';
-import {
-    Check,
-    X,
-} from 'lucide-react';
+import { Check, X } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import FriendUserInfo from "@/components/friend/FriendUserInfo.compo";
-import {useTranslations} from "next-intl";
+import FriendUserInfo from '@/components/friend/FriendUserInfo.compo';
+import { useUpdateFriendRequest } from '@/hooks/friend/friend.hook';
+import {
+    Friend_Request_Status,
+    UpdateRequestFromReceiverEnum,
+} from '@/types/friend/friend.type';
+import type { IngoingFriendRequest } from '@/types/friend/friend.type';
+import {useCurrentFriendStore} from "@/stores/friend/check_user_profile.store";
 
-
-interface IncomingRequestItemProps {
-    request: {
-        sender: {
-            id: string;
-            user_name: string;
-            nickname: string;
-            avatar_url: string;
-        };
-        status: string;
-        created_at: string;
-    };
+interface Props {
+    request: IngoingFriendRequest;
 }
 
-export default function IncomingRequestItem({
-                                                request,
-                                            }: IncomingRequestItemProps) {
+export default function IncomingRequestItem({ request }: Props) {
+    const txt = useTranslations('Friend');
+    const openModal = useCurrentFriendStore((s) => s.openModal);
+    const updateRequest = useUpdateFriendRequest();
 
-
-    const txt = useTranslations('Friend')
-
-    const [status, setStatus] = useState<
-        'pending' | 'accepted' | 'rejected'
-    >(request.status as
-        | 'pending'
-        | 'accepted'
-        | 'rejected');
+    const isPending = updateRequest.isPending;
+    const isPendingStatus = request.status === Friend_Request_Status.PENDING;
 
     const handleAccept = () => {
-        // Mock API
-        setStatus('accepted');
+        updateRequest.mutate({
+            id: request.id,
+            body: { status: UpdateRequestFromReceiverEnum.ACCEPTED },
+        });
     };
 
     const handleReject = () => {
-        // Mock API
-        setStatus('rejected');
+        updateRequest.mutate({
+            id: request.id,
+            body: { status: UpdateRequestFromReceiverEnum.REJECTED },
+        });
     };
 
     return (
@@ -54,28 +44,23 @@ export default function IncomingRequestItem({
             <div className="min-w-0 flex-1">
                 <FriendUserInfo
                     user={request.sender}
+                    onClick={() => openModal(request.sender)}
                 />
             </div>
 
             <div className="flex flex-col gap-3 sm:items-end">
-                <div className="flex flex-wrap items-center gap-3">
-                    <div className="text-xs text-muted-foreground sm:text-right">
-                        <p className="mt-1">
-                            {txt('received_at')} {request.created_at}
-                        </p>
-                    </div>
-
-                    {/*<Badge variant="secondary">*/}
-                    {/*    {txt( status as string )}*/}
-                    {/*    /!*{status}*!/*/}
-                    {/*</Badge>*/}
+                <div className="text-xs text-muted-foreground sm:text-right">
+                    <p className="mt-1">
+                        {txt('received_at')} {request.created_at}
+                    </p>
                 </div>
 
-                {status === 'pending' && (
+                {isPendingStatus && (
                     <div className="flex gap-2">
                         <Button
                             size="sm"
                             onClick={handleAccept}
+                            disabled={isPending}
                         >
                             <Check size={15} />
                             {txt('accept')}
@@ -85,6 +70,7 @@ export default function IncomingRequestItem({
                             size="sm"
                             variant="outline"
                             onClick={handleReject}
+                            disabled={isPending}
                         >
                             <X size={15} />
                             {txt('reject')}

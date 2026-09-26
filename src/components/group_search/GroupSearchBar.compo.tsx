@@ -1,16 +1,11 @@
 'use client';
 
-import { useState } from 'react';
-import {
-    AtSign,
-    Check,
-    ChevronDown,
-    Search, TextInitial,
-} from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { AtSign, Check, Search, TextInitial } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -18,28 +13,24 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
+import type { SearchGroupMode } from '@/types/group_search/group_search.type';
 
-
-import type { SearchGroupMode } from './SearchGroupTypes';
-import {useTranslations} from "next-intl";
-
-
-
-interface GroupSearchBarProps {
+interface Props {
     mode: SearchGroupMode;
     onModeChange: (mode: SearchGroupMode) => void;
     onSearch: (keyword: string) => void;
 }
 
-const modeLabel: Record<SearchGroupMode, string> = {
-    slug: 'Search by slug',
-    name: 'Search by name',
-};
-
-export default function GroupSearchBar({mode, onModeChange, onSearch}: GroupSearchBarProps) {
+export default function GroupSearchBar({ mode, onModeChange, onSearch }: Props) {
+    const txt = useTranslations('Group_search');
     const [keyword, setKeyword] = useState('');
 
-    const txt = useTranslations('Group_search')
+    // Reset keyword khi đổi mode
+    useEffect(() => {
+        setKeyword('');
+        onSearch('');
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [mode]);
 
     const handleSearch = () => {
         onSearch(keyword.trim());
@@ -47,8 +38,7 @@ export default function GroupSearchBar({mode, onModeChange, onSearch}: GroupSear
 
     return (
         <div className="flex w-full gap-2">
-            <div className="relative flex min-w-0 flex-1 align-middle gap-2">
-
+            <div className="relative flex min-w-0 flex-1 items-center gap-2">
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button
@@ -57,52 +47,28 @@ export default function GroupSearchBar({mode, onModeChange, onSearch}: GroupSear
                             size="icon"
                             className="h-11 w-11 shrink-0"
                         >
-                            { mode === 'slug' ?  <AtSign size={18} /> : <TextInitial size={18} /> }
+                            {mode === 'slug' ? <AtSign size={18} /> : <TextInitial size={18} />}
                         </Button>
                     </DropdownMenuTrigger>
 
                     <DropdownMenuContent align="end">
-                        <DropdownMenuItem
-                            onClick={() =>
-                                onModeChange('slug')
-                            }
-                        >
+                        <DropdownMenuItem onClick={() => onModeChange('slug')}>
                             <span>{txt('search_by_group_code')}</span>
-
-                            {mode === 'slug' && (
-                                <Check
-                                    size={16}
-                                    className="ml-auto"
-                                />
-                            )}
+                            {mode === 'slug' && <Check size={16} className="ml-auto" />}
                         </DropdownMenuItem>
 
-                        <DropdownMenuItem
-                            onClick={() =>
-                                onModeChange('name')
-                            }
-                        >
+                        <DropdownMenuItem onClick={() => onModeChange('name')}>
                             <span>{txt('search_by_name')}</span>
-
-                            {mode === 'name' && (
-                                <Check
-                                    size={16}
-                                    className="ml-auto"
-                                />
-                            )}
+                            {mode === 'name' && <Check size={16} className="ml-auto" />}
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
 
                 <Input
                     value={keyword}
-                    onChange={(e) =>
-                        setKeyword(e.target.value)
-                    }
+                    onChange={(e) => setKeyword(e.target.value)}
                     onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                            handleSearch();
-                        }
+                        if (e.key === 'Enter') handleSearch();
                     }}
                     placeholder={
                         mode === 'slug'
@@ -113,14 +79,13 @@ export default function GroupSearchBar({mode, onModeChange, onSearch}: GroupSear
                 />
             </div>
 
-
-
             <Button
                 type="button"
                 onClick={handleSearch}
                 disabled={!keyword.trim()}
                 className="h-11"
             >
+                <Search size={16} />
                 {txt('search')}
             </Button>
         </div>

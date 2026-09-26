@@ -1,6 +1,6 @@
 'use client';
 
-import {useInfiniteQuery, useQuery, useQueryClient} from '@tanstack/react-query';
+import {InfiniteData, useInfiniteQuery, useQuery, useQueryClient} from '@tanstack/react-query';
 import { api } from '@/lib/axios/axios';
 import { useRouter } from '@/i18n/navigation';
 import {
@@ -11,6 +11,7 @@ import {
 
 import type { CreateGroupFormValues } from '@/schemas/group/group.schema';
 import type { Group } from '@/types/group/group.type';
+import type {GroupMember} from "@/types/group/group_member.type";
 
 
 let PAGE_SIZE  = 10;
@@ -20,7 +21,7 @@ let PAGE_SIZE  = 10;
 // ============================================================
 
 export function useGetJoinedGroups() {
-    return useInfiniteQuery<Group[], Error, any, string[], number>({
+    return useInfiniteQuery<Group[], Error, InfiniteData<Group[], number>, string[], number>({
         queryKey: ['my_all_group'],
         queryFn: async ({ pageParam }) => {
             const res = await api.get(`group/joined?page=${pageParam}`);

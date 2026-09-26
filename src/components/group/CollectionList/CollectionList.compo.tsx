@@ -2,29 +2,23 @@
 
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
+
 import CollectionCard from '@/components/group/CollectionList/CollectionCard.compo';
 import CollectionMenu from '@/components/group/CollectionList/CollectionMenu.compo';
 import CollectionModal from '@/components/group/CollectionList/CollectionModal.compo';
 import ConfirmModal from '@/components/group/_share/ConfirmModal.compo';
+import { InfiniteScrollList } from '@/components/_share/infinity_scroll/InfiniteScrollList.compo';
+
 import {
-    useCreateCollection, useDeleteCollection,
     useGetCollections,
-    useUpdateCollection
-} from "@/hooks/post_collection/post_collection.hook";
-import {InfiniteScrollList} from "@/components/_share/infinity_scroll/InfiniteScrollList.compo";
-import {Collection} from "@/types/post_collection/post_collection.schema";
+    useCreateCollection,
+    useUpdateCollection,
+    useDeleteCollection,
+} from '@/hooks/post_collection/post_collection.hook';
 
-
-
-
-
-
-
-
-
-
-// =======================================
-
+import { useGetGroup } from '@/hooks/group/group_tan.hook';   // ⬅️ cần group để lấy permission
+import type { Collection } from '@/types/post_collection/post_collection.type';
+import type { CreateCollectionFormValues } from '@/schemas/post_collection/post_collection.schema';
 
 interface Props {
     locale: string;
@@ -34,6 +28,7 @@ interface Props {
 export default function CollectionList({ locale, groupId }: Props) {
     const txt = useTranslations('Post_collections');
 
+    // ============ Queries ============
     const {
         data,
         fetchNextPage,
@@ -43,29 +38,33 @@ export default function CollectionList({ locale, groupId }: Props) {
         isError,
     } = useGetCollections(groupId);
 
+    const { data: group } = useGetGroup(groupId);   // ⬅️ lấy group
+
+    // ============ Mutations ============
     const createMutation = useCreateCollection(groupId);
     const updateMutation = useUpdateCollection(groupId);
     const deleteMutation = useDeleteCollection(groupId);
 
+    // ============ Local state ============
     const [menuId, setMenuId] = useState<string | null>(null);
     const [createOpen, setCreateOpen] = useState(false);
     const [editOpen, setEditOpen] = useState(false);
     const [deleteOpen, setDeleteOpen] = useState(false);
     const [selected, setSelected] = useState<Collection | null>(null);
 
-    // Flatten pages
+    // ============ Flatten pages ============
     const collections = data?.pages.flatMap((p) => p) ?? [];
 
-    // Check permission
-    const canAdd = collections.some((c) => c._permission.add);
+    // ============ Permission ============
+    const canAdd = group?.permission?.create_collection ?? false;   // ⬅️ từ group
 
-    // Handlers
-    const handleCreate = async (values: { title: string }) => {
+    // ============ Handlers ============
+    const handleCreate = async (values: CreateCollectionFormValues) => {
         await createMutation.mutateAsync(values);
         setCreateOpen(false);
     };
 
-    const handleEdit = async (values: { title: string }) => {
+    const handleEdit = async (values: CreateCollectionFormValues) => {
         if (!selected) return;
         await updateMutation.mutateAsync({ id: selected.id, body: values });
         setEditOpen(false);
@@ -79,6 +78,7 @@ export default function CollectionList({ locale, groupId }: Props) {
         setSelected(null);
     };
 
+    // ============ Render ============
     return (
         <>
             <section className="mt-6">
@@ -111,8 +111,8 @@ export default function CollectionList({ locale, groupId }: Props) {
                             />
                             <CollectionMenu
                                 open={menuId === collection.id}
-                                canEdit={collection._permission.edit}
-                                canDelete={collection._permission.delete}
+                                canEdit={collection.permission.edit}       // ⬅️ không còn _permission
+                                canDelete={collection.permission.delete}   // ⬅️
                                 onEdit={() => {
                                     setSelected(collection);
                                     setMenuId(null);
@@ -159,7 +159,9 @@ export default function CollectionList({ locale, groupId }: Props) {
             <ConfirmModal
                 open={deleteOpen}
                 title={txt('confirm_delete_title')}
-                description={txt('confirm_delete_desc', { title: selected?.title ?? '' })}
+                description={txt('confirm_delete_desc', {
+                    title: selected?.title ?? '',
+                })}
                 onClose={() => {
                     setDeleteOpen(false);
                     setSelected(null);

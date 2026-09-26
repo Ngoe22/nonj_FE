@@ -18,11 +18,11 @@ export type Group = {
         edit_setting: boolean ,
         able_to_leave : boolean ,
         able_to_delete :boolean ,
+        create_collection : boolean ,
     }
 }
 
 export type UpdateGroup = {
-
         name: string;
         join_mode : Group_Join_Mode
         view_mode : Group_View_Mode

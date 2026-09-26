@@ -71,7 +71,10 @@
     "view_group_btn" : "Xem nhóm",
     "join_now_btn" : "Tham gia ngay",
     "request_to_join" : "Gửi yêu cầu tham gia ",
-    "isMem" : "Đã là thành viên"
+    "isMem" : "Đã là thành viên",
+    "requested": "Đã gửi",
+    "cancel_request": "Huỷ yêu cầu",
+    "no_outgoing_requests": "Chưa gửi yêu cầu nào"
 
   },
   "Group": {
@@ -104,6 +107,12 @@
     "kick": "Xóa",
     "promote": "Thăng chức",
     "demote": "Giáng chức",
+
+    "no_members": "Chưa có thành viên",
+    "confirm_kick_title": "Kick thành viên",
+    "confirm_kick_desc": "Bạn có chắc muốn kick \"{name}\" khỏi nhóm?",
+
+
     "leave_group": "Rời nhóm",
     "delete_group": "Xóa nhóm",
     "leave_group_title" : "Rời nhóm",
@@ -173,7 +182,15 @@
     "rejected": "Đã từ chối",
     "cancel" : "Hủy",
     "outgoing_req": "Yêu cầu đã gửi",
-    "incoming_req": "Yêu cầu đã nhận"
+    "incoming_req": "Yêu cầu đã nhận",
+
+    "searching": "Đang tìm...",
+    "no_user_found": "Không tìm thấy người dùng",
+    "add_friend": "Kết bạn",
+    "unfriend": "Huỷ kết bạn"
+
+
+
   },
   "Exam_preparation": {
     "title": "Soạn bài tập cho nhóm",

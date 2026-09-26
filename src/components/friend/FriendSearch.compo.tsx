@@ -1,58 +1,56 @@
 'use client';
 
 import { useState } from 'react';
-import {
-    Check,
-    Clock,
-    Search,
-    UserPlus,
-} from 'lucide-react';
+import { Clock, Search, UserPlus, UserMinus, X } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
-import {searchUser} from "@/mock/group";
-import FriendUserInfo from "@/components/friend/FriendUserInfo.compo";
-import {useTranslations} from "next-intl";
+
+import FriendUserInfo from '@/components/friend/FriendUserInfo.compo';
+import {
+    useSearchUser,
+    useAddFriend,
+    useUnfriend,
+    useCancelFriendRequest,
+} from '@/hooks/friend/friend.hook';
+import {useCurrentFriendStore} from "@/stores/friend/check_user_profile.store";
+
 
 
 
 
 export default function FriendSearch() {
+    const txt = useTranslations('Friend');
     const [keyword, setKeyword] = useState('');
-    const [searched, setSearched] = useState(false);
+    const [submitted, setSubmitted] = useState('');
 
-    const txt = useTranslations('Friend')
+    const openModal = useCurrentFriendStore((s) => s.openModal);
 
-    const [requestStatus, setRequestStatus] = useState<
-        'idle' | 'pending'
-    >('idle');
+    const { data: user, isLoading } = useSearchUser(submitted);
+    const addFriend = useAddFriend();
+    const unfriend = useUnfriend();
+    const cancelRequest = useCancelFriendRequest();
 
     const handleSearch = () => {
-        if (!keyword.trim()) {
-            setSearched(false);
-            return;
-        }
-
-        // Mock search
-        setSearched(true);
+        setSubmitted(keyword.trim());
     };
 
-    const handleAddFriend = () => {
-        // Mock API
-        setRequestStatus('pending');
+    const handleAdd = () => {
+        if (!user) return;
+        addFriend.mutate({ receiver_id: user.id });
     };
 
-    const matched =
-        searched &&
-        (
-            searchUser.user_name
-                .toLowerCase()
-                .includes(keyword.toLowerCase()) ||
-            searchUser.nickname
-                .toLowerCase()
-                .includes(keyword.toLowerCase())
-        );
+    const handleUnfriend = () => {
+        if (!user) return;
+        unfriend.mutate({ friend_id: user.id });
+    };
+
+    const isPending =
+        addFriend.isPending || unfriend.isPending || cancelRequest.isPending;
+
+    const showCard = !!submitted && (isLoading || !!user);
 
     return (
         <div className="relative">
@@ -62,18 +60,10 @@ export default function FriendSearch() {
                         size={18}
                         className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
                     />
-
                     <Input
                         value={keyword}
-                        onChange={(e) => {
-                            setKeyword(e.target.value);
-                            setSearched(false);
-                        }}
-                        onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
-                                handleSearch();
-                            }
-                        }}
+                        onChange={(e) => setKeyword(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                         placeholder={txt('search_pld')}
                         className="h-11 pl-10"
                     />
@@ -90,44 +80,67 @@ export default function FriendSearch() {
                 </Button>
             </div>
 
-            {matched && (
+            {/* Kết quả search */}
+            {showCard && (
                 <Card className="absolute left-0 right-0 top-14 z-30 p-3 shadow-lg">
-                    <div className="flex items-center gap-4">
-                        <div className="min-w-0 flex-1">
-                            <FriendUserInfo user={searchUser} />
+                    {isLoading ? (
+                        <p className="py-3 text-center text-sm text-muted-foreground">
+                            {txt('searching')}
+                        </p>
+                    ) : !user ? (
+                        <p className="py-3 text-center text-sm text-muted-foreground">
+                            {txt('no_user_found')}
+                        </p>
+                    ) : (
+                        <div className="flex items-center gap-4">
+                            <div className="min-w-0 flex-1">
+                                <FriendUserInfo
+                                    user={user}
+                                    onClick={() => openModal(user)}
+                                />
+                            </div>
+
+                            {/* Add friend */}
+                            {user.permission.add_friend && (
+                                <Button
+                                    size="sm"
+                                    onClick={handleAdd}
+                                    disabled={isPending}
+                                    className="shrink-0"
+                                >
+                                    <UserPlus size={16} />
+                                    {txt('add_friend')}
+                                </Button>
+                            )}
+
+                            {/* Cancel sent request */}
+                            {user.permission.cancel_request_friend && (
+                                <Button
+                                    size="sm"
+                                    variant="secondary"
+                                    disabled
+                                    className="shrink-0"
+                                >
+                                    <Clock size={16} />
+                                    {txt('pending')}
+                                </Button>
+                            )}
+
+                            {/* Unfriend */}
+                            {user.permission.unfriend && (
+                                <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={handleUnfriend}
+                                    disabled={isPending}
+                                    className="shrink-0 text-red-600 hover:bg-red-50"
+                                >
+                                    <UserMinus size={16} />
+                                    {txt('unfriend')}
+                                </Button>
+                            )}
                         </div>
-
-                        {requestStatus === 'idle' && (
-                            <Button
-                                size="sm"
-                                onClick={handleAddFriend}
-                                className="shrink-0"
-                            >
-                                <UserPlus size={16} />
-                                Add friend
-                            </Button>
-                        )}
-
-                        {requestStatus === 'pending' && (
-                            <Button
-                                size="sm"
-                                variant="secondary"
-                                disabled
-                                className="shrink-0"
-                            >
-                                <Clock size={16} />
-                                Pending
-                            </Button>
-                        )}
-                    </div>
-                </Card>
-            )}
-
-            {searched && !matched && (
-                <Card className="absolute left-0 right-0 top-14 z-30 p-5 shadow-lg">
-                    <p className="text-center text-sm text-muted-foreground">
-                        No user found.
-                    </p>
+                    )}
                 </Card>
             )}
         </div>

@@ -64,8 +64,10 @@
       "try_another_keyword": "Try another keyword.",
       "view_group_btn" : "View group",
       "join_now_btn" : "Join now",
-      "request_to_join" : "Request to join"
-
+      "request_to_join" : "Request to join",
+      "requested": "Requested",
+      "cancel_request": "Cancel request",
+      "no_outgoing_requests": "No outgoing requests"
     },
     "Group": {
       "title": "Groups",
@@ -100,6 +102,11 @@
       "kick": "Kick",
       "promote": "Promote",
       "demote": "Demote",
+
+      "no_members": "No members",
+      "confirm_kick_title": "Kick member",
+      "confirm_kick_desc": "Are you sure you want to kick \"{name}\"?",
+
       "leave_group": "Leave Group",
       "leave_group_title" : "Leave Group",
       "leave_group_desc"  : "Are you sure you want to leave this group?",
@@ -169,9 +176,14 @@
         "accepted": "Accepted",
         "reject": "Reject",
         "rejected": "Rejected",
-      "cancel" : "Cancel",
+        "cancel" : "Cancel",
         "outgoing_req": "Outgoing Req",
-        "incoming_req": "Incoming Req"
+        "incoming_req": "Incoming Req",
+
+      "searching": "Searching...",
+      "no_user_found": "User not found",
+      "add_friend": "Add friend",
+      "unfriend": "Unfriend"
     },
     "Exam_preparation": {
       "title": "My Exam Preparation",

@@ -2,20 +2,16 @@
 
 import Link from 'next/link';
 import { MoreVertical } from 'lucide-react';
+import {Collection} from "@/types/post_collection/post_collection.type";
+
+
+// ============================================================
+
 
 interface CollectionCardProps {
     locale: string;
     groupId: string;
-    collection: {
-        id: string;
-        title: string;
-        desc: string;
-        _permission: {
-            delete: boolean;
-            add: boolean;
-            edit: boolean;
-        };
-    };
+    collection: Collection
     onMenu: () => void;
 }
 
@@ -25,6 +21,8 @@ export default function CollectionCard({
                                            collection,
                                            onMenu,
                                        }: CollectionCardProps) {
+
+
     return (
         <div className="relative rounded-2xl border border-border bg-surface p-5">
             <Link
