@@ -21,10 +21,6 @@ import { useTranslations } from "next-intl";
 import { useRouter, usePathname } from "@/i18n/navigation";
 import { useLogout } from "@/hooks/auth/useLogout.hook";
 
-
-
-
-
 export default function Sidebar() {
     const { isOpen, toggleSidebar } = useSidebarStore();
     const { theme, toggleTheme } = useThemeStore();
