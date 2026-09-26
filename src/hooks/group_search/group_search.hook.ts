@@ -23,13 +23,19 @@ export function useSearchGroupBySlug(slug: string) {
     return useQuery<SearchGroup | null>({
         queryKey: ['search_group_slug', trimmed],
         queryFn: async () => {
-            const res = await api.get(
-                `group/slug_search/${encodeURIComponent(trimmed)}`,
-            );
-            return res.data.data ?? null;
+            try {
+                const res = await api.get(
+                    `group/slug_search/${encodeURIComponent(trimmed)}`,
+                );
+                return res.data.data ?? null;
+            } catch (error :any) {
+                if (error.response?.status === 404) return null;
+                throw error;
+            }
         },
         enabled: !!trimmed,
         staleTime: 2 * 60 * 1000,
+        retry :false
     });
 }
 
@@ -42,10 +48,15 @@ export function useSearchGroupsByName(name: string) {
     return useInfiniteQuery<SearchGroup[], Error, InfiniteData<SearchGroup[], number>, string[], number>({
         queryKey: ['search_groups_name', trimmed],
         queryFn: async ({ pageParam }) => {
-            const res = await api.get(
-                `group/name_search/${encodeURIComponent(trimmed)}?page=${pageParam}&limit=${NAME_SEARCH_PAGE_SIZE}`,
-            );
-            return res.data.data;
+            try {
+                const res = await api.get(
+                    `group/name_search/${encodeURIComponent(trimmed)}?page=${pageParam}&limit=${NAME_SEARCH_PAGE_SIZE}`,
+                );
+                return res.data.data;
+            } catch (error :any) {
+                if (error.response?.status === 404) return null;
+            }
+
         },
         initialPageParam: 1,
         getNextPageParam: (lastPage, allPages) =>
@@ -54,6 +65,7 @@ export function useSearchGroupsByName(name: string) {
                 : undefined,
         enabled: !!trimmed,
         staleTime: 2 * 60 * 1000,
+        retry :false
     });
 }
 

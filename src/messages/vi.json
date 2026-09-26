@@ -64,6 +64,7 @@
     "search_by_name": "Tìm kiếm theo tên",
     "search_by_group_code": "Tìm kiếm theo @group_code",
     "requested_at": "Yêu cầu lúc",
+    "loading" : "Đang tìm kiếm ... ",
     "pending": "Đang chờ phản hồi",
     "no_results": "Tìm kiếm nhóm để xem kết quả.",
     "no_groups_found": "Không tìm thấy nhóm nào",

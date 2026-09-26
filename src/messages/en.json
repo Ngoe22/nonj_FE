@@ -58,6 +58,7 @@
       "search_by_name": "Search by name",
       "search_by_group_code": "Search by @group_code ",
       "requested_at": "Requested at",
+      "loading" : "Loading ...",
       "pending": "Pending",
       "no_results": "Search for a group to see results.",
       "no_groups_found": "No groups found",
