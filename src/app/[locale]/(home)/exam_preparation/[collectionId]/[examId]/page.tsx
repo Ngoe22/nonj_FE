@@ -11,15 +11,8 @@ interface PageProps {
 export default async function Page({
                                        params,
                                    }: PageProps) {
-    const {
-        locale,
-        collectionId,
-    } = await params;
-
     return (
         <ExamPreparationDetail
-            locale={locale}
-            collectionId={collectionId}
         />
     );
 }

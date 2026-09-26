@@ -1,99 +1,183 @@
 'use client';
 
-import Link from 'next/link';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
-import { useParams } from 'next/navigation';
+import { useState } from 'react';
+import {Link} from '@/i18n/navigation';
+import { ArrowLeft, Plus } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
-import { Card } from '@/components/ui/card';
+import ExamTemplateCard from '@/components/exam_preparation/ExamTemplateCard.compo';
+import ExamTemplateModal from '@/components/exam_preparation/ExamTemplateModal.compo';
+import { InfiniteScrollList } from '@/components/_share/infinity_scroll/InfiniteScrollList.compo';
 
 import {
-    examPreparationCollections,
-    examPreparationList,
-} from '@/mock/group';
-import {useTranslations} from "next-intl";
+    useGetMyTemplates,
+    useCreateTemplate,
+    useUpdateTemplate,
+    useDeleteTemplate,
+} from '@/hooks/exam_preparation/exam_preparation.hook';
+
+import type { ExamTemplate } from '@/types/exam_preparation/exam_preparation.type';
+import type { TemplateFormValues } from '@/schemas/exam_preparation/exam_preparation.schema';
+import ConfirmModal from "@/components/group/_share/ConfirmModal.compo";
+import {useExamParams} from "@/hooks/exam_preparation/use_exam_params.hook";
+
+
+
+
+
+
+// ===============================
+
+
+
+
+
+
 
 export default function ExamCollectionDetail() {
+    const txt = useTranslations('Exam_preparation');
+    const { collectionId } = useExamParams();
 
-    const txt = useTranslations('Exam_preparation')
-    const params = useParams();
-    const locale = String(params.locale);
-    const collectionId = String(
-        params.collectionId
-    );
+    const {
+        data,
+        fetchNextPage,
+        hasNextPage,
+        isFetchingNextPage,
+        isLoading,
+        isError,
+    } = useGetMyTemplates(collectionId);
 
-    const collection =
-        examPreparationCollections.find(
-            (item) => item.id === collectionId
-        );
+    const createMutation = useCreateTemplate(collectionId);
+    const updateMutation = useUpdateTemplate();
+    const deleteMutation = useDeleteTemplate();
 
-    if (!collection) {
-        return (
-            <div className="mx-auto w-full max-w-4xl px-4 py-6 sm:px-6">
-                <p className="text-sm text-muted-foreground">
-                    Collection not found.
-                </p>
-            </div>
-        );
-    }
+    const [createOpen, setCreateOpen] = useState(false);
+    const [editOpen, setEditOpen] = useState(false);
+    const [deleteOpen, setDeleteOpen] = useState(false);
+    const [selected, setSelected] = useState<ExamTemplate | null>(null);
+
+    const templates = data?.pages.flatMap((p) => p) ?? [];
+
+    const handleCreate = async (values: TemplateFormValues) => {
+        await createMutation.mutateAsync({
+            title: values.title,
+            exercise_content: {},
+        });
+        setCreateOpen(false);
+    };
+
+    const handleEdit = async (values: TemplateFormValues) => {
+        if (!selected) return;
+        await updateMutation.mutateAsync({
+            collection_id: collectionId,
+            template_id: selected.id,
+            body: { title: values.title },
+        });
+        setEditOpen(false);
+        setSelected(null);
+    };
+
+    const handleDelete = async () => {
+        if (!selected) return;
+        await deleteMutation.mutateAsync(selected.id);
+        setDeleteOpen(false);
+        setSelected(null);
+    };
 
     return (
         <div className="mx-auto w-full max-w-4xl px-4 py-6 sm:px-6">
             {/* Header */}
             <div className="border-b border-border pb-5">
                 <Link
-                    href={`/${locale}/exam_preparation`}
+                    href="/exam_preparation"
                     className="inline-flex items-center gap-2 text-sm text-muted-foreground transition hover:text-foreground"
                 >
                     <ArrowLeft size={17} />
                     {txt('back')}
                 </Link>
 
-                <h1 className="mt-4 text-2xl font-bold">
-                    {collection.title}
-                </h1>
+                <div className="mt-4 flex items-start justify-between gap-4">
+                    <h1 className="text-2xl font-bold">{txt('exams')}</h1>
 
-                <p className="mt-2 text-sm text-muted-foreground">
-                    {collection.desc}
-                </p>
+                    <button
+                        type="button"
+                        onClick={() => setCreateOpen(true)}
+                        className="flex shrink-0 items-center gap-2 rounded-xl bg-foreground px-4 py-2.5 text-sm font-medium text-background"
+                    >
+                        <Plus size={16} />
+                        {txt('create_template')}
+                    </button>
+                </div>
             </div>
 
-            {/* Exam list */}
+            {/* List */}
             <section className="mt-6">
-                <h2 className="text-lg font-semibold">
-                    {txt('exams')}
-                </h2>
-
-                <div className="mt-4 space-y-3">
-                    {examPreparationList.map(
-                        (exam) => (
-                            <Link
-                                key={exam.id}
-                                href={`/${locale}/exam_preparation/${collectionId}/${exam.id}`}
-                            >
-                                <Card className="group cursor-pointer p-5 transition hover:border-border-strong hover:shadow-sm">
-                                    <div className="flex items-center gap-4">
-                                        <div className="min-w-0 flex-1">
-                                            <h3 className="truncate font-medium">
-                                                {exam.title}
-                                            </h3>
-
-                                            <p className="mt-1 text-xs text-muted-foreground">
-                                                {exam.collection
-                                                    .name}
-                                            </p>
-                                        </div>
-
-                                        <ArrowRight
-                                            size={18}
-                                            className="shrink-0 text-muted-foreground transition-transform group-hover:translate-x-1"
-                                        />
-                                    </div>
-                                </Card>
-                            </Link>
-                        )
+                <InfiniteScrollList<ExamTemplate>
+                    items={templates}
+                    getKey={(t) => t.id}
+                    renderItem={(template) => (
+                        <ExamTemplateCard
+                            collectionId={collectionId}
+                            template={template}
+                            onEdit={() => {
+                                setSelected(template);
+                                setEditOpen(true);
+                            }}
+                            onDelete={() => {
+                                setSelected(template);
+                                setDeleteOpen(true);
+                            }}
+                        />
                     )}
-                </div>
+                    hasNextPage={hasNextPage}
+                    isFetchingNextPage={isFetchingNextPage}
+                    fetchNextPage={fetchNextPage}
+                    isLoading={isLoading}
+                    isError={isError}
+                    className="space-y-3"
+                    emptyComponent={
+                        <div className="flex min-h-56 items-center justify-center rounded-2xl border border-dashed border-border">
+                            <p className="text-sm text-muted-foreground">
+                                {txt('no_templates')}
+                            </p>
+                        </div>
+                    }
+                />
             </section>
+
+            {/* Modals */}
+            <ExamTemplateModal
+                open={createOpen}
+                mode="create"
+                onClose={() => setCreateOpen(false)}
+                onSubmit={handleCreate}
+                isSubmitting={createMutation.isPending}
+            />
+
+            <ExamTemplateModal
+                open={editOpen}
+                mode="edit"
+                initialTitle={selected?.title ?? ''}
+                onClose={() => {
+                    setEditOpen(false);
+                    setSelected(null);
+                }}
+                onSubmit={handleEdit}
+                isSubmitting={updateMutation.isPending}
+            />
+
+            <ConfirmModal
+                open={deleteOpen}
+                title={txt('confirm_delete_template')}
+                description={txt('confirm_delete_template_desc', {
+                    title: selected?.title ?? '',
+                })}
+                onClose={() => {
+                    setDeleteOpen(false);
+                    setSelected(null);
+                }}
+                onConfirm={handleDelete}
+            />
         </div>
     );
 }

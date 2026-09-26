@@ -1,91 +1,81 @@
 'use client';
 
-import Link from 'next/link';
-import {
-    ArrowLeft,
-} from 'lucide-react';
+import {Link} from '@/i18n/navigation';
+import { ArrowLeft } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { useQuery } from '@tanstack/react-query';
 
 import { Badge } from '@/components/ui/badge';
+import { formatDate } from '@/lib/format/date';
+import { api } from '@/lib/axios/axios';
+import type { ExamTemplate } from '@/types/exam_preparation/exam_preparation.type';
+import {useExamParams} from "@/hooks/exam_preparation/use_exam_params.hook";
 
-import { ExamPreparation } from '@/mock/group';
-import {useTranslations} from "next-intl";
+export default function ExamPreparationDetail() {
+    const txt = useTranslations('Exam_preparation');
+    const { collectionId, examId } = useExamParams();
 
-interface ExamPreparationDetailProps {
-    locale: string;
-    collectionId: string;
-}
+    // ⚠️ BE chưa có endpoint GET 1 template — cần bổ sung
+    // Tạm dùng list để tìm, hoặc BE thêm endpoint `GET /user_exercise_template/me/:collection/:id`
+    const { data: template, isLoading } = useQuery<ExamTemplate | null>({
+        queryKey: ['exam_template', collectionId, examId],
+        queryFn: async () => {
+            // ⚠️ Tạm gọi list rồi filter — sửa khi BE có endpoint riêng
+            const res = await api.get(
+                `user_exercise_template/me/${collectionId}?page=1&limit=100`,
+            );
+            const list = res.data.data as ExamTemplate[];
+            return list.find((t) => t.id === examId) ?? null;
+        },
+        enabled: !!collectionId && !!examId,
+    });
 
-export default function ExamPreparationDetail({
-                                                  locale,
-                                                  collectionId,
-                                              }: ExamPreparationDetailProps) {
+    if (isLoading) {
+        return (
+            <div className="mx-auto w-full max-w-4xl px-4 py-6 sm:px-6">
+                <p className="text-sm text-muted-foreground">{txt('loading')}</p>
+            </div>
+        );
+    }
 
-  const txt = useTranslations('Exam_preparation')
+    if (!template) {
+        return (
+            <div className="mx-auto w-full max-w-4xl px-4 py-6 sm:px-6">
+                <p className="text-sm text-muted-foreground">
+                    {txt('template_not_found')}
+                </p>
+            </div>
+        );
+    }
 
     return (
         <div className="mx-auto w-full max-w-4xl px-4 py-6 sm:px-6">
             {/* Header */}
             <div className="border-b border-border pb-5">
                 <Link
-                    href={`/${locale}/exam_preparation/${collectionId}`}
+                    href={`/exam_preparation/${collectionId}`}
                     className="inline-flex items-center gap-2 text-sm text-muted-foreground transition hover:text-foreground"
                 >
                     <ArrowLeft size={17} />
                     {txt('back')}
                 </Link>
 
-                <h1 className="mt-5 text-2xl font-bold">
-                    {ExamPreparation.title}
-                </h1>
+                <h1 className="mt-5 text-2xl font-bold">{template.title}</h1>
 
-                <div className="mt-3">
+                <div className="mt-3 flex items-center gap-3">
                     <Badge variant="secondary">
-                        {ExamPreparation.collection.name}
+                        {formatDate(template.created_at)}
                     </Badge>
                 </div>
             </div>
 
-            {/* Basic information */}
-            <section className="mt-6">
-                <h2 className="text-lg font-semibold">
-                    {txt('information')}
-                </h2>
-
-                <div className="mt-4 rounded-2xl border border-border bg-card p-5">
-                    <div>
-                        <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                            {txt('title_label')}
-                        </p>
-
-                        <p className="mt-1 text-sm font-medium">
-                            {ExamPreparation.title}
-                        </p>
-                    </div>
-
-                    <div className="mt-5">
-                        <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                            {txt('collection')}
-                        </p>
-
-                        <p className="mt-1 text-sm font-medium">
-                            {ExamPreparation.collection.name}
-                        </p>
-                    </div>
-                </div>
-            </section>
-
             {/* Exercise content */}
             <section className="mt-8">
-                <h2 className="text-lg font-semibold">
-                    {txt('exercise_content')}
-                </h2>
+                <h2 className="text-lg font-semibold">{txt('exercise_content')}</h2>
 
                 <div className="mt-4 flex min-h-64 items-center justify-center rounded-2xl border border-dashed border-border">
                     <div className="text-center">
-                        <p className="text-sm font-medium">
-                            Exercise content
-                        </p>
-
+                        <p className="text-sm font-medium">Exercise content</p>
                         <p className="mt-1 text-sm text-muted-foreground">
                             This section will be implemented later.
                         </p>

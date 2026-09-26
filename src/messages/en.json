@@ -198,7 +198,32 @@
       "back": "Back",
       "create": "Create",
       "delete": "Delete",
-      "edit" : "Start editing"
+      "edit" : "Start editing",
+
+
+
+      "create_collection": "Create collection",
+      "edit_collection": "Edit collection",
+      "no_collections": "No collections yet",
+
+      "create_template": "Create exam",
+      "edit_template": "Edit exam",
+      "no_templates": "No exams yet",
+      "template_not_found": "Exam not found",
+
+      "title_placeholder": "Enter title",
+      "desc_label": "Description",
+      "desc_placeholder": "Enter description (optional)",
+
+      "cancel": "Cancel",
+      "confirm": "Confirm",
+      "saving": "Saving...",
+      "loading": "Loading...",
+
+      "confirm_delete_collection": "Delete collection",
+      "confirm_delete_collection_desc": "Are you sure you want to delete \"{title}\"?",
+      "confirm_delete_template": "Delete exam",
+      "confirm_delete_template_desc": "Are you sure you want to delete \"{title}\"?"
     },
 
   "MyProfile" : {

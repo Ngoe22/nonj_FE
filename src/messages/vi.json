@@ -205,7 +205,33 @@
     "back": "Quay lại",
     "create": "Tạo",
     "delete": "Xóa",
-    "edit" : "Bắt đầu chỉnh "
+    "edit" : "Bắt đầu chỉnh ",
+
+
+
+    "create_collection": "Tạo bộ đề",
+    "edit_collection": "Sửa bộ đề",
+    "no_collections": "Chưa có bộ đề nào",
+
+    "create_template": "Tạo đề",
+    "edit_template": "Sửa đề",
+    "no_templates": "Chưa có đề nào",
+    "template_not_found": "Không tìm thấy đề",
+
+
+    "title_placeholder": "Nhập tiêu đề",
+    "desc_label": "Mô tả",
+    "desc_placeholder": "Nhập mô tả (tuỳ chọn)",
+
+    "cancel": "Huỷ",
+    "confirm": "Xác nhận",
+    "saving": "Đang lưu...",
+    "loading": "Đang tải...",
+
+    "confirm_delete_collection": "Xoá bộ đề",
+    "confirm_delete_collection_desc": "Bạn có chắc muốn xoá \"{title}\"?",
+    "confirm_delete_template": "Xoá đề",
+    "confirm_delete_template_desc": "Bạn có chắc muốn xoá \"{title}\"?"
 
   },
   "MyProfile": {
