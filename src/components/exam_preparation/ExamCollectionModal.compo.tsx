@@ -40,7 +40,6 @@ export default function ExamCollectionModal({
                                                 isSubmitting = false,
                                             }: Props) {
     const txt = useTranslations('Exam_preparation');
-    const txtErr = useTranslations('Shema');
 
     const {
         register,
@@ -50,7 +49,7 @@ export default function ExamCollectionModal({
     } = useForm<CollectionFormValues>({
         resolver: zodResolver(collectionFormSchema),
         defaultValues: { title: initialTitle, desc: initialDesc },
-        mode: 'onBlur',
+        mode: 'onSubmit',
     });
 
     useEffect(() => {
@@ -60,14 +59,6 @@ export default function ExamCollectionModal({
     const submit = handleSubmit(async (values) => {
         await onSubmit(values);
     });
-
-    const titleError = errors.title?.message
-        ? { ...errors.title, message: txtErr(errors.title.message as any) }
-        : undefined;
-
-    const descError = errors.desc?.message
-        ? { ...errors.desc, message: txtErr(errors.desc.message as any) }
-        : undefined;
 
     return (
         <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
@@ -87,7 +78,7 @@ export default function ExamCollectionModal({
                         </label>
                         <Input
                             register={register('title')}
-                            error={titleError}
+                            error={errors.title}
                             placeholder={txt('title_placeholder')}
                         />
                     </div>
@@ -98,7 +89,7 @@ export default function ExamCollectionModal({
                         </label>
                         <Input
                             register={register('desc')}
-                            error={descError}
+                            error={errors.desc}
                             type="textarea"
                             placeholder={txt('desc_placeholder')}
                             inputStyles="mt-1 text-sm font-medium rounded-md p-2 w-full border-2 border-status-info min-h-[80px] resize-y"
@@ -109,7 +100,7 @@ export default function ExamCollectionModal({
                         <Button
                             type="button"
                             variant="outline"
-                            onClick={onClose}
+                            onClick={()=> { reset() ; onClose()} }
                             disabled={isSubmitting}
                         >
                             {txt('cancel')}

@@ -5,9 +5,8 @@ import { useTranslations } from 'next-intl';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import FriendUserInfo from '@/components/friend/FriendUserInfo.compo';
+import UserInfo from '@/components/_share/user_info/UserInfo.compo';
 import { useCancelFriendRequest } from '@/hooks/friend/friend.hook';
-import { useCurrentFriendStore } from '@/stores/friend/current_friend.store';
 import type { OutgoingFriendRequest } from '@/types/friend/friend.type';
 
 interface Props {
@@ -16,7 +15,6 @@ interface Props {
 
 export default function OutgoingRequestItem({ request }: Props) {
     const txt = useTranslations('Friend');
-    const openModal = useCurrentFriendStore((s) => s.openModal);
     const cancelRequest = useCancelFriendRequest();
 
     const handleCancel = () => {
@@ -26,10 +24,7 @@ export default function OutgoingRequestItem({ request }: Props) {
     return (
         <div className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-4 sm:flex-row sm:items-center">
             <div className="min-w-0 flex-1">
-                <FriendUserInfo
-                    user={request.receiver}
-                    onClick={() => openModal(request.receiver)}
-                />
+                <UserInfo user={request.receiver} disableClick />
             </div>
 
             <div className="flex flex-wrap items-center gap-3 sm:justify-end">

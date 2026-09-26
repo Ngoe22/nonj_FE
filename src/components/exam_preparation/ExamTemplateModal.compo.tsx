@@ -48,7 +48,7 @@ export default function ExamTemplateModal({
     } = useForm<TemplateFormValues>({
         resolver: zodResolver(templateFormSchema),
         defaultValues: { title: initialTitle },
-        mode: 'onBlur',
+        mode: 'onSubmit',
     });
 
     useEffect(() => {
@@ -58,10 +58,6 @@ export default function ExamTemplateModal({
     const submit = handleSubmit(async (values) => {
         await onSubmit(values);
     });
-
-    const titleError = errors.title?.message
-        ? { ...errors.title, message: txtErr(errors.title.message as any) }
-        : undefined;
 
     return (
         <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
@@ -74,6 +70,8 @@ export default function ExamTemplateModal({
                     </DialogTitle>
                 </DialogHeader>
 
+
+
                 <form onSubmit={submit} className="space-y-4">
                     <div>
                         <label className="mb-2 block text-sm font-medium">
@@ -81,7 +79,7 @@ export default function ExamTemplateModal({
                         </label>
                         <Input
                             register={register('title')}
-                            error={titleError}
+                            error={errors.title}
                             placeholder={txt('title_placeholder')}
                         />
                     </div>

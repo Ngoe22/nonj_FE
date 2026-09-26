@@ -43,7 +43,7 @@ export default function CollectionModal({
     } = useForm<CreateCollectionFormValues>({
         resolver: zodResolver(createCollectionSchema),
         defaultValues: { title: initialTitle, desc: initialDesc },
-        mode: 'onBlur',
+        mode: 'onSubmit',
     });
 
     useEffect(() => {

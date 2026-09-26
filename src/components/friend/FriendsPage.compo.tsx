@@ -111,7 +111,7 @@ export default function FriendsPage() {
             </Tabs>
 
             {/* Modal xem thông tin user */}
-            <FriendDetailModal />
+            {/*<FriendDetailModal />*/}
         </div>
     );
 }

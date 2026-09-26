@@ -46,7 +46,7 @@ export default function GroupSettings({ group }: Props) {
     } = useForm<UpdateGroupFormValues>({
         resolver: zodResolver(updateGroupSchema),
         defaultValues: defaults,
-        mode: 'onBlur',
+        mode: 'onSubmit',
     });
 
     const joinMode = watch('join_mode');

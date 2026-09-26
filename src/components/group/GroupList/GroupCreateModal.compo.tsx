@@ -42,7 +42,7 @@ export function CreateGroupModal({open, onClose, onSubmit, isSubmitting = false 
     } = useForm<CreateGroupFormValues>({
         resolver: zodResolver(createGroupSchema),
         defaultValues: createGroupDefaultValues,
-        mode: 'onBlur',
+        mode: 'onSubmit',
     });
 
     useEffect(() => {

@@ -1,9 +1,9 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
+import {Group_Member_Role, GroupMember} from "@/types/group/group_member.type";
 
-import { Group_Member_Role } from '@/types/group_member/group_member.type';
-import type { GroupMember } from '@/types/group_member/group_member.type';
+
 
 interface Props {
     member: GroupMember;

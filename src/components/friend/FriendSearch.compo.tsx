@@ -1,37 +1,38 @@
 'use client';
 
-import { useState } from 'react';
-import { Clock, Search, UserPlus, UserMinus, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Clock, Search, UserPlus, UserMinus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
+import UserInfo from '@/components/_share/user_info/UserInfo.compo';
 
-import FriendUserInfo from '@/components/friend/FriendUserInfo.compo';
 import {
     useSearchUser,
     useAddFriend,
     useUnfriend,
     useCancelFriendRequest,
 } from '@/hooks/friend/friend.hook';
-import {useCurrentFriendStore} from "@/stores/friend/check_user_profile.store";
-
-
-
-
+import {useUserModalStore} from "@/stores/user_info/user_modal.store";
 
 export default function FriendSearch() {
     const txt = useTranslations('Friend');
     const [keyword, setKeyword] = useState('');
     const [submitted, setSubmitted] = useState('');
 
-    const openModal = useCurrentFriendStore((s) => s.openModal);
+    const openModal = useUserModalStore((s) => s.openModal);
 
     const { data: user, isLoading } = useSearchUser(submitted);
     const addFriend = useAddFriend();
     const unfriend = useUnfriend();
     const cancelRequest = useCancelFriendRequest();
+
+    // ✅ Auto mở modal khi search ra user
+    useEffect(() => {
+        if (user) openModal(user);
+    }, [user, openModal]);
 
     const handleSearch = () => {
         setSubmitted(keyword.trim());
@@ -94,13 +95,12 @@ export default function FriendSearch() {
                     ) : (
                         <div className="flex items-center gap-4">
                             <div className="min-w-0 flex-1">
-                                <FriendUserInfo
+                                <UserInfo
                                     user={user}
                                     onClick={() => openModal(user)}
                                 />
                             </div>
 
-                            {/* Add friend */}
                             {user.permission.add_friend && (
                                 <Button
                                     size="sm"
@@ -113,7 +113,6 @@ export default function FriendSearch() {
                                 </Button>
                             )}
 
-                            {/* Cancel sent request */}
                             {user.permission.cancel_request_friend && (
                                 <Button
                                     size="sm"
@@ -126,7 +125,6 @@ export default function FriendSearch() {
                                 </Button>
                             )}
 
-                            {/* Unfriend */}
                             {user.permission.unfriend && (
                                 <Button
                                     size="sm"
