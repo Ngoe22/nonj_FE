@@ -13,7 +13,6 @@ import FriendSearch from '@/components/friend/FriendSearch.compo';
 import FriendListItem from '@/components/friend/FriendListItem.compo';
 import OutgoingRequestItem from '@/components/friend/OutgoingRequestItem.compo';
 import IncomingRequestItem from '@/components/friend/IncomingRequestItem.compo';
-import FriendDetailModal from '@/components/friend/FriendDetailModal.compo';
 import { InfiniteScrollList } from '@/components/_share/infinity_scroll/InfiniteScrollList.compo';
 
 import {

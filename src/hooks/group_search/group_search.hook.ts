@@ -1,6 +1,7 @@
 'use client';
 
 import {InfiniteData, useInfiniteQuery, useQuery} from '@tanstack/react-query';
+import axios from 'axios';
 
 import { api } from '@/lib/axios/axios';
 import { useTanCreate, useTanDelete } from '@/hooks/_share/tan_crud/tan_crud.hook';
@@ -53,10 +54,15 @@ export function useSearchGroupsByName(name: string) {
                     `group/name_search/${encodeURIComponent(trimmed)}?page=${pageParam}&limit=${NAME_SEARCH_PAGE_SIZE}`,
                 );
                 return res.data.data;
-            } catch (error :any) {
-                if (error.response?.status === 404) return null;
+            } catch (error) {
+                // 404 = không có nhóm nào khớp → trả mảng rỗng.
+                // KHÔNG được trả `null`: null sẽ lọt vào list và crash lúc render
+                // vì `pages.flatMap(p => p)` biến nó thành 1 item null.
+                if (axios.isAxiosError(error) && error.response?.status === 404) {
+                    return [];
+                }
+                throw error;
             }
-
         },
         initialPageParam: 1,
         getNextPageParam: (lastPage, allPages) =>

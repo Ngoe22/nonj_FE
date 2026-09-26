@@ -10,6 +10,7 @@ import {Button} from "@/components/ui/button";
 import {useTranslations} from "next-intl";
 import {MyProfileHeader} from "@/components/profile/MyProfileHeader.compo";
 import {MyProfileInfo} from "@/components/profile/MyProfileInfo.compo";
+import {useLogout} from "@/hooks/auth/useLogout.hook";
 
 // import { myProfile } from '@/mock/group';
 
@@ -17,6 +18,7 @@ export default function MyProfilePage() {
 
     const txt = useTranslations('MyProfile')
    const { data:myProfile , isPending ,error } = useGetMyProfile()
+    const logout = useLogout()
 
     if (isPending) return <ProfileSkeleton />;
     if (error) return <ProfileError message={error.message} />;
@@ -130,6 +132,8 @@ export default function MyProfilePage() {
             {/*logout*/}
             <Card className="mt-4 p-5 sm:p-6">
                 <Button
+                    onClick={() => logout.mutate()}
+                    disabled={logout.isPending}
                     className={`text-card  hover:text-white  bg-card-foreground  hover:bg-destructive`}
                 >
                     {txt('logout_btn')}

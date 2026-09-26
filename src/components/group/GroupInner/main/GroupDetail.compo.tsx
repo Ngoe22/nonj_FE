@@ -27,6 +27,7 @@ export default  function GroupDetail() {
 
 
     const txt = useTranslations('Group')
+    const toastTxt = useTranslations('Toast')
 
 
     const params = useParams();
@@ -51,7 +52,7 @@ export default  function GroupDetail() {
         if(currentGroup?.id) {
             deleteGroup(currentGroup.id)
         } else {
-            toast.error("action_fail");
+            toast.error(toastTxt('action_fail'));
         }
         setGroupDeleteOpen(false);
     }
@@ -61,11 +62,9 @@ export default  function GroupDetail() {
         if(currentGroup?.id) {
             quitGroup(currentGroup.id)
         } else {
-            toast.error("action_fail");
+            toast.error(toastTxt('action_fail'));
         }
-        setGroupDeleteOpen(false);
-
-
+        setQuitOpen(false);
     }
 
     //
@@ -204,7 +203,7 @@ export default  function GroupDetail() {
                 open={ groupDeleteOpen}
                 title={ txt('delete_group_title') }
                 description={ txt('delete_group_desc') }
-                onClose={() => setQuitOpen(false)}
+                onClose={() => setGroupDeleteOpen(false)}
                 onConfirm={deleteHandler}
             />
 
@@ -212,7 +211,7 @@ export default  function GroupDetail() {
                 open={quitOpen}
                 title={ txt('leave_group_title') }
                 description= { txt('leave_group_desc') }
-                onClose={() => setGroupDeleteOpen(false)}
+                onClose={() => setQuitOpen(false)}
                 onConfirm={quitHandler}
             />
         </>

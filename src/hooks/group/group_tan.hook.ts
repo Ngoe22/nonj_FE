@@ -35,7 +35,7 @@ export function useGetJoinedGroups() {
 }
 
 export function useGetOwnGroups() {
-    return useInfiniteQuery<Group[], Error, any, string[], number>({
+    return useInfiniteQuery<Group[], Error, InfiniteData<Group[], number>, string[], number>({
         queryKey: ['my_own_group'],
         queryFn: async ({ pageParam }) => {
             const res = await api.get(`group/own?page=${pageParam}`);

@@ -8,7 +8,7 @@ import type {
     JoinRequest,
     UpdateJoinRequestVars,
 } from '@/types/group/join_request.type';
-import {useInfiniteQuery} from "@tanstack/react-query";
+import { InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
 
 const PAGE_SIZE = 10;
 
@@ -16,7 +16,7 @@ const PAGE_SIZE = 10;
 // GET MANY —
 // ============================================================
 export function useGetGroupJoinRequests(groupId: string) {
-    return useInfiniteQuery<JoinRequest[], Error, any, string[], number>({
+    return useInfiniteQuery<JoinRequest[], Error, InfiniteData<JoinRequest[], number>, string[], number>({
         queryKey: ['join_requests', groupId],
         queryFn: async ({ pageParam }) => {
             const res = await api.get(

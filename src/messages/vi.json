@@ -97,6 +97,8 @@
     "pending": "Chờ phản hồi",
     "approve": "Chấp nhận",
     "reject": "Từ chối",
+    "approved": "Đã chấp nhận",
+    "rejected": "Đã từ chối",
     "members": "Thành viên",
     "user": "Thành viên",
     "name_column": "Tên",
@@ -163,7 +165,8 @@
     "confirm_delete_desc": "Bạn có chắc muốn xoá ?",
 
     "cancel" : "Hủy" ,
-    "confirm" : "Xác nhận"
+    "confirm" : "Xác nhận" ,
+    "saving" : "Đang lưu..."
 
   },
   "Friend" : {
@@ -254,7 +257,11 @@
     "max_char_50": "Không được vượt quá 50 ký tự",
     "max_char_100": "Không được vượt quá 100 ký tự",
     "max_char_500": "Không được vượt quá 500 ký tự",
-    "only_letter_and_number_and_underscore": "Chỉ cho phép chữ cái, số và dấu gạch dưới ,không cần @"
+    "only_letter_and_number_and_underscore": "Chỉ cho phép chữ cái, số và dấu gạch dưới ,không cần @",
+
+    "group_name_required": "Vui lòng nhập tên nhóm",
+    "group_name_max": "Tên nhóm không được vượt quá 50 ký tự",
+    "group_description_max": "Mô tả không được vượt quá 500 ký tự"
   },
   "Toast" : {
     "action_fail" : "Thao tác thất bại , ... thử lại sau",

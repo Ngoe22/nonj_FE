@@ -19,6 +19,7 @@ import { useOpenLanguageSelector } from "@/components/_share/language_model/Lang
 import LanguageSelector from "@/components/_share/language_model/LanguageSelector.compo";
 import { useTranslations } from "next-intl";
 import { useRouter, usePathname } from "@/i18n/navigation";
+import { useLogout } from "@/hooks/auth/useLogout.hook";
 
 
 
@@ -30,6 +31,7 @@ export default function Sidebar() {
     const openLanguageSelectorFn = useOpenLanguageSelector();
     const router = useRouter();
     const pathname = usePathname();  // ✅ để track active
+    const logout = useLogout();
 
     const txt = useTranslations('Sidebar');
 
@@ -116,10 +118,7 @@ export default function Sidebar() {
                     icon={<LogOut size={19} />}
                     label={txt('logout')}
                     isOpen={isOpen}
-                    onClick={() => {
-                        // TODO: gọi API logout + clear store + redirect
-                        router.push('/auth');
-                    }}
+                    onClick={() => logout.mutate()}
                 />
             </div>
         </aside>
