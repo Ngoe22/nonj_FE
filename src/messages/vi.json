@@ -283,5 +283,27 @@
     "infinity_scroll_group_have_not_joined_any" : "Bạn chưa tham gia nhóm nào",
     "infinity_scroll_group_have_not_owned_any" : "Bạn chưa sở hữu nhóm nào"
 
+  },
+
+  "Time": {
+    "just_now": "Vừa xong",
+    "seconds_ago": "{count} giây trước",
+    "minutes_ago": "{count} phút trước",
+    "hours_ago": "{count} giờ trước",
+    "yesterday": "Hôm qua",
+    "days_ago": "{count} ngày trước",
+    "weeks_ago": "{count} tuần trước",
+    "months_ago": "{count} tháng trước",
+    "years_ago": "{count} năm trước",
+
+    "seconds_short": "{count}s",
+    "minutes_short": "{count}p",
+    "hours_short": "{count}h",
+    "days_short": "{count}d",
+
+    "in_seconds": "sau {count} giây",
+    "in_minutes": "sau {count} phút",
+    "in_hours": "sau {count} giờ",
+    "in_days": "sau {count} ngày"
   }
 }

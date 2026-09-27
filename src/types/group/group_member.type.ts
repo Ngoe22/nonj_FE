@@ -1,7 +1,7 @@
 export enum Group_Member_Role {
-    FOUNDER = 'founder',
-    ADMIN = 'admin',
-    MEMBER = 'member',
+    FOUNDER = 'FOUNDER',
+    ADMIN = 'ADMIN',
+    MEMBER = 'MEMBER',
 }
 
 export enum GroupMemberUpdateAction {

@@ -2,6 +2,8 @@
 
 import { useTranslations } from 'next-intl';
 import {Group_Member_Role, GroupMember} from "@/types/group/group_member.type";
+import {useRelativeTime} from "@/helper/timeFormat/relativeTime.helper";
+import {formatLocalDateTime} from "@/helper/timeFormat/timezone.helper";
 
 
 
@@ -21,6 +23,7 @@ export function GroupMemberCard({
                                     isPending = false,
                                 }: Props) {
     const txt = useTranslations('Group');
+    const timeAgo = useRelativeTime();
 
     const { _permission, role } = member;
 
@@ -35,6 +38,8 @@ export function GroupMemberCard({
     // MEMBER: promote_mem → Promote | kick_mem → Kick
     // FOUNDER: không hiện gì (không kick/demote chính mình)
     // ============================================================
+
+
     const showKick = isAdmin
         ? (_permission?.kick_admin ?? false)
         : isMember
@@ -47,36 +52,50 @@ export function GroupMemberCard({
     const hasAnyAction = showKick || showPromote || showDemote;
 
     return (
-        <div className="relative flex flex-col gap-4 p-4 md:grid md:grid-cols-[auto_1fr_1fr_140px_100px_50px] md:items-center md:gap-4">
-            {/* Avatar */}
-            <img
-                src={member.user.avatar_url ?? '/default-avatar.png'}
-                alt={member.user.user_name}
-                className="h-10 w-10 rounded-full object-cover"
-            />
+        <div className="relative flex gap-3 p-4 justify-between items-center flex-wrap  border-b ">
 
-            {/* Username */}
-            <div>
-                <p className="text-sm font-medium">@{member.user.user_name}</p>
+
+            <div
+                className={`flex items-center gap-8 w-2/6 md:w-2/6 `}
+            >
+                {/* Avatar */}
+                <img
+                    src={member.user.avatar_url ?? '/default-avatar.png'}
+                    alt={member.user.user_name}
+                    className="h-10 w-10 rounded-full object-cover"
+                />
+
+                <div>
+                    {/* Nickname */}
+                    <div className="text-l ">
+                        {member.user.nickname}
+                    </div>
+
+                    {/* Username */}
+                    <p className="text-sm font-medium text-muted-foreground">
+                        @{member.user.user_name}
+                    </p>
+
+                </div>
+
             </div>
 
-            {/* Nickname */}
-            <div className="text-sm text-muted-foreground">
-                {member.user.nickname}
-            </div>
-
-            {/* Joined */}
-            <div className="text-sm text-muted-foreground">
-                {member.updated_at}
-            </div>
 
             {/* Role badge */}
-            <div>
+            <div className=" w-2/6 md:w-1/6 flex justify-end md:justify-center ">
                 <RoleBadge role={role} />
             </div>
 
+            {/* Joined */}
+            <div className="text-sm text-muted-foreground w-2/6 md:w-1/6 ">
+                { formatLocalDateTime(member.updated_at) }
+            </div>
+
+
+
             {/* Actions */}
-            <div className="flex flex-wrap gap-2 md:col-span-full">
+            {/* md:col-span-full */}
+            <div className="flex flex-wrap shrink-0 gap-2 w-3/6 md:w-1/6 justify-end">
                 {showKick && (
                     <button
                         type="button"
@@ -119,6 +138,7 @@ export function GroupMemberCard({
 // ============================================================
 function RoleBadge({ role }: { role: Group_Member_Role }) {
     const txt = useTranslations('Group');
+
 
     const styles: Record<Group_Member_Role, string> = {
         [Group_Member_Role.FOUNDER]: 'bg-purple-100 text-purple-700',

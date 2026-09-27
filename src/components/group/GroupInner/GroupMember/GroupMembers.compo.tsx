@@ -85,16 +85,7 @@ export default function GroupMembers() {
     // ============ Render ============
     return (
         <div className="pt-6">
-            <div className="overflow-hidden rounded-2xl border border-border">
-                {/* Header — chỉ hiện trên desktop */}
-                <div className="hidden grid-cols-[auto_1fr_1fr_140px_100px_50px] gap-4 border-b border-border bg-surface-hover px-4 py-3 text-xs font-medium uppercase tracking-wide text-muted-foreground md:grid">
-                    <span />
-                    <span>{txt('user')}</span>
-                    <span>{txt('name_column')}</span>
-                    <span>{txt('joined')}</span>
-                    <span>{txt('role')}</span>
-                    <span />
-                </div>
+            <div className="overflow-hidden rounded-2xl border border-border p-2">
 
                 {/* List với infinite scroll */}
                 <InfiniteScrollList<GroupMember>

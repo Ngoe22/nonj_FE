@@ -103,9 +103,11 @@
       "name_column": "Name",
       "joined": "Joined",
       "role": "Role",
-      "member": "Member",
-      "admin": "Admin",
-      "founder": "Founder",
+
+      "MEMBER": "Member",
+      "ADMIN": "Admin",
+      "FOUNDER": "Founder",
+
       "kick": "Kick",
       "promote": "Promote",
       "demote": "Demote",
@@ -276,5 +278,26 @@
     "infinity_scroll_is_end_of_data": "— End of list —",
     "infinity_scroll_group_have_not_joined_any" : "U haven't joined any group",
     "infinity_scroll_group_have_not_owned_any" : "U haven't owned any group"
+  },
+  "Time": {
+    "just_now": "Just now",
+    "seconds_ago": "{count} seconds ago",
+    "minutes_ago": "{count} minutes ago",
+    "hours_ago": "{count} hours ago",
+    "yesterday": "Yesterday",
+    "days_ago": "{count} days ago",
+    "weeks_ago": "{count} weeks ago",
+    "months_ago": "{count} months ago",
+    "years_ago": "{count} years ago",
+
+    "seconds_short": "{count}s",
+    "minutes_short": "{count}m",
+    "hours_short": "{count}h",
+    "days_short": "{count}d",
+
+    "in_seconds": "in {count} seconds",
+    "in_minutes": "in {count} minutes",
+    "in_hours": "in {count} hours",
+    "in_days": "in {count} days"
   }
 }
