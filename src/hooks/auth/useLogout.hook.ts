@@ -24,7 +24,9 @@ export function useLogout() {
 
     return useMutation({
         mutationFn: async () => {
-            await api.post('/auth/logout');
+            // BE chỉ có POST /auth/logout/:range (one|all) — gọi thiếu :range sẽ 404
+            // và refresh token không bị thu hồi ở server.
+            await api.post('/auth/logout/all');
         },
         onSuccess: clearSessionAndRedirect,
         // API lỗi (vd: token đã hết hạn) thì vẫn phải xoá session ở FE

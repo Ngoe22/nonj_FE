@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import {useGetGroupMembers, useKickGroupMember, useUpdateGroupMember} from "@/hooks/group/member/group_member.hook";
-import {GroupMember, GroupMemberUpdateAction} from "@/types/group/group_member.type";
+import {GroupMember, GroupMemberUpdateAction, Group_Member_Role} from "@/types/group/group_member.type";
 import {InfiniteScrollList} from "@/components/_share/infinity_scroll/InfiniteScrollList.compo";
 import {GroupMemberCard} from "@/components/group/GroupInner/GroupMember/GroupMemberCard.compo";
 import ConfirmModal from "@/components/group/_share/ConfirmModal.compo";
@@ -59,11 +59,24 @@ export default function GroupMembers() {
 
     const handleKickConfirm = async () => {
         if (!kickTarget) return;
-        await kickMember.mutateAsync({
-            group_id: groupId,
-            user_id: kickTarget.user.id,
-            member_id: kickTarget.id,
-        });
+
+        // BE: kickMember (DELETE kick/:gid/:uid) CHỈ cho target là MEMBER.
+        // Muốn xoá một ADMIN thì phải dùng REMOVE_ADMIN (founderRemoveAdmin),
+        // nếu không BE trả 404 target_role_not_allowed_in_group.
+        if (kickTarget.role === Group_Member_Role.ADMIN) {
+            await updateMember.mutateAsync({
+                group_id: groupId,
+                target_id: kickTarget.user.id,
+                action: GroupMemberUpdateAction.REMOVE_ADMIN,
+            });
+        } else {
+            await kickMember.mutateAsync({
+                group_id: groupId,
+                user_id: kickTarget.user.id,
+                member_id: kickTarget.id,
+            });
+        }
+
         setKickTarget(null);
     };
 

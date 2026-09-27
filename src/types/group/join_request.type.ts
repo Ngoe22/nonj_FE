@@ -21,7 +21,7 @@ export interface JoinRequest {
     id: string;
     sender: JoinRequestSender;
     status: Group_Join_Request_Status;
-    created_time: string;
+    created_at: string;
     permission: {
         approve: boolean;
         reject: boolean;

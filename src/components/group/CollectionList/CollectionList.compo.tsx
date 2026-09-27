@@ -111,8 +111,8 @@ export default function CollectionList({ locale, groupId }: Props) {
                             />
                             <CollectionMenu
                                 open={menuId === collection.id}
-                                canEdit={collection.permission.edit}       // ⬅️ không còn _permission
-                                canDelete={collection.permission.delete}   // ⬅️
+                                canEdit={collection.permission?.edit ?? false}
+                                canDelete={collection.permission?.delete ?? false}
                                 onEdit={() => {
                                     setSelected(collection);
                                     setMenuId(null);

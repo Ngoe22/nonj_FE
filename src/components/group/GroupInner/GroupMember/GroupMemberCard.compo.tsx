@@ -36,13 +36,13 @@ export function GroupMemberCard({
     // FOUNDER: không hiện gì (không kick/demote chính mình)
     // ============================================================
     const showKick = isAdmin
-        ? _permission.kick_admin
+        ? (_permission?.kick_admin ?? false)
         : isMember
-            ? _permission.kick_mem
+            ? (_permission?.kick_mem ?? false)
             : false;
 
-    const showPromote = isMember ? _permission.promote_mem : false;
-    const showDemote = isAdmin ? _permission.demote_admin : false;
+    const showPromote = isMember ? (_permission?.promote_mem ?? false) : false;
+    const showDemote = isAdmin ? (_permission?.demote_admin ?? false) : false;
 
     const hasAnyAction = showKick || showPromote || showDemote;
 

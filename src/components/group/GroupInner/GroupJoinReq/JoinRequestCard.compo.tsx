@@ -46,7 +46,7 @@ export function JoinRequestCard({
 
                 {/* Time */}
                 <div className="text-sm text-muted-foreground">
-                    {request.created_time}
+                    {request.created_at}
                 </div>
 
                 {/* Status badge */}
