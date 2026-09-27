@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
-import { useCancelJoinRequest } from '@/hooks/group_search/group_search.hook';
+import { useCancelJoinRequest } from '@/hooks/group_search/group_join_request.hook';
 import type { OutgoingJoinRequest } from '@/types/group_search/group_search.type';
 
 interface Props {

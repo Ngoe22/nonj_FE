@@ -1,9 +1,10 @@
 import {useTranslations} from "next-intl";
+import {GoogleLoginButton} from "@/components/auth/GoogleLoginButton.compo";
 
 
 export  function GoogleRegister() {
 
-    const txt = useTranslations('Auth')
+    // const txt = useTranslations('Auth')
 
     return (
         <div className="rounded-2xl border border-border bg-background p-6 text-center">
@@ -11,21 +12,26 @@ export  function GoogleRegister() {
                 G
             </div>
 
-            <h2 className="mt-4 text-lg font-semibold text-foreground">
-                {txt('register_with_gg')}
-            </h2>
+            {/*<h2 className="mt-4 text-lg font-semibold text-foreground">*/}
+            {/*    {txt('register_with_gg')}*/}
+            {/*</h2>*/}
 
-            <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                Google registration sẽ được tích hợp sau.
-            </p>
 
-            <button
-                type="button"
-                disabled
-                className="mt-5 w-full rounded-xl border border-border bg-surface-hover px-4 py-3 text-sm font-medium text-muted-foreground"
+
+            <div
+            className="flex justify-center items-center mt-8"
             >
-                {txt('register_continue_with_gg')}
-            </button>
+                <GoogleLoginButton mode="register" />
+            </div>
+
+
+            {/*<button*/}
+            {/*    type="button"*/}
+            {/*    disabled*/}
+            {/*    className="mt-5 w-full rounded-xl border border-border bg-surface-hover px-4 py-3 text-sm font-medium text-muted-foreground"*/}
+            {/*>*/}
+            {/*    {txt('register_continue_with_gg')}*/}
+            {/*</button>*/}
         </div>
     );
 }

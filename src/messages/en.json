@@ -30,7 +30,10 @@
     "manual_register_bio_label": "Bio",
     "manual_register_bio_pld": "Tell us a bit about yourself...",
     "register_btn": "Submit" ,
-    "register_fail" : "Register fail"
+    "register_fail" : "Register fail",
+
+    "continue_with_google": "Continue with Google",
+    "continue_with_google_register": "Sign up with Google"
   },
   "Sidebar": {
     "home": "Home",
@@ -239,13 +242,16 @@
     "user_name" : "Username",
     "nickname" : "Name",
     "bio" : "Bio",
-    "logout_btn" : "Logout"
+    "logout_btn" : "Logout",
+    "load_fail" : "Not found profile , try again later"
+
   },
   "Shema" : {
     "invalid_email": "Invalid email address",
     "enter_something": "Please enter something",
     "at_least_char_3": "Must be at least 3 characters",
     "at_least_char_6": "Must be at least 6 characters",
+    "max_char_20": "Must not exceed 20 characters",
     "max_char_50": "Must not exceed 50 characters",
     "max_char_100": "Must not exceed 100 characters",
     "max_char_500": "Must not exceed 500 characters",
@@ -254,10 +260,13 @@
     "group_name_required": "Group name is required",
     "group_name_max": "Group name must not exceed 50 characters",
     "group_description_max": "Description must not exceed 500 characters"
+
   },
   "Toast" : {
     "action_fail" : "Something went wrong ... , try again later",
-    "profile_update_fail" : "Update fail ... , try again later"
+    "profile_update_fail" : "Update fail ... , try again later",
+    "login_fail": "Login failed",
+    "banned_account": "Account is banned"
   },
 
   "Share_component": {

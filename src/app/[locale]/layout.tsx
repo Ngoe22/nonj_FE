@@ -4,6 +4,7 @@ import {getMessages} from 'next-intl/server';
 import {notFound} from 'next/navigation';
 import {routing} from '@/i18n/routing';
 import {ToastContainer} from "react-toastify";
+import Script from "next/script";
 
 export default async function LocaleLayout(
     { children, params  }: {
@@ -20,6 +21,10 @@ export default async function LocaleLayout(
 
     return (
         <NextIntlClientProvider messages={messages}>
+            <Script
+                src="https://accounts.google.com/gsi/client"
+                strategy="beforeInteractive"
+            />
             <ToastContainer />
             {children}
         </NextIntlClientProvider>

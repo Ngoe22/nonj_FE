@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Clock, Search, UserPlus, UserMinus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
@@ -8,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import UserInfo from '@/components/_share/user_info/UserInfo.compo';
+import { InvalidInput } from '@/components/_share/form_error_warning/FormErrorWarning.compo';
 
 import {
     useSearchUser,
@@ -15,11 +18,17 @@ import {
     useUnfriend,
     useCancelFriendRequest,
 } from '@/hooks/friend/friend.hook';
-import {useUserModalStore} from "@/stores/user_info/user_modal.store";
+import {
+    friendSearchSchema,
+    friendSearchDefaultValues,
+    type FriendSearchFormValues,
+} from '@/schemas/friend/friend.schema';
+import { useUserModalStore } from '@/stores/user_info/user_modal.store';
 
 export default function FriendSearch() {
     const txt = useTranslations('Friend');
-    const [keyword, setKeyword] = useState('');
+
+    // Keyword đã submit (dùng cho query) — input do react-hook-form giữ
     const [submitted, setSubmitted] = useState('');
 
     const openModal = useUserModalStore((s) => s.openModal);
@@ -29,14 +38,25 @@ export default function FriendSearch() {
     const unfriend = useUnfriend();
     const cancelRequest = useCancelFriendRequest();
 
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm<FriendSearchFormValues>({
+        resolver: zodResolver(friendSearchSchema),
+        defaultValues: friendSearchDefaultValues,
+        mode: 'onSubmit', // không validate khi blur
+    });
+
     // ✅ Auto mở modal khi search ra user
     useEffect(() => {
         if (user) openModal(user);
     }, [user, openModal]);
 
-    const handleSearch = () => {
-        setSubmitted(keyword.trim());
-    };
+    // Validate bằng schema rồi mới cho query chạy
+    const submit = handleSubmit((values) => {
+        setSubmitted(values.keyword.trim());
+    });
 
     const handleAdd = () => {
         if (!user) return;
@@ -55,31 +75,38 @@ export default function FriendSearch() {
 
     return (
         <div className="relative">
-            <div className="flex gap-2">
-                <div className="relative flex-1">
-                    <Search
-                        size={18}
-                        className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-                    />
-                    <Input
-                        value={keyword}
-                        onChange={(e) => setKeyword(e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                        placeholder={txt('search_pld')}
-                        className="h-11 pl-10"
-                    />
-                </div>
+            <form onSubmit={submit}>
+                <div className="flex gap-2">
+                    <div className="relative flex-1">
+                        <Search
+                            size={18}
+                            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                        />
+                        <Input
+                            {...register('keyword')}
+                            placeholder={txt('search_pld')}
+                            className="h-11 pl-10"
+                            autoComplete="off"
+                            spellCheck={false}
+                        />
 
-                <Button
-                    type="button"
-                    size="icon"
-                    className="h-11 w-11 shrink-0"
-                    onClick={handleSearch}
-                    disabled={!keyword.trim()}
-                >
-                    <Search size={18} />
-                </Button>
-            </div>
+                        {/* ✅ Hiện lỗi dưới input */}
+                        {errors.keyword && (
+                            <div className={'absolute top-1/1 left-0'}>
+                                <InvalidInput msg={errors.keyword?.message} />
+                            </div>
+                        )}
+                    </div>
+
+                    <Button
+                        type="submit"
+                        size="icon"
+                        className="h-11 w-11 shrink-0"
+                    >
+                        <Search size={18} />
+                    </Button>
+                </div>
+            </form>
 
             {/* Kết quả search */}
             {showCard && (
@@ -103,6 +130,7 @@ export default function FriendSearch() {
 
                             {user.permission.add_friend && (
                                 <Button
+                                    type="button"
                                     size="sm"
                                     onClick={handleAdd}
                                     disabled={isPending}
@@ -115,6 +143,7 @@ export default function FriendSearch() {
 
                             {user.permission.cancel_request_friend && (
                                 <Button
+                                    type="button"
                                     size="sm"
                                     variant="secondary"
                                     disabled
@@ -127,6 +156,7 @@ export default function FriendSearch() {
 
                             {user.permission.unfriend && (
                                 <Button
+                                    type="button"
                                     size="sm"
                                     variant="outline"
                                     onClick={handleUnfriend}

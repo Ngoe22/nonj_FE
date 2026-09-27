@@ -8,6 +8,7 @@ import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {RegisterFormValues, registerSchema} from "@/schemas/auth/register.schemas";
 import {InvalidInput} from "@/components/_share/form_error_warning/FormErrorWarning.compo";
+import {GoogleLoginButton} from "@/components/auth/GoogleLoginButton.compo";
 
 export default function RegisterForm() {
     const router = useRouter();
@@ -138,6 +139,8 @@ export default function RegisterForm() {
                     </p>
                 )}
             </form>
+
+
         </div>
     );
 }

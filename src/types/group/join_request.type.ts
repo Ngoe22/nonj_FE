@@ -22,7 +22,7 @@ export interface JoinRequest {
     sender: JoinRequestSender;
     status: Group_Join_Request_Status;
     created_time: string;
-    _permission: {
+    permission: {
         approve: boolean;
         reject: boolean;
     };

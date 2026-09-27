@@ -15,6 +15,7 @@ export interface SearchGroup {
     is_joined: boolean;
     has_pending_request: boolean;
     permission: {
+
         view_setting: boolean;
         view_join_req: boolean;
         view_member: boolean;

@@ -2,6 +2,9 @@
 
 import {useQuery} from "@tanstack/react-query";
 import {api} from "@/lib/axios/axios";
+import type { AuthUserInfo } from '@/types/auth/auth.type';
+
+
 
 interface UserProfile {
     id: string;
@@ -15,19 +18,39 @@ interface UserProfile {
 }
 
 interface Res {
-    data: UserProfile;
+    data: AuthUserInfo;
 }
 
 
-// useGetMyProfile
-export function useGetMyProfile() {
-    return useQuery({
+
+
+export function useGetMyProfile(enabled = true) {
+    return useQuery<AuthUserInfo | null>({
         queryKey: ['my_profile'],
         queryFn: async () => {
-            const res = await api.get<Res>('user/me');
-
-            return res.data.data;
+            try {
+                const res = await api.get<{ data: AuthUserInfo }>('user/me');
+                return res.data.data;
+            } catch (err: any) {
+                if (err?.response?.status === 401) return null;
+                throw err;
+            }
         },
-        staleTime: 60 * 60 * 1000,
+        enabled,
+        staleTime: 5 * 60 * 1000,
+        retry: false,
     });
 }
+
+// useGetMyProfile
+// export function useGetMyProfile() {
+//     return useQuery({
+//         queryKey: ['my_profile'],
+//         queryFn: async () => {
+//             const res = await api.get<Res>('user/me');
+//
+//             return res.data.data;
+//         },
+//         staleTime: 60 * 60 * 1000,
+//     });
+// }

@@ -6,6 +6,7 @@ import Sidebar from "@/components/home/Sidebar.compo";
 import {useSidebarStore} from "@/stores/side_bar/side_bar.store";
 import {useThemeStore} from "@/stores/theme/theme.store";
 import {useGetMyProfile} from "@/hooks/profile/useGetMyProfile.hook";
+import {Link} from "@/i18n/navigation";
 
 interface HomeLayoutProps {
     children: ReactNode;
@@ -62,7 +63,7 @@ export default function HomeLayout({ children }: HomeLayoutProps) {
                                 className={'text-muted-foreground'}
                             >@{user?.user_name}</p>
                             {/* Avatar */}
-                            <a
+                            <Link
                                 href="/profile"
                                 className="block h-8 w-8 overflow-hidden rounded-full"
                             >
@@ -71,7 +72,7 @@ export default function HomeLayout({ children }: HomeLayoutProps) {
                                     alt="Profile"
                                     className="h-full w-full object-cover"
                                 />
-                            </a>
+                            </Link>
                         </div>
                     </header>
 

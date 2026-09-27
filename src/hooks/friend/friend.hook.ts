@@ -39,6 +39,7 @@ export function useSearchUser(userName: string) {
         },
         enabled: !!trimmed,
         staleTime: 30 * 1000,
+        retry : false
     });
 }
 

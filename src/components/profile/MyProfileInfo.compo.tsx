@@ -44,7 +44,7 @@ export function MyProfileInfo(
         defaultValues: editAble,
     });
 
-    const onSubmit = async (data :any) => {
+    const onSubmit = async (data: updateMyInfoFormValues) => {
         // console.log(data)
         await mutateAsync(data)
         setIsEditing(false)

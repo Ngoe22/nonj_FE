@@ -8,7 +8,7 @@ export const createGroupSchema = z.object({
         .string()
         .min(1, 'enter_something')
         .max(50, 'max_char_50')
-        .regex(/^[a-z0-9_]+$/, 'only_letter_and_number_and_underscore'),
+        .regex(/^[a-zA-Z0-9_]+$/, 'only_letter_and_number_and_underscore'),
 
     name: z
         .string()

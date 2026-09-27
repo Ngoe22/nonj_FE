@@ -35,7 +35,10 @@
     "manual_register_bio_label" : "Giới thiệu",
     "manual_register_bio_pld" : "Nhập giới thiệu bản thân ...",
     "register_btn" : "Đăng ký",
-    "register_fail" : "Đăng ký thất bại"
+    "register_fail" : "Đăng ký thất bại",
+
+    "continue_with_google": "Tiếp tục với Google",
+    "continue_with_google_register": "Đăng ký với Google"
 
   },
   "Sidebar" : {
@@ -172,7 +175,7 @@
   "Friend" : {
     "search_pld" : "Nhập @username...",
     "title": "Bạn bè",
-    "description": "Quản lý bạn bè và lời mời kết bạn của bạn.",
+    "description": "Tìm kiếm bạn bè  .",
     "my_friends": "Bạn bè của tôi",
     "friend": "Bạn bè",
     "since": "Từ",
@@ -246,7 +249,9 @@
     "user_name": "user_name",
     "nickname": "Tên",
     "bio": "Giới thiệu",
-    "logout_btn": "Đăng xuất"
+    "logout_btn": "Đăng xuất",
+    "load_fail" : "Không tìm thấy thong tin , thử  lại sau"
+
   },
 
   "Shema": {
@@ -254,6 +259,7 @@
     "enter_something": "Vui lòng nhập nội dung",
     "at_least_char_3": "Phải có ít nhất 3 ký tự",
     "at_least_char_6": "Phải có ít nhất 6 ký tự",
+    "max_char_20": "Must not exceed 20 characters",
     "max_char_50": "Không được vượt quá 50 ký tự",
     "max_char_100": "Không được vượt quá 100 ký tự",
     "max_char_500": "Không được vượt quá 500 ký tự",
@@ -265,7 +271,9 @@
   },
   "Toast" : {
     "action_fail" : "Thao tác thất bại , ... thử lại sau",
-    "profile_update_fail" : "Cập nhập lỗi .. thử lại sau "
+    "profile_update_fail" : "Cập nhập lỗi .. thử lại sau ",
+    "login_fail": "Đăng nhập thất bại",
+    "banned_account": "Tài khoản đã bị khoá"
   },
   "Share_component": {
     "infinity_scroll_loading": "Đang tải...",

@@ -23,7 +23,7 @@ interface AuthPageProps {
 export default function AuthPage() {
     const [mode, setMode] = useState<AuthMode>('login');
     const [registerMethod, setRegisterMethod] =
-        useState<RegisterMethod>('manual');
+        useState<RegisterMethod>('google');
 
     return (
         <main className="relative h-screen overflow-hidden bg-background p-3 sm:p-5 md:p-6">

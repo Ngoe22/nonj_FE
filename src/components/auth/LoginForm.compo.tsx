@@ -7,6 +7,7 @@ import { useForm } from 'react-hook-form';
 import { LoginFormValues, loginSchema } from '@/schemas/auth/login.schemas';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {InvalidInput} from "@/components/_share/form_error_warning/FormErrorWarning.compo";
+import {GoogleLoginButton} from "@/components/auth/GoogleLoginButton.compo";
 
 export default function LoginForm() {
     const txt = useTranslations('Auth');
@@ -74,6 +75,15 @@ export default function LoginForm() {
                     </p>
                 )}
             </form>
+
+
+
+            <div
+                className={`m-10 border-b border-2`}
+            ></div>
+
+            <GoogleLoginButton mode="login" />
+
         </div>
     );
 }

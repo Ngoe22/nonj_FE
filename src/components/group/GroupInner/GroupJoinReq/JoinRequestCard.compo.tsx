@@ -23,6 +23,9 @@ export function JoinRequestCard({
 
     const isPendingStatus = request.status === Group_Join_Request_Status.PENDING;
 
+    console.log(request)
+
+
     return (
         <div className="rounded-2xl border border-border bg-surface p-4 sm:p-5">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
@@ -52,7 +55,7 @@ export function JoinRequestCard({
                 {/* Actions */}
                 {isPendingStatus && (
                     <div className="flex gap-2">
-                        {request._permission.approve && (
+                        {request.permission.approve && (
                             <button
                                 type="button"
                                 disabled={isPending}
@@ -64,7 +67,7 @@ export function JoinRequestCard({
                             </button>
                         )}
 
-                        {request._permission.reject && (
+                        {request.permission.reject && (
                             <button
                                 type="button"
                                 disabled={isPending}

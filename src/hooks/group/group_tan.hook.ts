@@ -14,7 +14,7 @@ import type { Group } from '@/types/group/group.type';
 import type {GroupMember} from "@/types/group/group_member.type";
 
 
-let PAGE_SIZE  = 10;
+const PAGE_SIZE = 10;
 
 // ============================================================
 // GET MANY — own groups
