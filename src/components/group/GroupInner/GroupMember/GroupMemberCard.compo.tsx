@@ -22,6 +22,8 @@ export function GroupMemberCard({
                                     onKick,
                                     isPending = false,
                                 }: Props) {
+
+
     const txt = useTranslations('Group');
     const timeAgo = useRelativeTime();
 

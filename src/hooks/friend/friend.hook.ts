@@ -20,6 +20,8 @@ import type {
     UnfriendVars,
 } from '@/types/friend/friend.type';
 import type {Group} from "@/types/group/group.type";
+import {toast} from "react-toastify";
+import {useTranslations} from "next-intl";
 
 const PAGE_SIZE = 20;
 
@@ -122,6 +124,8 @@ export function useGetIngoingFriendRequests() {
 // ADD FRIEND — POST /friend_request/:receiver_id
 // ============================================================
 export function useAddFriend() {
+    const toastTxt = useTranslations('Toast')
+
     return useTanCreate<void, AddFriendVars>({
         mutationFn: async ({ receiver_id }) => {
             await api.post(`friend_request/${receiver_id}`);
@@ -132,7 +136,10 @@ export function useAddFriend() {
                     ['search_user'],
                     ['outgoing_friend_requests'],
                 ],
-            },
+            },onError: {
+                onErrorCallback : () => toast.error(toastTxt('action_fail'))
+            }
+
         },
     });
 }
@@ -141,6 +148,8 @@ export function useAddFriend() {
 // CANCEL OUTGOING REQUEST — DELETE /friend_request/:request_id
 // ============================================================
 export function useCancelFriendRequest() {
+    const toastTxt = useTranslations('Toast')
+
     return useTanDelete<OutgoingFriendRequest, CancelFriendRequestVars>({
         mutationFn: async ({ request_id }) => {
             await api.delete(`friend_request/${request_id}`);
@@ -163,6 +172,9 @@ export function useCancelFriendRequest() {
                     ['search_user'],
                 ],
             },
+            onError: {
+                onErrorCallback : () => toast.error(toastTxt('action_fail'))
+            }
         },
     });
 }
@@ -171,6 +183,9 @@ export function useCancelFriendRequest() {
 // ACCEPT / REJECT — PATCH /friend_request/:request_id
 // ============================================================
 export function useUpdateFriendRequest() {
+    const toastTxt = useTranslations('Toast')
+
+
     return useTanUpdate<IngoingFriendRequest, UpdateFriendRequestVars>({
         mutationFn: async ({ id, body }) => {
             const res = await api.patch(`friend_request/${id}`, body);
@@ -194,6 +209,9 @@ export function useUpdateFriendRequest() {
                     ['search_user'],
                 ],
             },
+            onError: {
+                onErrorCallback : () => toast.error(toastTxt('action_fail'))
+            }
         },
     });
 }
@@ -202,6 +220,10 @@ export function useUpdateFriendRequest() {
 // UNFRIEND — PATCH /friendship/:friend_id
 // ============================================================
 export function useUnfriend() {
+
+    const toastTxt = useTranslations('Toast')
+
+
     return useTanUpdate<Friendship, UnfriendVars>({
         mutationFn: async ({ friend_id }) => {
             const res = await api.patch(`friendship/${friend_id}`);
@@ -212,6 +234,10 @@ export function useUnfriend() {
             onSuccess: {
                 invalidateTags: [['friends'], ['search_user']],
             },
+            onError: {
+                onErrorCallback : () => toast.error(toastTxt('action_fail'))
+            }
+
         },
     });
 }

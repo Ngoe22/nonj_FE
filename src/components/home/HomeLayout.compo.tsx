@@ -7,6 +7,7 @@ import {useSidebarStore} from "@/stores/side_bar/side_bar.store";
 import {useThemeStore} from "@/stores/theme/theme.store";
 import {useGetMyProfile} from "@/hooks/profile/useGetMyProfile.hook";
 import {Link} from "@/i18n/navigation";
+import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 
 interface HomeLayoutProps {
     children: ReactNode;
@@ -62,16 +63,18 @@ export default function HomeLayout({ children }: HomeLayoutProps) {
                             <p
                                 className={'text-muted-foreground'}
                             >@{user?.user_name}</p>
+
                             {/* Avatar */}
                             <Link
                                 href="/profile"
-                                className="block h-8 w-8 overflow-hidden rounded-full"
+                                className="block h-8 w-8 shrink-0 overflow-hidden rounded-full"
                             >
-                                <img
-                                    src="https://i.pinimg.com/736x/01/ac/5b/01ac5b864a6c29efb24c1145aeb9c7be.jpg"
-                                    alt="Profile"
-                                    className="h-full w-full object-cover"
-                                />
+                                <Avatar className="h-full w-full">
+                                    <AvatarImage src={user?.avatar_url ?? undefined} alt={user?.user_name} />
+                                    <AvatarFallback>
+                                        {user?.nickname?.charAt(0).toUpperCase() ?? '?'}
+                                    </AvatarFallback>
+                                </Avatar>
                             </Link>
                         </div>
                     </header>

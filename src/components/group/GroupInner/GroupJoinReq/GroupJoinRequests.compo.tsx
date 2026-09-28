@@ -68,11 +68,6 @@ export default function GroupJoinRequests() {
                 isLoading={isLoading}
                 isError={isError}
                 className="space-y-3"
-                // emptyComponent={
-                //     <p className="py-10 text-center text-sm text-muted-foreground">
-                //         {txt('no_join_requests')}
-                //     </p>
-                // }
             />
         </div>
     );

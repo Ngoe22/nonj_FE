@@ -107,9 +107,11 @@
     "name_column": "Tên",
     "joined": "Ngày tham gia",
     "role": "Vai trò",
-    "member": "Thành viên",
-    "admin": "Quản trị viên",
-    "founder": "Người sáng lập",
+
+    "MEMBER": "Thành viên",
+    "ADMIN": "Quản trị",
+    "FOUNDER": "Trưởng nhóm",
+
     "kick": "Xóa",
     "promote": "Thăng chức",
     "demote": "Giáng chức",
@@ -263,7 +265,7 @@
     "max_char_50": "Không được vượt quá 50 ký tự",
     "max_char_100": "Không được vượt quá 100 ký tự",
     "max_char_500": "Không được vượt quá 500 ký tự",
-    "only_letter_and_number_and_underscore": "Chỉ cho phép chữ cái, số và dấu gạch dưới ,không cần @",
+    "only_letter_and_number_and_underscore": "Chỉ cho phép chữ cái, số và dấu gạch dưới , không cần @",
 
     "group_name_required": "Vui lòng nhập tên nhóm",
     "group_name_max": "Tên nhóm không được vượt quá 50 ký tự",
@@ -281,7 +283,8 @@
     "infinity_scroll_is_nodata": "Không có dữ liệu",
     "infinity_scroll_is_end_of_data": "— Đã hết —",
     "infinity_scroll_group_have_not_joined_any" : "Bạn chưa tham gia nhóm nào",
-    "infinity_scroll_group_have_not_owned_any" : "Bạn chưa sở hữu nhóm nào"
+    "infinity_scroll_group_have_not_owned_any" : "Bạn chưa sở hữu nhóm nào",
+    "user_info_title" : "Thông tin người dùng"
 
   },
 

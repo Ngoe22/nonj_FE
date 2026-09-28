@@ -277,7 +277,10 @@
     "infinity_scroll_is_nodata": "No data available",
     "infinity_scroll_is_end_of_data": "— End of list —",
     "infinity_scroll_group_have_not_joined_any" : "U haven't joined any group",
-    "infinity_scroll_group_have_not_owned_any" : "U haven't owned any group"
+    "infinity_scroll_group_have_not_owned_any" : "U haven't owned any group",
+    "user_info_title" : "Group info"
+
+
   },
   "Time": {
     "just_now": "Just now",

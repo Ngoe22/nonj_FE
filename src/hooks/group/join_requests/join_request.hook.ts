@@ -59,7 +59,7 @@ export function useUpdateJoinRequest(groupId: string) {
                 },
             },
             onSuccess: {
-                invalidateTags: [['join_requests', groupId]],
+                invalidateTags: [['join_requests', groupId] , ['group_members',groupId]],
             },
         },
     });

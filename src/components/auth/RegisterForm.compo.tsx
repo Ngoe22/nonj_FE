@@ -27,7 +27,8 @@ export default function RegisterForm() {
 
     const registerSubmit = async (data:RegisterFormValues) => {
         try {
-            await registerMutation.mutateAsync(data);
+            const result = await registerMutation.mutateAsync(data);
+            console.log(result)
             router.push('/'); // Chỉ chuyển trang khi thành công
         } catch (error) {
             console.error( error);
@@ -133,13 +134,13 @@ export default function RegisterForm() {
                         : txt('register_btn')}
                 </button>
 
-                {registerMutation.isError && (
-                    <p className="rounded-xl border border-status-error bg-[var(--status-error-bg)] px-4 py-3 text-sm text-[var(--status-error)]">
-                        {txt('register_fail')}
-                    </p>
-                )}
-            </form>
 
+            </form>
+            {registerMutation.isError && (
+                <p className="rounded-xl border border-status-error bg-[var(--status-error-bg)] px-4 py-3 text-sm text-[var(--status-error)]">
+                    {txt('register_fail')}
+                </p>
+            )}
 
         </div>
     );

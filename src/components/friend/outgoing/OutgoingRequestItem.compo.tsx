@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import UserInfo from '@/components/_share/user_info/UserInfo.compo';
 import { useCancelFriendRequest } from '@/hooks/friend/friend.hook';
 import type { OutgoingFriendRequest } from '@/types/friend/friend.type';
+import {formatLocalDateTime} from "@/helper/timeFormat/timezone.helper";
 
 interface Props {
     request: OutgoingFriendRequest;
@@ -24,30 +25,32 @@ export default function OutgoingRequestItem({ request }: Props) {
     return (
         <div className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-4 sm:flex-row sm:items-center">
             <div className="min-w-0 flex-1">
-                <UserInfo user={request.receiver} disableClick />
+                <UserInfo user={request.receiver}  />
             </div>
 
             <div className="flex flex-wrap items-center gap-3 sm:justify-end">
                 <div className="text-xs text-muted-foreground sm:text-right">
                     <p className="mt-1">
-                        {txt('sent')} {request.created_at}
+                        {txt('sent')} {formatLocalDateTime(request.created_at)}
                     </p>
                 </div>
 
-                <Badge variant="secondary" className="gap-1">
-                    <Clock size={13} />
-                    {txt('pending')}
-                </Badge>
+                <div className="flex flex-wrap gap-3 items-center" >
+                    <Badge variant="secondary" className="gap-1">
+                        <Clock size={13} />
+                        {txt('pending')}
+                    </Badge>
 
-                <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={handleCancel}
-                    disabled={cancelRequest.isPending}
-                >
-                    <X size={15} />
-                    {txt('cancel')}
-                </Button>
+                    <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={handleCancel}
+                        disabled={cancelRequest.isPending}
+                    >
+                        <X size={15} />
+                        {txt('cancel')}
+                    </Button>
+                </div>
             </div>
         </div>
     );

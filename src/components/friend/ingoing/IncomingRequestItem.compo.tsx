@@ -11,6 +11,7 @@ import {
     UpdateRequestFromReceiverEnum,
 } from '@/types/friend/friend.type';
 import type { IngoingFriendRequest } from '@/types/friend/friend.type';
+import {formatLocalDateTime} from "@/helper/timeFormat/timezone.helper";
 
 interface Props {
     request: IngoingFriendRequest;
@@ -38,15 +39,15 @@ export default function IncomingRequestItem({ request }: Props) {
     };
 
     return (
-        <div className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-4 sm:flex-row sm:items-center">
-            <div className="min-w-0 flex-1">
-                <UserInfo user={request.sender} disableClick />
+        <div className="flex flex-col flex-wrap  gap-4 rounded-2xl border border-border bg-card p-4 sm:flex-row">
+            <div className="min-w-0 flex-1 shrink-0 flex items-center">
+                <UserInfo user={request.sender}  />
             </div>
 
-            <div className="flex flex-col gap-3 sm:items-end">
+            <div className="flex flex-col gap-3 items-end">
                 <div className="text-xs text-muted-foreground sm:text-right">
                     <p className="mt-1">
-                        {txt('received_at')} {request.created_at}
+                        {txt('received_at')} {formatLocalDateTime(request.created_at)}
                     </p>
                 </div>
 

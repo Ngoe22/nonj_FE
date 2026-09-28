@@ -7,6 +7,7 @@ export interface BasicUser {
     user_name: string;
     nickname: string;
     avatar_url: string | null;
+    bio?: string | null;
 }
 
 export interface UserWithBio extends BasicUser {

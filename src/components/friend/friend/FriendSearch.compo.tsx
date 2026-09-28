@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import {MouseEventHandler, ReactEventHandler, useEffect, useState} from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Clock, Search, UserPlus, UserMinus } from 'lucide-react';
@@ -23,21 +23,34 @@ import {
     friendSearchDefaultValues,
     type FriendSearchFormValues,
 } from '@/schemas/friend/friend.schema';
-import { useUserModalStore } from '@/stores/user_info/user_modal.store';
+import UserDetailModal from "@/components/_share/user_info/UserDetailModal.compo";
+import {ActionButtons} from "@/components/friend/friend/ActionBtn.compo";
+
+
+
+
+
+
+
+
+
+
+
+
+//=============================================================
+
+
 
 export default function FriendSearch() {
+
     const txt = useTranslations('Friend');
 
-    // Keyword đã submit (dùng cho query) — input do react-hook-form giữ
+// Keyword đã submit (dùng cho query) — input do react-hook-form giữ
     const [submitted, setSubmitted] = useState('');
-
-    const openModal = useUserModalStore((s) => s.openModal);
-
     const { data: user, isLoading } = useSearchUser(submitted);
-    const addFriend = useAddFriend();
-    const unfriend = useUnfriend();
-    const cancelRequest = useCancelFriendRequest();
 
+
+// schema
     const {
         register,
         handleSubmit,
@@ -45,22 +58,19 @@ export default function FriendSearch() {
     } = useForm<FriendSearchFormValues>({
         resolver: zodResolver(friendSearchSchema),
         defaultValues: friendSearchDefaultValues,
-        mode: 'onSubmit', // không validate khi blur
+        mode: 'onSubmit',
     });
-
-    // ✅ Auto mở modal khi search ra user
-    useEffect(() => {
-        if (user) openModal(user);
-    }, [user, openModal]);
-
-    // Validate bằng schema rồi mới cho query chạy
     const submit = handleSubmit((values) => {
         setSubmitted(values.keyword.trim());
     });
 
-    const handleAdd = () => {
+// handle click
+    const addFriend = useAddFriend();
+    const unfriend = useUnfriend();
+
+    const handleAdd = async () => {
         if (!user) return;
-        addFriend.mutate({ receiver_id: user.id });
+        addFriend.mutate({receiver_id: user.id});
     };
 
     const handleUnfriend = () => {
@@ -69,9 +79,18 @@ export default function FriendSearch() {
     };
 
     const isPending =
-        addFriend.isPending || unfriend.isPending || cancelRequest.isPending;
+        addFriend.isPending || unfriend.isPending ;
 
     const showCard = !!submitted && (isLoading || !!user);
+
+    const btn = user ?
+    <ActionButtons
+        user={user}
+        isPending={isPending}
+        onAdd={handleAdd}
+        onUnfriend={handleUnfriend}
+    /> : null
+
 
     return (
         <div className="relative">
@@ -90,7 +109,6 @@ export default function FriendSearch() {
                             spellCheck={false}
                         />
 
-                        {/* ✅ Hiện lỗi dưới input */}
                         {errors.keyword && (
                             <div className={'absolute top-1/1 left-0'}>
                                 <InvalidInput msg={errors.keyword?.message} />
@@ -120,54 +138,12 @@ export default function FriendSearch() {
                             {txt('no_user_found')}
                         </p>
                     ) : (
-                        <div className="flex items-center gap-4">
-                            <div className="min-w-0 flex-1">
-                                <UserInfo
-                                    user={user}
-                                    onClick={() => openModal(user)}
-                                />
-                            </div>
-
-                            {user.permission.add_friend && (
-                                <Button
-                                    type="button"
-                                    size="sm"
-                                    onClick={handleAdd}
-                                    disabled={isPending}
-                                    className="shrink-0"
-                                >
-                                    <UserPlus size={16} />
-                                    {txt('add_friend')}
-                                </Button>
-                            )}
-
-                            {user.permission.cancel_request_friend && (
-                                <Button
-                                    type="button"
-                                    size="sm"
-                                    variant="secondary"
-                                    disabled
-                                    className="shrink-0"
-                                >
-                                    <Clock size={16} />
-                                    {txt('pending')}
-                                </Button>
-                            )}
-
-                            {user.permission.unfriend && (
-                                <Button
-                                    type="button"
-                                    size="sm"
-                                    variant="outline"
-                                    onClick={handleUnfriend}
-                                    disabled={isPending}
-                                    className="shrink-0 text-red-600 hover:bg-red-50"
-                                >
-                                    <UserMinus size={16} />
-                                    {txt('unfriend')}
-                                </Button>
-                            )}
-                        </div>
+                        <UserDetailModal
+                            user={user}
+                            onClose={ () => setSubmitted('') }
+                        >
+                            {btn}
+                        </UserDetailModal>
                     )}
                 </Card>
             )}

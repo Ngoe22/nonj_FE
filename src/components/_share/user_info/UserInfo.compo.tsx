@@ -6,20 +6,15 @@ import {
     AvatarImage,
 } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
-import { useUserModalStore } from '@/stores/user_info/user_modal.store';
 import type { BasicUser } from '@/types/user_info/user_info.type';
 
 type Size = 'sm' | 'md' | 'lg';
-type Layout = 'row' | 'col';
 
-interface Props {
-    user: BasicUser;
+interface Props <T extends BasicUser = BasicUser> {
+    user: T;
     size?: Size;
-    layout?: Layout;
-    onClick?: () => void;
-    disableClick?: boolean;
-    subtitle?: string | null;
     className?: string;
+    children?: React.ReactNode;
 }
 
 const SIZE_CONFIG: Record<
@@ -34,24 +29,15 @@ const SIZE_CONFIG: Record<
 export default function UserInfo({
                                      user,
                                      size = 'md',
-                                     layout = 'row',
-                                     onClick,
-                                     disableClick = false,
-                                     subtitle,
                                      className,
+                                     children
                                  }: Props) {
-    const openModal = useUserModalStore((s) => s.openModal);
+
     const cfg = SIZE_CONFIG[size];
 
-    const content = (
+    return (
         <div
-            className={cn(
-                'flex min-w-0 gap-3',
-                layout === 'row'
-                    ? 'items-center'
-                    : 'flex-col items-center text-center',
-                className,
-            )}
+            className={  className ? className : `flex gap-3 items-center`}
         >
             <Avatar className={cn('shrink-0', cfg.avatar)}>
                 <AvatarImage src={user.avatar_url ?? undefined} alt={user.user_name} />
@@ -60,39 +46,18 @@ export default function UserInfo({
                 </AvatarFallback>
             </Avatar>
 
-            <div className="min-w-0">
+            <div className="min-w-0 w-full">
                 <p className={cn('truncate font-medium text-foreground', cfg.name)}>
-                    @{user.user_name}
-                </p>
-                <p className={cn('truncate text-muted-foreground', cfg.sub)}>
                     {user.nickname}
                 </p>
-
-                {subtitle && (
-                    <p
-                        className={cn(
-                            'mt-1 line-clamp-1 text-muted-foreground',
-                            cfg.sub,
-                        )}
-                    >
-                        {subtitle}
-                    </p>
-                )}
+                <p className={cn('truncate text-muted-foreground', cfg.sub)}>
+                    @{user.user_name}
+                </p>
             </div>
+
+            {children}
         </div>
     );
 
-    if (disableClick) return content;
 
-    const handleClick = onClick ?? (() => openModal(user));
-
-    return (
-        <button
-            type="button"
-            onClick={handleClick}
-            className="w-full rounded-lg text-left transition hover:opacity-80"
-        >
-            {content}
-        </button>
-    );
 }
