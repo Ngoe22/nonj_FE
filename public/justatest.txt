@@ -337,3 +337,72 @@ ingoing
     },
 
 
+
+
+
+
+question {
+
+    time_limit : number
+    type : chose correct ..
+    QA : [
+        {
+            point : number
+            question : string // text edit able
+            correct_answer : [ string , string ]
+            option : [ string , string , ... ]
+        }
+    ]
+}
+
+answer {
+    total_point : ....
+    list : {
+        point :
+        answer : [ string ,  string , ... ]
+    }
+}
+
+check way
+
+#chose correct:
+QA.loop {
+    const x = index
+
+     const answer = answer.list[x]. become map
+     QA[x].correct_answer.loop {
+        if answer.has ( correct_answer ) != true
+        return 0
+     }
+     return QA[x].point
+}
+
+
+#trong sap xep
+   correct answer.join == user_answer.join  return point
+
+
+
+# trong noi cap
+
+    correct_answer : {
+        key : string
+    }
+
+    user_answer : {
+        key : string
+    }
+
+get list key of correct answer
+    if correct_answer[key]  !==  user_answer[key] return 0
+
+
+
+
+# trong noi cap
+
+    viet
+    correct answer  : string
+    user_answer : string
+
+    check  ===
