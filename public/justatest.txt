@@ -340,6 +340,80 @@ ingoing
 
 
 
+exercise_content [
+    {
+        time_limit : number | null // for taking exam when time up jump to the next question , if null next by manual
+        title : string
+        type : chose_correct ..
+        QA : [
+            {
+                point : 2 : number
+                question : "con gi biet bay" // text edit able
+                correct_answer : [ dai bang , chim se ] : string[]
+                option : [ cho , chim se , dai bang , bo tot ... ]  :string[]
+            }
+            {
+                point : number
+                question : string // text edit able
+                correct_answer : [ string , string ]
+                option : [ string , string , ... ]
+            }
+        ]
+    } ,
+
+    {
+        time_limit : number
+        title : string
+        type : arrange
+        QA : [
+            {
+                point : 5 : number
+                correct_answer : [ toi , la , fan , MU ] : string[]
+                option : [ fan , toi , MU , la ]  :string[]
+            }
+            {
+                point : number
+                correct_answer : [ string , string ]
+                option : [ string , string , ... ]
+            }
+        ]
+    } ,
+
+    {
+        time_limit : number
+        title : string
+        type : pairing
+        QA : [
+            {
+                point : 5 : number
+                correct_answer : [
+                   [ 'thang tu' , 'la loi noi doi cua em' ] : string[]
+                   [ 'tien quan' , 'ca' ] : string[]
+                   [ 'nhu chua tung' , 'co cuoc chia ly' ] : string[]
+                ]
+
+                option : [
+                    [ 'thang tu' , 'tien quan' , 'nhu chua tung' ] : string[]
+                    [ 'ca' , 'la loi noi doi cua em' , 'co cuoc chia ly' ] : string[]
+                ]
+            }
+        ]
+    } ,
+
+    {
+        time_limit : number
+        title : string
+        type : input
+        QA : [
+            {
+                point : 5 : number
+                question : ai la nguoi dau tien dat chan le mat trang ? :string
+                correct_answer : chu cuoi : string
+                // tra loi va the text
+            }
+        ]
+    } ,
+]
 
 question {
 
@@ -402,7 +476,7 @@ get list key of correct answer
 # trong noi cap
 
     viet
-    correct answer  : string
+    correct_answer  : string
     user_answer : string
 
     check  ===
