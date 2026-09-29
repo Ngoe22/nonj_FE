@@ -10,25 +10,14 @@ import { formatDate } from '@/lib/format/date';
 import { api } from '@/lib/axios/axios';
 import type { ExamTemplate } from '@/types/exam_preparation/exam_preparation.type';
 import {useExamParams} from "@/hooks/exam_preparation/use_exam_params.hook";
+import {useGetMyTemplate} from "@/hooks/exam_preparation/exam_preparation.hook";
 
 export default function ExamPreparationDetail() {
+
     const txt = useTranslations('Exam_preparation');
     const { collectionId, examId } = useExamParams();
 
-    // ⚠️ BE chưa có endpoint GET 1 template — cần bổ sung
-    // Tạm dùng list để tìm, hoặc BE thêm endpoint `GET /user_exercise_template/me/:collection/:id`
-    const { data: template, isLoading } = useQuery<ExamTemplate | null>({
-        queryKey: ['exam_template', collectionId, examId],
-        queryFn: async () => {
-            // ⚠️ Tạm gọi list rồi filter — sửa khi BE có endpoint riêng
-            const res = await api.get(
-                `user_exercise_template/me/${collectionId}?page=1&limit=100`,
-            );
-            const list = res.data.data as ExamTemplate[];
-            return list.find((t) => t.id === examId) ?? null;
-        },
-        enabled: !!collectionId && !!examId,
-    });
+    const { data: template, isLoading } = useGetMyTemplate( { collectionId ,preparationId : examId } )
 
     if (isLoading) {
         return (

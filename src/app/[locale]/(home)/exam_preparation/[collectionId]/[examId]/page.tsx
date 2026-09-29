@@ -1,4 +1,4 @@
-import ExamPreparationDetail from "@/components/exam_preparation/ExamPreparationDetail.compo";
+import ExamPreparationDetail from "@/components/exam_preparation/exam/page/ExamPreparationDetail.compo";
 
 interface PageProps {
     params: Promise<{

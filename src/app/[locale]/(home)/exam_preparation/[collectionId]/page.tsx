@@ -1,5 +1,5 @@
-import ExamCollectionDetail from "@/components/exam_preparation/ExamCollectionDetail.compo";
+import ExamPreparationList from "@/components/exam_preparation/exam/list/ExamPreparationList.compo";
 
 export default function Page() {
-    return <ExamCollectionDetail />;
+    return <ExamPreparationList />;
 }

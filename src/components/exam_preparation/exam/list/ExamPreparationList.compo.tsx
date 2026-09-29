@@ -5,8 +5,8 @@ import {Link} from '@/i18n/navigation';
 import { ArrowLeft, Plus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-import ExamTemplateCard from '@/components/exam_preparation/ExamTemplateCard.compo';
-import ExamTemplateModal from '@/components/exam_preparation/ExamTemplateModal.compo';
+import ExamTemplateCard from '@/components/exam_preparation/exam/item/ExamTemplateCard.compo';
+import ExamTemplateModal from '@/components/exam_preparation/exam/modal/ExamTemplateModal.compo';
 import { InfiniteScrollList } from '@/components/_share/infinity_scroll/InfiniteScrollList.compo';
 
 import {
@@ -16,25 +16,15 @@ import {
     useDeleteTemplate,
 } from '@/hooks/exam_preparation/exam_preparation.hook';
 
-import type { ExamTemplate } from '@/types/exam_preparation/exam_preparation.type';
+import type {AnswerSection, ExamTemplate} from '@/types/exam_preparation/exam_preparation.type';
 import type { TemplateFormValues } from '@/schemas/exam_preparation/exam_preparation.schema';
 import ConfirmModal from "@/components/group/_share/ConfirmModal.compo";
 import {useExamParams} from "@/hooks/exam_preparation/use_exam_params.hook";
 
 
-
-
-
-
 // ===============================
 
-
-
-
-
-
-
-export default function ExamCollectionDetail() {
+export default function ExamPreparationList() {
     const txt = useTranslations('Exam_preparation');
     const { collectionId } = useExamParams();
 
@@ -56,12 +46,16 @@ export default function ExamCollectionDetail() {
     const [deleteOpen, setDeleteOpen] = useState(false);
     const [selected, setSelected] = useState<ExamTemplate | null>(null);
 
+
+    //
+
     const templates = data?.pages.flatMap((p) => p) ?? [];
 
     const handleCreate = async (values: TemplateFormValues) => {
         await createMutation.mutateAsync({
             title: values.title,
-            exercise_content: {},
+            exercise_content: [],
+            correct_answer : []
         });
         setCreateOpen(false);
     };
@@ -71,7 +65,11 @@ export default function ExamCollectionDetail() {
         await updateMutation.mutateAsync({
             collection_id: collectionId,
             template_id: selected.id,
-            body: { title: values.title },
+            body: {
+                title: values.title ,
+                exercise_content : [] ,
+                correct_answer : []
+            },
         });
         setEditOpen(false);
         setSelected(null);

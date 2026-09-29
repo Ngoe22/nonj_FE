@@ -4,8 +4,8 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Plus } from 'lucide-react';
 
-import ExamCollectionCard from '@/components/exam_preparation/ExamCollectionCard.compo';
-import ExamCollectionModal from '@/components/exam_preparation/ExamCollectionModal.compo';
+import ExamCollectionCard from '@/components/exam_preparation/collection/list/ExamPreparationCollectionCard.compo';
+import ExamCollectionModal from '@/components/exam_preparation/collection/modal/ExamCollectionModal.compo';
 import { InfiniteScrollList } from '@/components/_share/infinity_scroll/InfiniteScrollList.compo';
 
 import {
@@ -13,12 +13,12 @@ import {
     useCreateCollection,
     useUpdateCollection,
     useDeleteCollection,
-} from '@/hooks/exam_preparation/exam_preparation.hook';
+} from '@/hooks/exam_preparation/exam_preparation_collection.hook';
 import type { ExamCollection } from '@/types/exam_preparation/exam_preparation.type';
 import type { CollectionFormValues } from '@/schemas/exam_preparation/exam_preparation.schema';
 import ConfirmModal from "@/components/group/_share/ConfirmModal.compo";
 
-export default function ExamPreparationPage() {
+export default function ExamPreparationCollectionList() {
     const txt = useTranslations('Exam_preparation');
 
     const {
