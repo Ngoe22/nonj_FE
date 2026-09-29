@@ -20,6 +20,7 @@ import type {AnswerSection, ExamTemplate} from '@/types/exam_preparation/exam_pr
 import type { TemplateFormValues } from '@/schemas/exam_preparation/exam_preparation.schema';
 import ConfirmModal from "@/components/group/_share/ConfirmModal.compo";
 import {useExamParams} from "@/hooks/exam_preparation/use_exam_params.hook";
+import ExamPreparationCreateModal from "@/components/exam_preparation/exam/modal/ExamPreparationCreatModal.compo";
 
 
 // ===============================
@@ -38,11 +39,10 @@ export default function ExamPreparationList() {
     } = useGetMyTemplates(collectionId);
 
     const createMutation = useCreateTemplate(collectionId);
-    const updateMutation = useUpdateTemplate();
+    // const updateMutation = useUpdateTemplate();
     const deleteMutation = useDeleteTemplate();
 
     const [createOpen, setCreateOpen] = useState(false);
-    const [editOpen, setEditOpen] = useState(false);
     const [deleteOpen, setDeleteOpen] = useState(false);
     const [selected, setSelected] = useState<ExamTemplate | null>(null);
 
@@ -58,21 +58,6 @@ export default function ExamPreparationList() {
             correct_answer : []
         });
         setCreateOpen(false);
-    };
-
-    const handleEdit = async (values: TemplateFormValues) => {
-        if (!selected) return;
-        await updateMutation.mutateAsync({
-            collection_id: collectionId,
-            template_id: selected.id,
-            body: {
-                title: values.title ,
-                exercise_content : [] ,
-                correct_answer : []
-            },
-        });
-        setEditOpen(false);
-        setSelected(null);
     };
 
     const handleDelete = async () => {
@@ -117,10 +102,6 @@ export default function ExamPreparationList() {
                         <ExamTemplateCard
                             collectionId={collectionId}
                             template={template}
-                            onEdit={() => {
-                                setSelected(template);
-                                setEditOpen(true);
-                            }}
                             onDelete={() => {
                                 setSelected(template);
                                 setDeleteOpen(true);
@@ -144,24 +125,30 @@ export default function ExamPreparationList() {
             </section>
 
             {/* Modals */}
-            <ExamTemplateModal
+            {/*<ExamTemplateModal*/}
+            {/*    open={createOpen}*/}
+            {/*    mode="create"*/}
+            {/*    onClose={() => setCreateOpen(false)}*/}
+            {/*    onSubmit={handleCreate}*/}
+            {/*    isSubmitting={createMutation.isPending}*/}
+            {/*/>*/}
+
+            {/*<ExamTemplateModal*/}
+            {/*    open={editOpen}*/}
+            {/*    mode="edit"*/}
+            {/*    initialTitle={selected?.title ?? ''}*/}
+            {/*    onClose={() => {*/}
+            {/*        setEditOpen(false);*/}
+            {/*        setSelected(null);*/}
+            {/*    }}*/}
+            {/*    onSubmit={handleEdit}*/}
+            {/*    isSubmitting={updateMutation.isPending}*/}
+            {/*/>*/}
+
+            <ExamPreparationCreateModal
                 open={createOpen}
-                mode="create"
                 onClose={() => setCreateOpen(false)}
                 onSubmit={handleCreate}
-                isSubmitting={createMutation.isPending}
-            />
-
-            <ExamTemplateModal
-                open={editOpen}
-                mode="edit"
-                initialTitle={selected?.title ?? ''}
-                onClose={() => {
-                    setEditOpen(false);
-                    setSelected(null);
-                }}
-                onSubmit={handleEdit}
-                isSubmitting={updateMutation.isPending}
             />
 
             <ConfirmModal

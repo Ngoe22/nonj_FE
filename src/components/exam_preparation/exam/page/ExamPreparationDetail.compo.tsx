@@ -10,14 +10,19 @@ import { formatDate } from '@/lib/format/date';
 import { api } from '@/lib/axios/axios';
 import type { ExamTemplate } from '@/types/exam_preparation/exam_preparation.type';
 import {useExamParams} from "@/hooks/exam_preparation/use_exam_params.hook";
-import {useGetMyTemplate} from "@/hooks/exam_preparation/exam_preparation.hook";
+import {useGetMyTemplate, useUpdateTemplate} from "@/hooks/exam_preparation/exam_preparation.hook";
+import {useState} from "react";
 
 export default function ExamPreparationDetail() {
 
     const txt = useTranslations('Exam_preparation');
     const { collectionId, examId } = useExamParams();
 
-    const { data: template, isLoading } = useGetMyTemplate( { collectionId ,preparationId : examId } )
+    const { data: preparation, isLoading } = useGetMyTemplate( { collectionId ,preparationId : examId } )
+    const updateMutation = useUpdateTemplate();
+
+    const currentTemplate =  useState(preparation);
+
 
     if (isLoading) {
         return (
@@ -26,8 +31,7 @@ export default function ExamPreparationDetail() {
             </div>
         );
     }
-
-    if (!template) {
+    if (!preparation) {
         return (
             <div className="mx-auto w-full max-w-4xl px-4 py-6 sm:px-6">
                 <p className="text-sm text-muted-foreground">
@@ -49,13 +53,21 @@ export default function ExamPreparationDetail() {
                     {txt('back')}
                 </Link>
 
-                <h1 className="mt-5 text-2xl font-bold">{template.title}</h1>
+                <h1 className="mt-5 text-2xl font-bold">{preparation.title}</h1>
 
                 <div className="mt-3 flex items-center gap-3">
                     <Badge variant="secondary">
-                        {formatDate(template.created_at)}
+                        {formatDate(preparation.created_at)}
                     </Badge>
                 </div>
+
+                <div className="mt-3 flex items-center gap-3">
+                    <Badge variant="secondary">
+                        {preparation.question_type}
+                    </Badge>
+                </div>
+
+
             </div>
 
             {/* Exercise content */}
@@ -64,9 +76,17 @@ export default function ExamPreparationDetail() {
 
                 <div className="mt-4 flex min-h-64 items-center justify-center rounded-2xl border border-dashed border-border">
                     <div className="text-center">
-                        <p className="text-sm font-medium">Exercise content</p>
                         <p className="mt-1 text-sm text-muted-foreground">
-                            This section will be implemented later.
+                            // preparation.preparation_content
+
+                            if type = mul
+
+                            /Render A
+                                content
+                                answer
+
+                            Render B
+
                         </p>
                     </div>
                 </div>

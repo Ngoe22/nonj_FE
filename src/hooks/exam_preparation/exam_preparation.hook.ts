@@ -60,13 +60,13 @@ export function useGetMyTemplates(collectionId: string) {
 
 export function useCreateTemplate(collectionId: string) {
     return useTanCreate<ExamTemplate, CreateTemplateVars>({
-        mutationFn: async ({ title, exercise_content  , correct_answer}) => {
+        mutationFn: async ({ title, preparation_content  , correct_answer}) => {
             const res = await api.post<{ data: ExamTemplate }>(
                 `user_exercise_template`,
                 {
                     title,
                     collection: collectionId,
-                    exercise_content,
+                    preparation_content,
                     correct_answer
                 },
             );

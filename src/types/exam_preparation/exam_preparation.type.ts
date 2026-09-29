@@ -16,6 +16,11 @@ export interface ExamCollection {
 interface BaseSection {
     time_limit: number | null;   // null = không giới hạn
     title: string;
+    main_question: {
+        text ?: string
+        img_url ?: string
+        mp3_url ?: string
+    };
 }
 
 interface BaseQA {
@@ -99,7 +104,7 @@ export interface InputQA extends BaseQA {
 }
 
 export interface  InputAnswer {
-    correct_answer: string;   // text user nhập
+    correct_answer: string;
 }
 
 // ============================================================
@@ -125,7 +130,7 @@ export type ExamQA =
     | PairingQA
     | InputQA;
 
-/** Mảng section — đây chính là `exercise_content` */
+/** Mảng section — đây chính là `preparation_content` */
 export type ExerciseContent = ExamSection[];
 export type AnswerContent = AnswerSection[];
 
@@ -138,13 +143,13 @@ export interface ExamTemplate {
     id: string;
     title: string;
     question_type : Question_Type
-    exercise_content: ExerciseContent;
+    preparation_content: ExerciseContent;
     correct_answer ?: AnswerContent ;
     created_at: string;
 }
 
 /**
- *  if type Essay just send exercise_content only ,  render textEditable for user
+ *  if type Essay just send preparation_content only ,  render textEditable for user
  * */
 
 //======================================================================================================
@@ -157,7 +162,7 @@ export interface ExamTemplate {
 
 export interface CreateTemplateVars {
     title: string;
-    exercise_content: ExerciseContent;
+    preparation_content: ExerciseContent;
     correct_answer ?: AnswerContent ;
 }
 
@@ -166,7 +171,7 @@ export interface UpdateTemplateVars {
     template_id: string;
     body?: {
         title?: string;
-        exercise_content?: ExerciseContent;
+        preparation_content?: ExerciseContent;
         correct_answer ?: AnswerContent ;
     };
 }

@@ -11,14 +11,12 @@ import type { ExamTemplate } from '@/types/exam_preparation/exam_preparation.typ
 interface Props {
     collectionId: string;
     template: ExamTemplate;
-    onEdit: () => void;
     onDelete: () => void;
 }
 
 export default function ExamTemplateCard({
                                              collectionId,
                                              template,
-                                             onEdit,
                                              onDelete,
                                          }: Props) {
     return (
@@ -41,19 +39,7 @@ export default function ExamTemplateCard({
             </Link>
 
             <div className="absolute right-3 top-3 flex gap-1">
-                <Button
-                    type="button"
-                    size="icon"
-                    variant="ghost"
-                    className="h-8 w-8"
-                    onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        onEdit();
-                    }}
-                >
-                    <Pencil size={15} />
-                </Button>
+
                 <Button
                     type="button"
                     size="icon"
