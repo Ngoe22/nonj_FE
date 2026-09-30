@@ -1,8 +1,3 @@
-export enum Question_Type {
-    MULTIPLE_CHOICE = 'MULTIPLE_CHOICE',
-    ESSAY = 'ESSAY',
-}
-
 export enum View_Each_Other_Answer {
     AFTER_ANSWER = 'AFTER_ANSWER',
     AFTER_DEADLINE = 'AFTER_DEADLINE',
@@ -10,16 +5,11 @@ export enum View_Each_Other_Answer {
 }
 
 export enum Retake {
-    BEFORE_DATELINE = 'BEFORE', // if no date like retake unlimited
+    /** 'BEFORE' = được làm lại trước deadline; không deadline thì vô hạn */
+    BEFORE_DATELINE = 'BEFORE',
     NEVER = 'NEVER',
 }
 
-//preparation
-
-export enum Exam_Question_Type {
-    CHOSE_CORRECT = 'chose_correct',
-    ARRANGE = 'arrange',
-    PAIRING = 'pairing',
-    INPUT = 'input',
-}
-
+// Question_Type / Exam_Question_Type đã bỏ:
+// loại câu hỏi giờ do TỪNG SECTION mang — xem
+// enum/question_preparation/question_preparation.enum.ts

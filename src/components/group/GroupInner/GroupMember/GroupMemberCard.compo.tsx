@@ -27,7 +27,7 @@ export function GroupMemberCard({
     const txt = useTranslations('Group');
     const timeAgo = useRelativeTime();
 
-    const { _permission, role } = member;
+    const { permission, role } = member;
 
     const isAdmin = role === Group_Member_Role.ADMIN;
     const isMember = role === Group_Member_Role.MEMBER;
@@ -43,13 +43,13 @@ export function GroupMemberCard({
 
 
     const showKick = isAdmin
-        ? (_permission?.kick_admin ?? false)
+        ? (permission?.kick_admin ?? false)
         : isMember
-            ? (_permission?.kick_mem ?? false)
+            ? (permission?.kick_mem ?? false)
             : false;
 
-    const showPromote = isMember ? (_permission?.promote_mem ?? false) : false;
-    const showDemote = isAdmin ? (_permission?.demote_admin ?? false) : false;
+    const showPromote = isMember ? (permission?.promote_mem ?? false) : false;
+    const showDemote = isAdmin ? (permission?.demote_admin ?? false) : false;
 
     const hasAnyAction = showKick || showPromote || showDemote;
 

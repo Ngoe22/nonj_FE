@@ -13,6 +13,7 @@ import {
     Sun,
     Telescope,
     UserGroup,
+    ShieldCheck,
 } from "lucide-react";
 
 import { useOpenLanguageSelector } from "@/components/_share/language_model/LanguageSelectorBtn.compo";
@@ -20,6 +21,7 @@ import LanguageSelector from "@/components/_share/language_model/LanguageSelecto
 import { useTranslations } from "next-intl";
 import { useRouter, usePathname } from "@/i18n/navigation";
 import { useLogout } from "@/hooks/auth/useLogout.hook";
+import { useGetMyProfile } from "@/hooks/profile/useGetMyProfile.hook";
 
 export default function Sidebar() {
     const { isOpen, toggleSidebar } = useSidebarStore();
@@ -28,6 +30,8 @@ export default function Sidebar() {
     const router = useRouter();
     const pathname = usePathname();  // ✅ để track active
     const logout = useLogout();
+    const { data: me } = useGetMyProfile();
+    const isSystemAdmin = me?.role === 'SYSTEM_ADMIN';
 
     const txt = useTranslations('Sidebar');
 
@@ -89,11 +93,21 @@ export default function Sidebar() {
                 />
                 <SidebarButton
                     icon={<FileText size={19} />}
-                    label={txt('exam_preparation')}
+                    label={txt('question_preparation')}
                     isOpen={isOpen}
-                    isActive={pathname === '/exam_preparation'}
-                    onClick={() => router.push('/exam_preparation')}
+                    isActive={pathname === '/question_preparation'}
+                    onClick={() => router.push('/question_preparation')}
                 />
+                {/* Chỉ SYSTEM_ADMIN thấy mục quản trị */}
+                {isSystemAdmin && (
+                    <SidebarButton
+                        icon={<ShieldCheck size={19} />}
+                        label={txt('admin')}
+                        isOpen={isOpen}
+                        isActive={pathname === '/admin'}
+                        onClick={() => router.push('/admin')}
+                    />
+                )}
             </nav>
 
             {/* Bottom actions */}
@@ -274,9 +288,9 @@ function SidebarButton({
 //                 />
 //                 <SidebarButton
 //                     icon={< Form size={19} />}
-//                     label={txt('exam_preparation')}
+//                     label={txt('question_preparation')}
 //                     isOpen={isOpen}
-//                     onClick={()=>router.push('/exam_preparation')}
+//                     onClick={()=>router.push('/question_preparation')}
 //
 //                 />
 //             </nav>

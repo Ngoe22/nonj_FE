@@ -19,6 +19,8 @@ export type Group = {
         able_to_leave : boolean ,
         able_to_delete :boolean ,
         create_collection : boolean ,
+        /** giao bài trong nhóm — BE thêm key này cho founder + admin */
+        create_post : boolean ,
     }
 }
 

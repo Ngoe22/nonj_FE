@@ -35,7 +35,7 @@ const testGroupCollectionData  = {
   desc :  'blabla ',
   group: { id: 'eqwe1231q12312asdl' }, // khong can hien thi vi group co roi
 
-  _permission : { // de lam nut action
+  permission : { // de lam nut action
     delete : true ,
     add : true ,
     edit : true ,
@@ -54,7 +54,7 @@ const joinrequestTest = {
   status: 'pending',
   created_time : '2026-7-9' ,
 
-  _permission : { // de lam nut action
+  permission : { // de lam nut action
     approve : true ,
     reject : true ,
   }
@@ -73,7 +73,7 @@ const member = {
   role: 'admin | user',
   updated_at : "joined time linke 2026-7-9" ,
 
-  _permission : { // de lam nut action
+  permission : { // de lam nut action
     kick_mem : true ,
     promote_mem : true ,
     demote_mem : true ,

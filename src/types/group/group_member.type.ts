@@ -23,7 +23,7 @@ export interface GroupMember {
     group: { id: string };
     role: Group_Member_Role;
     updated_at: string;
-    _permission: {
+    permission: {
         kick_admin: boolean;
         kick_mem: boolean;
         promote_mem: boolean;

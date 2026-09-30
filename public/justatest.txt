@@ -440,20 +440,11 @@ answer {
 check way
 
 #chose correct:
-QA.loop {
-    const x = index
 
-     const answer = answer.list[x]. become map
-     QA[x].correct_answer.loop {
-        if answer.has ( correct_answer ) != true
-        return 0
-     }
-     return QA[x].point
-}
-
+loop qua item of answer , kiem tra user_answer include correct answer
 
 #trong sap xep
-   correct answer.join == user_answer.join  return point
+   correct answer.item == user_answer.join  return point
 
 
 
@@ -473,9 +464,7 @@ get list key of correct answer
 
 
 
-# trong noi cap
-
-    viet
+# trong input
     correct_answer  : string
     user_answer : string
 

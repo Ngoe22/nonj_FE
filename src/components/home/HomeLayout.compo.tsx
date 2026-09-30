@@ -8,6 +8,8 @@ import {useThemeStore} from "@/stores/theme/theme.store";
 import {useGetMyProfile} from "@/hooks/profile/useGetMyProfile.hook";
 import {Link} from "@/i18n/navigation";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
+import NotificationBell from "@/components/notification/NotificationBell.compo";
+import NotificationSocketProvider from "@/components/notification/NotificationSocketProvider.compo";
 
 interface HomeLayoutProps {
     children: ReactNode;
@@ -26,6 +28,9 @@ export default function HomeLayout({ children }: HomeLayoutProps) {
 
     return (
         <div className="min-h-screen  p-2  sm:p-4 md:p-5 bg-background ">
+            {/* Mở WebSocket 1 lần cho cả app */}
+            <NotificationSocketProvider />
+
             <div
                 className="relative flex gap-4 h-[calc(100vh-1.5rem)] overflow-hidden sm:h-[calc(100vh-2rem)] md:h-[calc(100vh-3rem)]"
             >
@@ -60,6 +65,9 @@ export default function HomeLayout({ children }: HomeLayoutProps) {
                         </button>
 
                         <div className={`flex items-center gap-4`} >
+                            {/* Chuông thông báo + dropdown */}
+                            <NotificationBell />
+
                             <p
                                 className={'text-muted-foreground'}
                             >@{user?.user_name}</p>
