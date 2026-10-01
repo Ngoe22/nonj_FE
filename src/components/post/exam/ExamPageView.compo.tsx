@@ -49,7 +49,10 @@ export function ExamPageView({
             : undefined;
 
     return (
-        <div className="space-y-4">
+        // `break-words` ở container: `overflow-wrap` KẾ THỪA, nên một chỗ này là
+        // đủ cho cả câu hỏi, đáp án và nội dung đề — chuỗi dài không ngắt được
+        // (ví dụ "qqqqqq…") sẽ xuống dòng thay vì tràn ngang.
+        <div className="space-y-4 break-words">
             {/* Đề bài chung của section — hiện lại trên MỌI trang của section đó */}
             <div className="rounded-2xl border border-border bg-surface p-3">
                 <div className="mb-2 flex flex-wrap items-center gap-2">

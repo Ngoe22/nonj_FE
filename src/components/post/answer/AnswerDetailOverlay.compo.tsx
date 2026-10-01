@@ -131,7 +131,7 @@ export function AnswerDetailOverlay({ open, post, answer, onClose }: Props) {
                 </div>
             </header>
 
-            <div className="mx-auto w-full max-w-3xl space-y-5 px-4 py-5">
+            <div className="mx-auto w-full max-w-3xl space-y-5 break-words px-4 py-5">
                 {!grade && (
                     <p className="rounded-2xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
                         {txt('no_grade_detail')}

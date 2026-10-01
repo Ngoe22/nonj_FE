@@ -35,7 +35,7 @@ export function QuestionContentView({ content }: { content: QuestionContent }) {
     return (
         <div className="space-y-2">
             {content.text && (
-                <p className="whitespace-pre-wrap text-sm text-foreground">
+                <p className="whitespace-pre-wrap break-words text-sm text-foreground">
                     {content.text}
                 </p>
             )}
@@ -67,10 +67,10 @@ export function SectionView({
     const Icon = isMultipleChoice ? ListChecks : FileText;
 
     return (
-        <section className="rounded-2xl border-2 border-border bg-background p-4">
+        <section className="rounded-2xl border border-border bg-background p-3 sm:border-2 sm:p-4">
             {/* Đầu mục phần */}
             <div className="flex flex-wrap items-center justify-between gap-2">
-                <div className="flex min-w-0 items-center gap-2">
+                <div className="flex min-w-0 flex-wrap items-center gap-2">
                     <Icon size={16} className="shrink-0 text-muted-foreground" />
                     <span className="rounded-full bg-surface-hover px-3 py-1 text-xs font-medium">
                         {isMultipleChoice ? txt('multiple_choice') : txt('essay')}
@@ -79,7 +79,7 @@ export function SectionView({
                         #{index + 1}
                     </span>
                     {section.title && (
-                        <h3 className="truncate text-sm font-semibold text-foreground">
+                        <h3 className="min-w-0 break-words text-sm font-semibold text-foreground">
                             {section.title}
                         </h3>
                     )}
@@ -99,7 +99,7 @@ export function SectionView({
             {(section.content?.text ||
                 section.content?.img_url ||
                 section.content?.mp3_url) && (
-                <div className="mt-3 rounded-xl border border-border bg-surface p-3">
+                <div className="mt-3 rounded-xl border border-border bg-surface p-2.5 sm:p-3">
                     <QuestionContentView content={section.content} />
                 </div>
             )}
@@ -143,7 +143,7 @@ export function SectionView({
                             </p>
                             {answer?.type === Question_Section_Type.ESSAY &&
                             answer.sample_answer ? (
-                                <p className="whitespace-pre-wrap text-sm text-foreground">
+                                <p className="whitespace-pre-wrap break-words text-sm text-foreground">
                                     {answer.sample_answer}
                                 </p>
                             ) : (

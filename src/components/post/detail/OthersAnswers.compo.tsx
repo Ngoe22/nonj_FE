@@ -68,7 +68,7 @@ export function OthersAnswers({
     };
 
     return (
-        <section className={hideHeading ? '' : 'mt-8'}>
+        <section className={`break-words ${hideHeading ? '' : 'mt-8'}`}>
             {!hideHeading && (
                 <h2 className="text-lg font-semibold">
                     {txt('others_answers')}
