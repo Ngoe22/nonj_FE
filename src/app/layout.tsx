@@ -1,9 +1,18 @@
 import "./globals.css";
 import TanStackQueryProvider from "@/components/root/layout_root/TanstackQueryProvider.compo";
-import { Figtree } from "next/font/google";
+import { JetBrains_Mono } from "next/font/google";
 import { cn } from "@/lib/utils";
 
-const figtree = Figtree({subsets:['latin'],variable:'--font-sans'});
+/**
+ * JetBrains Mono cho TOÀN dự án (đã chốt).
+ *
+ * Vẫn gán vào biến `--font-sans` để mọi chỗ đang dùng `font-sans` tự động đổi
+ * theo, không phải sửa từng component.
+ */
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin', 'vietnamese'],
+  variable: '--font-sans',
+});
 
 
 export default function RootLayout({
@@ -12,7 +21,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="vi" className={cn("font-sans", figtree.variable)} suppressHydrationWarning>
+    <html lang="vi" className={cn("font-sans", jetbrainsMono.variable)} suppressHydrationWarning>
 
     <head>
         <script

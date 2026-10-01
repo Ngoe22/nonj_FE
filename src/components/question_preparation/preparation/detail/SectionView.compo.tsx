@@ -35,7 +35,7 @@ export function QuestionContentView({ content }: { content: QuestionContent }) {
     return (
         <div className="space-y-2">
             {content.text && (
-                <p className="whitespace-pre-wrap break-words text-sm text-foreground">
+                <p className="whitespace-pre-wrap wrap-break-word text-sm text-foreground">
                     {content.text}
                 </p>
             )}
@@ -133,7 +133,7 @@ export function SectionView({
             {isEssaySection(section) && (
                 <div className="mt-3 space-y-2 rounded-xl border border-border bg-surface p-3">
                     <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
-                        {txt('point_label')}: {section.point}
+                        {txt('max_point_label')}: {section.point}
                     </p>
 
                     {showAnswers && (

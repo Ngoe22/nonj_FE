@@ -1,299 +1,307 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+import { io } from 'socket.io-client';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { api } from '@/lib/axios/axios';
-import type {
-    AdminCollection,
-    AdminGroup,
-    AdminPost,
-    AdminPreparationCollection,
-    AdminReport,
-    AdminUser,
+import {
+  ADMIN_ENDPOINT,
+  adminDeletePath,
+  adminRestorePath,
+  type AdminPage,
+  type AdminQuery,
+  type AdminResource,
 } from '@/types/admin/admin.type';
 
-const PAGE_SIZE = 20;
+export const ADMIN_PAGE_SIZE = 20;
 
-/** Lấy mảng thuần từ BE (TransformInterceptor bọc trong .data.data) */
-async function getList<T>(url: string): Promise<T[]> {
-    const res = await api.get<{ data: T[] }>(url);
-    return res.data.data;
-}
+/** Bỏ các tham số rỗng để URL gọn và cache key ổn định */
+export function buildAdminParams(query: Record<string, unknown>): string {
+  const params = new URLSearchParams();
 
-async function getOne<T>(url: string): Promise<T> {
-    const res = await api.get<{ data: T }>(url);
-    return res.data.data;
+  Object.entries(query).forEach(([key, value]) => {
+    if (value === undefined || value === null || value === '') return;
+    params.set(key, String(value));
+  });
+
+  return params.toString();
 }
 
 // ============================================================
-// USERS
+// DANH SÁCH + KHÔI PHỤC — dùng chung cho cả 6 mục
 // ============================================================
 
-export function useAdminUsers(page: number) {
-    return useQuery<AdminUser[]>({
-        queryKey: ['admin', 'users', page],
-        queryFn: () =>
-            getList<AdminUser>(
-                `admin/users?page=${page}&limit=${PAGE_SIZE}`,
-            ),
-    });
+/**
+ * Danh sách cho MỌI mục admin.
+ *
+ * BE trả `{ items, total, page, limit }` nên `total` có thật, phân trang đúng
+ * (trước đây BE trả mảng trần nên không biết tổng bao nhiêu bản ghi).
+ */
+export function useAdminList<T>(resource: AdminResource, query: AdminQuery) {
+  const qs = buildAdminParams(query as Record<string, unknown>);
+
+  return useQuery<AdminPage<T>>({
+    queryKey: ['admin', resource, qs],
+    queryFn: async () => {
+      const res = await api.get(`${ADMIN_ENDPOINT[resource]}?${qs}`);
+      return res.data.data;
+    },
+    placeholderData: (previous) => previous,
+  });
 }
+
+/** Khôi phục bản ghi đã bị xoá mềm */
+export function useAdminRestore(resource: AdminResource) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      await api.patch(adminRestorePath(resource, id));
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', resource] });
+    },
+  });
+}
+
+/**
+ * Xoá mềm một bản ghi.
+ *
+ * `user` trả về `null` ở `adminDeletePath` nên mutation sẽ báo lỗi — với người
+ * dùng phải dùng khoá/mở khoá (`useAdminUpdateUser`).
+ */
+export function useAdminSoftDelete(resource: AdminResource) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const path = adminDeletePath(resource, id);
+      if (!path)
+        throw new Error(`resource_khong_ho_tro_xoa_mem:${resource}`);
+      await api.delete(path);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', resource] });
+    },
+  });
+}
+
+// ============================================================
+// SỬA TỪNG LOẠI
+// ============================================================
 
 export function useAdminUpdateUser() {
-    const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
 
-    return useMutation<
-        AdminUser,
-        Error,
-        {
-            user_id: string;
-            body: Partial<
-                Pick<AdminUser, 'nickname' | 'bio' | 'status' | 'avatar_url'>
-            >;
-        }
-    >({
-        mutationFn: async ({ user_id, body }) => {
-            const res = await api.patch<{ data: AdminUser }>(
-                `admin/users/${user_id}`,
-                body,
-            );
-            return res.data.data;
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['admin', 'users'] });
-        },
-    });
-}
-
-/** Bộ sưu tập ĐỀ CÁ NHÂN của một user */
-export function useAdminUserCollections(userId: string, enabled: boolean) {
-    return useQuery<AdminPreparationCollection[]>({
-        queryKey: ['admin', 'user-collections', userId],
-        queryFn: () =>
-            getList<AdminPreparationCollection>(
-                `admin/question_preparation_collection/user/${userId}`,
-            ),
-        enabled: enabled && !!userId,
-    });
-}
-
-/** Các đề trong một bộ sưu tập cá nhân */
-export function useAdminCollectionPreparations(
-    userId: string,
-    collectionId: string,
-    enabled: boolean,
-) {
-    return useQuery<AdminPost[]>({
-        queryKey: [
-            'admin',
-            'user-collection-preparations',
-            userId,
-            collectionId,
-        ],
-        queryFn: () =>
-            getList<AdminPost>(
-                `admin/question_preparation/users/${userId}/${collectionId}`,
-            ),
-        enabled: enabled && !!userId && !!collectionId,
-    });
-}
-
-// ============================================================
-// GROUPS
-// ============================================================
-
-export function useAdminGroups(page: number) {
-    return useQuery<AdminGroup[]>({
-        queryKey: ['admin', 'groups', page],
-        queryFn: () =>
-            getList<AdminGroup>(
-                `admin/group/many?page=${page}&limit=${PAGE_SIZE}`,
-            ),
-    });
+  return useMutation({
+    mutationFn: async (vars: {
+      user_id: string;
+      body: Record<string, unknown>;
+    }) => {
+      const res = await api.patch(`admin/users/${vars.user_id}`, vars.body);
+      return res.data.data;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin', 'user'] }),
+  });
 }
 
 export function useAdminUpdateGroup() {
-    const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
 
-    return useMutation<
-        boolean,
-        Error,
-        {
-            group_id: string;
-            body: Partial<
-                Pick<
-                    AdminGroup,
-                    'name' | 'description' | 'join_mode' | 'view_mode'
-                >
-            >;
-        }
-    >({
-        mutationFn: async ({ group_id, body }) => {
-            const res = await api.patch<{ data: boolean }>(
-                `admin/group/${group_id}`,
-                body,
-            );
-            return res.data.data;
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['admin', 'groups'] });
-        },
-    });
-}
-
-export function useAdminDeleteGroup() {
-    const queryClient = useQueryClient();
-
-    return useMutation<boolean, Error, string>({
-        mutationFn: async (group_id) => {
-            const res = await api.delete<{ data: boolean }>(
-                `admin/group/${group_id}`,
-            );
-            return res.data.data;
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['admin', 'groups'] });
-        },
-    });
-}
-
-/** Bộ sưu tập bài tập của một nhóm */
-export function useAdminGroupCollections(groupId: string, enabled: boolean) {
-    return useQuery<AdminCollection[]>({
-        queryKey: ['admin', 'group-collections', groupId],
-        queryFn: () =>
-            getList<AdminCollection>(
-                `admin/post_collection/group/${groupId}?page=1&limit=100`,
-            ),
-        enabled: enabled && !!groupId,
-    });
-}
-
-export function useAdminCollection(collectionId: string, enabled: boolean) {
-    return useQuery<AdminCollection>({
-        queryKey: ['admin', 'collection', collectionId],
-        queryFn: () =>
-            getOne<AdminCollection>(`admin/post_collection/${collectionId}`),
-        enabled: enabled && !!collectionId,
-    });
-}
-
-export function useAdminDeleteCollection() {
-    const queryClient = useQueryClient();
-
-    return useMutation<boolean, Error, string>({
-        mutationFn: async (collection_id) => {
-            const res = await api.delete<{ data: boolean }>(
-                `admin/post_collection/${collection_id}`,
-            );
-            return res.data.data;
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({
-                queryKey: ['admin', 'group-collections'],
-            });
-        },
-    });
-}
-
-// ============================================================
-// POSTS
-// ============================================================
-
-export function useAdminCollectionPosts(
-    collectionId: string,
-    page: number,
-    enabled: boolean,
-) {
-    return useQuery<AdminPost[]>({
-        queryKey: ['admin', 'posts', collectionId, page],
-        queryFn: () =>
-            getList<AdminPost>(
-                `admin/post/collection/${collectionId}?page=${page}&limit=${PAGE_SIZE}`,
-            ),
-        enabled: enabled && !!collectionId,
-    });
+  return useMutation({
+    mutationFn: async (vars: {
+      group_id: string;
+      body: Record<string, unknown>;
+    }) => {
+      await api.patch(`admin/group/${vars.group_id}`, vars.body);
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin', 'group'] }),
+  });
 }
 
 export function useAdminUpdatePost() {
-    const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
 
-    return useMutation<
-        boolean,
-        Error,
-        {
-            post_id: string;
-            body: Partial<Pick<AdminPost, 'title' | 'description'>>;
-        }
-    >({
-        mutationFn: async ({ post_id, body }) => {
-            const res = await api.patch<{ data: boolean }>(
-                `admin/post/${post_id}`,
-                body,
-            );
-            return res.data.data;
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['admin', 'posts'] });
-        },
-    });
+  return useMutation({
+    mutationFn: async (vars: {
+      post_id: string;
+      body: Record<string, unknown>;
+    }) => {
+      await api.patch(`admin/post/${vars.post_id}`, vars.body);
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin', 'post'] }),
+  });
 }
 
-export function useAdminDeletePost() {
-    const queryClient = useQueryClient();
+export function useAdminUpdatePreparation() {
+  const queryClient = useQueryClient();
 
-    return useMutation<boolean, Error, string>({
-        mutationFn: async (post_id) => {
-            const res = await api.delete<{ data: boolean }>(
-                `admin/post/${post_id}`,
-            );
-            return res.data.data;
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['admin', 'posts'] });
-        },
-    });
-}
-
-// ============================================================
-// REPORTS
-// ============================================================
-
-export function useAdminReports(page: number, status?: string) {
-    const query = status ? `&status=${status}` : '';
-    return useQuery<AdminReport[]>({
-        queryKey: ['admin', 'reports', page, status ?? 'ALL'],
-        queryFn: () =>
-            getList<AdminReport>(
-                `admin/report?page=${page}&limit=${PAGE_SIZE}${query}`,
-            ),
-    });
+  return useMutation({
+    mutationFn: async (vars: {
+      user_id: string;
+      preparation_id: string;
+      body: Record<string, unknown>;
+    }) => {
+      await api.patch(
+        `admin/question_preparation/${vars.user_id}/${vars.preparation_id}`,
+        vars.body,
+      );
+    },
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ['admin', 'preparation'] }),
+  });
 }
 
 export function useAdminReviewReport() {
-    const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
 
-    return useMutation<
-        boolean,
-        Error,
-        {
-            report_id: string;
-            body: {
-                status: string;
-                action_taken: string;
-                review_note?: string;
-            };
-        }
-    >({
-        mutationFn: async ({ report_id, body }) => {
-            const res = await api.patch<{ data: boolean }>(
-                `admin/report/${report_id}/review`,
-                body,
-            );
-            return res.data.data;
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['admin', 'reports'] });
-        },
+  return useMutation({
+    mutationFn: async (vars: {
+      report_id: string;
+      body: Record<string, unknown>;
+    }) => {
+      await api.patch(`admin/report/${vars.report_id}/review`, vars.body);
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin', 'report'] }),
+  });
+}
+
+// ============================================================
+// DRILL-DOWN (bấm từ bảng đi sâu vào dữ liệu liên quan)
+// ============================================================
+
+/** Bộ sưu tập đề cá nhân của một người dùng */
+export function useAdminUserCollections(user_id: string, enabled = true) {
+  return useQuery({
+    queryKey: ['admin', 'user_collections', user_id],
+    enabled: enabled && !!user_id,
+    queryFn: async () => {
+      const res = await api.get(
+        `admin/question_preparation_collection/user/${user_id}`,
+      );
+      return res.data.data;
+    },
+  });
+}
+
+/** Đề trong 1 bộ sưu tập của 1 người */
+export function useAdminCollectionPreparations(
+  user_id: string,
+  collection_id: string,
+  enabled = true,
+) {
+  return useQuery({
+    queryKey: ['admin', 'collection_preparations', user_id, collection_id],
+    enabled: enabled && !!user_id && !!collection_id,
+    queryFn: async () => {
+      const res = await api.get(
+        `admin/question_preparation/users/${user_id}/${collection_id}?page=1&limit=100`,
+      );
+      return res.data.data;
+    },
+  });
+}
+
+/** Bộ sưu tập bài tập của một nhóm */
+export function useAdminGroupCollections(group_id: string, enabled = true) {
+  return useQuery({
+    queryKey: ['admin', 'group_collections', group_id],
+    enabled: enabled && !!group_id,
+    queryFn: async () => {
+      const res = await api.get(`admin/post_collection/group/${group_id}`);
+      return res.data.data;
+    },
+  });
+}
+
+/** Bạn bè của một người dùng (tab trong trang quan hệ) */
+export function useAdminUserFriends(user_id: string, enabled = true) {
+  return useQuery({
+    queryKey: ['admin', 'user_friends', user_id],
+    enabled: enabled && !!user_id,
+    queryFn: async () => {
+      const res = await api.get(`admin/friendship/${user_id}`);
+      return res.data.data;
+    },
+  });
+}
+
+/** Lời mời kết bạn ĐẾN một người dùng */
+export function useAdminUserIngoing(user_id: string, enabled = true) {
+  return useQuery({
+    queryKey: ['admin', 'user_ingoing', user_id],
+    enabled: enabled && !!user_id,
+    queryFn: async () => {
+      const res = await api.get(
+        `admin/friend_request/${user_id}/ingoing?page=1&limit=50`,
+      );
+      return res.data.data;
+    },
+  });
+}
+
+/** Lời mời kết bạn do một người dùng GỬI ĐI */
+export function useAdminUserOutgoing(user_id: string, enabled = true) {
+  return useQuery({
+    queryKey: ['admin', 'user_outgoing', user_id],
+    enabled: enabled && !!user_id,
+    queryFn: async () => {
+      const res = await api.get(
+        `admin/friend_request/${user_id}/outgoing?page=1&limit=50`,
+      );
+      return res.data.data;
+    },
+  });
+}
+
+// ============================================================
+// SỐ NGƯỜI ĐANG ONLINE
+// ============================================================
+
+/**
+ * Số người đang online.
+ *
+ * Lấy giá trị đầu qua REST (`GET /admin/online`) rồi CẬP NHẬT LIÊN TỤC qua
+ * WebSocket — không polling. Chỉ SYSTEM_ADMIN được vào phòng `admin` ở BE nên
+ * người dùng thường không nhận được sự kiện này.
+ */
+export function useAdminOnlineCount() {
+  const [total, setTotal] = useState<number | null>(null);
+
+  useEffect(() => {
+    let active = true;
+
+    api
+      .get('admin/online')
+      .then((res) => {
+        if (active) setTotal(res.data.data?.total ?? 0);
+      })
+      .catch(() => {
+        if (active) setTotal(null);
+      });
+
+    const baseUrl = process.env.NEXT_PUBLIC_BE_URL || 'http://localhost:3000';
+
+    const socket = io(`${baseUrl}/notif`, {
+      withCredentials: true,
+      transports: ['websocket', 'polling'],
+      // hoãn kết nối 1 nhịp — tránh cảnh báo do StrictMode mount 2 lần
+      autoConnect: false,
     });
+
+    socket.on('online_count', (payload: { total?: number }) => {
+      if (active) setTotal(payload?.total ?? 0);
+    });
+
+    const timer = setTimeout(() => socket.connect(), 0);
+
+    return () => {
+      active = false;
+      clearTimeout(timer);
+      socket.disconnect();
+    };
+  }, []);
+
+  return total;
 }
