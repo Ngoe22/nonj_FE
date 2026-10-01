@@ -58,7 +58,7 @@ function GroupCollectionsModal({
 
     return (
         <Dialog open={!!group} onOpenChange={(value) => !value && onClose()}>
-            <DialogContent className="max-h-[90vh] w-11/12 max-w-2xl overflow-y-auto">
+            <DialogContent className="max-h-[92dvh] w-[95vw] overflow-y-auto sm:max-w-3xl">
                 <DialogHeader>
                     <DialogTitle>
                         {txt('group_collections')} · {group?.name}

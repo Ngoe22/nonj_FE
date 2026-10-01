@@ -23,7 +23,7 @@ export function JoinRequestCard({
 
     const isPendingStatus = request.status === Group_Join_Request_Status.PENDING;
 
-    console.log(request)
+    // console.log(request)
 
 
     return (

@@ -70,6 +70,8 @@ export function useUploadFile() {
                 image_too_large: txt('image_too_large'),
                 audio_too_large: txt('audio_too_large'),
                 upload_failed: txt('upload_failed'),
+                // BE trả 503 kèm mã này khi chưa cấu hình R2
+                storage_not_configured: txt('storage_not_configured'),
             };
 
             toast.error(msgMap[code] ?? txt('upload_failed'));

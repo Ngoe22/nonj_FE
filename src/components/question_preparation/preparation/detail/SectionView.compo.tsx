@@ -85,12 +85,14 @@ export function SectionView({
                     )}
                 </div>
 
-                <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
-                    <Clock size={12} />
-                    {section.time_limit
-                        ? `${section.time_limit} ${txt('minutes')}`
-                        : txt('no_time_limit')}
-                </div>
+                {/* Giới hạn thời gian giờ là việc của post, không thuộc đề —
+                    chỉ hiện khi đề CŨ còn lưu giá trị này */}
+                {!!section.time_limit && (
+                    <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+                        <Clock size={12} />
+                        {`${section.time_limit} ${txt('minutes')}`}
+                    </div>
+                )}
             </div>
 
             {/* Đề bài chung của phần */}

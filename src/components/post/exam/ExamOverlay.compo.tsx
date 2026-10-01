@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { ChevronLeft, ChevronRight, Clock, Send, X } from 'lucide-react';
+import { AlertTriangle, ChevronLeft, ChevronRight, Clock, Send, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { Button } from '@/components/ui/button';
@@ -25,7 +25,6 @@ interface Props {
     isSubmitting?: boolean;
 }
 
-/** Ngưỡng kéo ngang tối thiểu (px) để tính là vuốt */
 const SWIPE_THRESHOLD = 60;
 
 export function ExamOverlay({
@@ -53,6 +52,7 @@ export function ExamOverlay({
         answeredCount,
         totalPages,
         currentSectionRemaining,
+        blankEssaySections,
     } = useExamSession({
         content: post.content ?? [],
         onSubmit,
@@ -76,9 +76,6 @@ export function ExamOverlay({
 
         const delta = (e.changedTouches[0]?.clientX ?? start) - start;
         if (Math.abs(delta) < SWIPE_THRESHOLD) return;
-
-        // Theo yêu cầu: VUỐT SANG PHẢI = câu tiếp theo, vuốt sang trái = câu trước.
-        // Muốn đảo lại (chuẩn mobile hơn) thì đổi 2 dòng dưới cho nhau.
         if (delta > 0) goNext();
         else goPrev();
     };
@@ -152,6 +149,16 @@ export function ExamOverlay({
                     {txt('submit')}
                 </Button>
             </header>
+
+            {/* Còn tự luận để trống -> không cho nộp */}
+            {blankEssaySections.length > 0 && (
+                <div className="flex items-center gap-2 border-b border-status-warning bg-status-warning-bg px-4 py-2 text-xs font-medium text-status-warning">
+                    <AlertTriangle size={14} />
+                    {txt('essay_required', {
+                        count: blankEssaySections.length,
+                    })}
+                </div>
+            )}
 
             {/* ================= Thanh tiến độ ================= */}
             <div className="h-1 w-full bg-surface-hover">

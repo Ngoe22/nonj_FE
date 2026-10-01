@@ -24,6 +24,8 @@ interface Props {
     /** admin/founder của nhóm mới được chấm */
     canGrade: boolean;
     enabled: boolean;
+    /** Ẩn tiêu đề khi component nằm trong tab (tab đã có nhãn) */
+    hideHeading?: boolean;
 }
 
 /**
@@ -39,6 +41,7 @@ export function OthersAnswers({
     post,
     canGrade,
     enabled,
+    hideHeading,
 }: Props) {
     const txt = useTranslations('Post');
 
@@ -65,8 +68,12 @@ export function OthersAnswers({
     };
 
     return (
-        <section className="mt-8">
-            <h2 className="text-lg font-semibold">{txt('others_answers')}</h2>
+        <section className={hideHeading ? '' : 'mt-8'}>
+            {!hideHeading && (
+                <h2 className="text-lg font-semibold">
+                    {txt('others_answers')}
+                </h2>
+            )}
 
             {isLoading && (
                 <p className="mt-2 text-sm text-muted-foreground">
@@ -87,13 +94,19 @@ export function OthersAnswers({
                     {answers.map((answer) => (
                         <div
                             key={answer.id}
-                            className="flex items-center gap-3 rounded-xl border border-border bg-surface px-4 py-3"
+                            className="flex items-center gap-3 rounded-xl border border-border bg-surface px-4 py-3 "
                         >
-                            <span className="min-w-0 flex-1 truncate text-sm">
-                                {answer.user?.nickname ??
-                                    answer.user?.user_name ??
-                                    '—'}
-                            </span>
+
+                            <div className={`flex flex-col flex-1`} >
+                                <span className="min-w-0  truncate text-sm">
+                                    {answer.user?.nickname}
+                                 </span>
+                                <span className="min-w-0  text-muted-foreground   text-xs">
+                                    @{answer.user?.user_name}
+                                 </span>
+
+                            </div>
+
 
                             {answer.status === Post_Answer_Status.PENDING && (
                                 <Badge variant="secondary">

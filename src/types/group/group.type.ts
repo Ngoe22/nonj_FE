@@ -21,6 +21,12 @@ export type Group = {
         create_collection : boolean ,
         /** giao bài trong nhóm — BE thêm key này cho founder + admin */
         create_post : boolean ,
+        /**
+         * true nếu người đang xem LÀ thành viên nhóm.
+         * Người ngoài nhóm vẫn xem được thông tin nhóm + bộ sưu tập (khi
+         * view_mode = PUBLIC) nhưng KHÔNG xem được bài tập.
+         */
+        is_member: boolean,
     }
 }
 

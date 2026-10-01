@@ -4,8 +4,8 @@ import { useFormContext } from 'react-hook-form';
 import { useTranslations } from 'next-intl';
 import { Trash2 } from 'lucide-react';
 
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/_share/about_form/info_and_input/input.compo';
+import { RemoveIconButton } from '@/components/_share/icon_button/RemoveIconButton.compo';
 
 import { Question_Item_Type } from '@/enum/question_preparation/question_preparation.enum';
 import type { QuestionPreparationFormValues } from '@/schemas/question_preparation/question_preparation.schema';
@@ -19,6 +19,18 @@ interface Props {
     itemIndex: number;
     onRemove: () => void;
 }
+
+/**
+ * Nhãn hiển thị của từng loại câu.
+ * Trước đây chỗ này in thẳng giá trị enum (`itemType.replace('_', ' ')`) nên ra
+ * chữ tiếng Anh thô như "chose correct", "arrange" — không theo i18n.
+ */
+const ITEM_TYPE_LABEL_KEY: Record<string, string> = {
+    [Question_Item_Type.CHOSE_CORRECT]: 'item_type_chose_correct',
+    [Question_Item_Type.ARRANGE]: 'item_type_arrange',
+    [Question_Item_Type.PAIRING]: 'item_type_pairing',
+    [Question_Item_Type.INPUT]: 'item_type_input',
+};
 
 export function ItemBuilder({ sectionIndex, itemIndex, onRemove }: Props) {
     const txt = useTranslations('Question_builder');
@@ -37,20 +49,17 @@ export function ItemBuilder({ sectionIndex, itemIndex, onRemove }: Props) {
     return (
         <div className="space-y-3 rounded-xl border border-border bg-surface p-3">
             <div className="flex items-center justify-between">
-                <span className="rounded-full bg-surface-hover px-2 py-0.5 text-[10px] font-medium uppercase">
-                    {typeof itemType === 'string'
-                        ? itemType.replace('_', ' ')
+                <span className="rounded-full bg-surface-hover px-2 py-0.5 text-[10px] font-medium">
+                    {typeof itemType === 'string' && ITEM_TYPE_LABEL_KEY[itemType]
+                        ? txt(ITEM_TYPE_LABEL_KEY[itemType])
                         : ''}
                 </span>
-                <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
+                <RemoveIconButton
                     onClick={onRemove}
-                    className="h-7 w-7 text-red-600 hover:bg-red-50"
-                >
-                    <Trash2 size={13} />
-                </Button>
+                    label={txt('remove')}
+                    className="h-7 w-7"
+                    icon={<Trash2 size={14} />}
+                />
             </div>
 
             <div className="grid grid-cols-1 gap-3 md:grid-cols-3">

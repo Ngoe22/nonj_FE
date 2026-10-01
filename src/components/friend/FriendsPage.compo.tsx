@@ -1,6 +1,10 @@
 'use client';
 
+import { useState } from 'react';
+
 import { useTranslations } from 'next-intl';
+import { useSearchParams } from 'next/navigation';
+import { usePathname, useRouter } from '@/i18n/navigation';
 
 import {
     Tabs,
@@ -26,7 +30,53 @@ import type {
     IngoingFriendRequest,
 } from '@/types/friend/friend.type';
 
+const TAB_VALUES = ['friends', 'outgoing', 'incoming'] as const;
+type TabValue = (typeof TAB_VALUES)[number];
+
 export default function FriendsPage() {
+    // Cho phép deep link từ thông báo: /friends?tab=incoming
+    const searchParams = useSearchParams();
+    const tabParam = searchParams.get('tab');
+
+    const isTabValue = (value: string | null): value is TabValue =>
+        (TAB_VALUES as readonly string[]).includes(value ?? '');
+
+    const [tab, setTab] = useState<TabValue>(
+        isTabValue(tabParam) ? tabParam : 'friends',
+    );
+
+    /*
+     * Bấm thông báo khi đang Ở SẴN trang này chỉ đổi QUERY, component không
+     * remount — nên `defaultValue` của Tabs bị bỏ qua và tab không đổi. Tự đồng
+     * bộ lại mỗi khi param đổi (điều chỉnh state ngay trong render, đúng cách
+     * React khuyến nghị cho trường hợp này).
+     */
+    const [syncedParam, setSyncedParam] = useState(tabParam);
+    if (syncedParam !== tabParam) {
+        setSyncedParam(tabParam);
+        if (isTabValue(tabParam)) setTab(tabParam);
+    }
+
+    const pathname = usePathname();
+    const router = useRouter();
+
+    /**
+     * Đổi tab thì đẩy luôn lên URL — hai chiều với deep link.
+     *
+     * Nếu chỉ đồng bộ một chiều (URL -> tab) thì bấm tab xong F5 lại về tab cũ,
+     * và copy link gửi cho người khác cũng không đúng tab.
+     */
+    const changeTab = (next: TabValue) => {
+        setTab(next);
+
+        const params = new URLSearchParams(searchParams.toString());
+        if (next === 'friends') params.delete('tab');
+        else params.set('tab', next);
+
+        const query = params.toString();
+        router.replace(query ? `${pathname}?${query}` : pathname);
+    };
+
     const txt = useTranslations('Friend');
 
     const friends = useGetFriends();
@@ -50,7 +100,11 @@ export default function FriendsPage() {
                 <FriendSearch />
             </div>
 
-            <Tabs defaultValue="friends" className="mt-8">
+            <Tabs
+                value={tab}
+                onValueChange={(value) => changeTab(value as TabValue)}
+                className="mt-8"
+            >
                 <TabsList className="grid h-auto w-full grid-cols-3">
                     <TabsTrigger value="friends">{txt('my_friends')}</TabsTrigger>
                     <TabsTrigger value="outgoing">{txt('outgoing_req')}</TabsTrigger>

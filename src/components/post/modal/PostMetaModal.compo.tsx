@@ -1,9 +1,10 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
+import { AlertCircle } from 'lucide-react';
 
 import {
     Dialog,
@@ -15,10 +16,14 @@ import { Button } from '@/components/ui/button';
 import { PostMetaFields } from '@/components/post/modal/PostMetaFields.compo';
 
 import {
+    buildPostMetaSchema,
     postMetaDefaultValues,
-    postMetaSchema,
     type PostMetaFormValues,
 } from '@/schemas/post/post.schema';
+import {
+    collectErrorKeys,
+    translateErrorKey,
+} from '@/helper/formError/formError.helper';
 
 interface Props {
     open: boolean;
@@ -31,7 +36,10 @@ interface Props {
 
 /**
  * Bước 1 của "soạn thủ công" (bước 2 là builder nội dung), và cũng là modal
- * SỬA post — sửa post chỉ cho đổi title/description/deadline/view_each_other.
+ * SỬA post.
+ *
+ * Sửa post cho đổi: title / description / deadline / chế độ xem bài nhau /
+ * chế độ làm lại. Nội dung câu hỏi và đáp án bị khoá (xem BE `UpdatePostDto`).
  */
 export default function PostMetaModal({
     open,
@@ -42,19 +50,33 @@ export default function PostMetaModal({
     isSubmitting,
 }: Props) {
     const txt = useTranslations('Post');
+    const txtErr = useTranslations('Shema');
+
+    // Schema phụ thuộc hạn ĐANG LƯU để biết hạn quá khứ là "giữ nguyên" hay "đổi mới"
+    const schema = useMemo(
+        () => buildPostMetaSchema(initialValues?.deadline_at),
+        [initialValues?.deadline_at],
+    );
 
     const form = useForm<PostMetaFormValues>({
-        resolver: zodResolver(postMetaSchema),
+        resolver: zodResolver(schema),
         defaultValues: postMetaDefaultValues,
         mode: 'onSubmit',
     });
 
-    const { handleSubmit, reset } = form;
+    const {
+        handleSubmit,
+        reset,
+        formState: { errors, submitCount },
+    } = form;
 
     useEffect(() => {
         if (!open) return;
         reset(initialValues ?? postMetaDefaultValues);
     }, [open, initialValues, reset]);
+
+    const errorKeys = collectErrorKeys(errors);
+    const showSummary = submitCount > 0 && errorKeys.length > 0;
 
     const submit = handleSubmit(async (values) => {
         await onSubmit(values);
@@ -62,24 +84,50 @@ export default function PostMetaModal({
 
     return (
         <Dialog open={open} onOpenChange={(value) => !value && onClose()}>
-            <DialogContent className="max-h-[90vh] w-11/12 max-w-lg overflow-y-auto">
-                <DialogHeader>
+            {/*
+              `sm:max-w-xl` (không phải `max-w-xl`) để ghi đè `sm:max-w-md`
+              mặc định của DialogContent — thiếu tiền tố sm: thì trên desktop
+              modal vẫn bị kẹp ở 448px.
+            */}
+            <DialogContent className="flex max-h-[92dvh] w-[95vw] flex-col gap-4 overflow-hidden p-5 sm:max-w-xl sm:p-6">
+                <DialogHeader className="shrink-0 pr-10">
                     <DialogTitle>
                         {mode === 'create' ? txt('create_post') : txt('edit_post')}
                     </DialogTitle>
                 </DialogHeader>
 
-                {mode === 'edit' && (
-                    <p className="rounded-xl border border-dashed border-border bg-surface p-3 text-xs text-muted-foreground">
-                        {txt('edit_post_note')}
-                    </p>
-                )}
-
                 <FormProvider {...form}>
-                    <form onSubmit={submit} className="space-y-4">
-                        <PostMetaFields hideRetake={mode === 'edit'} />
+                    <form
+                        onSubmit={submit}
+                        className="flex min-h-0 flex-1 flex-col gap-4"
+                    >
+                        <div className="min-h-0 flex-1 space-y-4 overflow-y-auto pr-1">
+                            {mode === 'edit' && (
+                                <p className="rounded-xl border border-dashed border-border bg-surface p-3 text-xs text-muted-foreground">
+                                    {txt('edit_post_note')}
+                                </p>
+                            )}
 
-                        <div className="flex justify-end gap-3 border-t pt-4">
+                            {showSummary && (
+                                <div className="rounded-xl border border-destructive/40 bg-destructive/5 p-3">
+                                    <p className="flex items-center gap-1.5 text-xs font-medium text-destructive">
+                                        <AlertCircle size={14} />
+                                        {txt('form_has_errors')}
+                                    </p>
+                                    <ul className="mt-1 ml-5 list-disc space-y-0.5 text-xs text-destructive/90">
+                                        {errorKeys.map((key) => (
+                                            <li key={key}>
+                                                {translateErrorKey(txtErr, key)}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
+
+                            <PostMetaFields />
+                        </div>
+
+                        <div className="flex shrink-0 justify-end gap-3 border-t pt-4">
                             <Button
                                 type="button"
                                 variant="outline"

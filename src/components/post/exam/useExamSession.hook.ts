@@ -103,6 +103,28 @@ export type DraftSection =
 // Chuyển nháp -> payload gửi BE (song song với correct_answer, KHÔNG có point)
 // ============================================================
 
+/**
+ * Các phần TỰ LUẬN học viên còn để trống.
+ *
+ * Tự luận BẮT BUỘC phải viết gì đó — nộp bài với phần tự luận trắng thì giáo
+ * viên không có gì để chấm. (Trắc nghiệm bỏ trống thì vẫn nộp được và tính sai.)
+ */
+export function findBlankEssaySections(
+    content: QuestionContentSection[],
+    answers: Record<number, DraftSection>,
+): number[] {
+    return content
+        .map((section, index) => ({ section, index }))
+        .filter(({ section, index }) => {
+            if (section.type !== Question_Section_Type.ESSAY) return false;
+            const draft = answers[index];
+            const text =
+                draft?.type === Question_Section_Type.ESSAY ? draft.text : '';
+            return text.trim() === '';
+        })
+        .map(({ index }) => index);
+}
+
 export function buildSubmission(
     content: QuestionContentSection[],
     answers: Record<number, DraftSection>,
@@ -250,11 +272,38 @@ export function useExamSession({
 
     const submittedRef = useRef(false);
 
-    const submit = useCallback(async () => {
-        if (submittedRef.current) return;
-        submittedRef.current = true;
-        await onSubmit(buildSubmission(content, answers));
-    }, [content, answers, onSubmit]);
+    /** Đã bấm nộp lần nào chưa — chỉ hiện cảnh báo SAU lần bấm đầu */
+    const [submitAttempted, setSubmitAttempted] = useState(false);
+
+    // Tính lại mỗi khi bài làm đổi -> học viên điền vào là cảnh báo tự mất
+    const blankEssays = useMemo(
+        () => findBlankEssaySections(content, answers),
+        [content, answers],
+    );
+
+    const submit = useCallback(
+        async (options?: { force?: boolean }) => {
+            if (submittedRef.current) return;
+
+            // `force` dùng cho trường hợp HẾT GIỜ: phải nộp, không thể chặn
+            if (!options?.force) {
+                const blank = findBlankEssaySections(content, answers);
+                if (blank.length > 0) {
+                    setSubmitAttempted(true);
+                    // nhảy tới phần tự luận còn trống đầu tiên
+                    const target = pages.findIndex(
+                        (page) => page.sectionIndex === blank[0],
+                    );
+                    if (target >= 0) setPageIndex(target);
+                    return;
+                }
+            }
+
+            submittedRef.current = true;
+            await onSubmit(buildSubmission(content, answers));
+        },
+        [content, answers, onSubmit, pages],
+    );
 
     // Hết giờ section -> sang section kế; hết section cuối -> nộp bài.
     // Việc chuyển trang ở đây do ĐỒNG HỒ điều khiển (external event), không
@@ -268,7 +317,11 @@ export function useExamSession({
         );
 
         if (nextPageIndex === -1) {
-            void submit();
+            // Hết giờ -> NỘP BẤT CHẤP, không chặn vì tự luận còn trống.
+            // `force: true` nên không đi vào nhánh setState bên trong `submit`;
+            // rule không suy luận được điều đó nên phải tắt tại đây.
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            void submit({ force: true });
         } else {
             // eslint-disable-next-line react-hooks/set-state-in-effect
             setPageIndex(nextPageIndex);
@@ -366,6 +419,8 @@ export function useExamSession({
         answeredCount,
         totalPages: pages.length,
         currentSectionRemaining,
+        /** Chỉ khác rỗng SAU khi bấm nộp mà còn tự luận trống */
+        blankEssaySections: submitAttempted ? blankEssays : [],
     };
 }
 

@@ -28,7 +28,7 @@ export default function RegisterForm() {
     const registerSubmit = async (data:RegisterFormValues) => {
         try {
             const result = await registerMutation.mutateAsync(data);
-            console.log(result)
+            // console.log(result)
             router.push('/'); // Chỉ chuyển trang khi thành công
         } catch (error) {
             console.error( error);

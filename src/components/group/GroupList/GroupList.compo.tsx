@@ -26,7 +26,7 @@ export default function GroupList() {
 
     const  handleCreateGroup = async (body: any)=>  {
         const data =  await mutateAsync(body)
-        console.log(data)
+        // console.log(data)
         setIsCreating(false)
     }
 

@@ -15,12 +15,22 @@ import {
 import { useTranslations } from 'next-intl';
 
 import { Badge } from '@/components/ui/badge';
+import {
+    Tabs,
+    TabsContent,
+    TabsList,
+    TabsTrigger,
+} from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { SectionView } from '@/components/question_preparation/preparation/detail/SectionView.compo';
 import { ExamOverlay } from '@/components/post/exam/ExamOverlay.compo';
 import { buildDraftFromSubmission } from '@/components/post/exam/useExamSession.hook';
 import { AnswerDetailOverlay } from '@/components/post/answer/AnswerDetailOverlay.compo';
 import { OthersAnswers } from '@/components/post/detail/OthersAnswers.compo';
+import {
+    PostInfoBadge,
+    viewEachOtherLabel,
+} from '@/components/post/_share/PostInfoBadge.compo';
 import PostMetaModal from '@/components/post/modal/PostMetaModal.compo';
 import ConfirmModal from '@/components/group/_share/ConfirmModal.compo';
 
@@ -106,6 +116,11 @@ export default function PostDetail() {
 
     const hasAnswered = !!myAnswer;
     const canTake = permission.take && !expired && !hasAnswered;
+
+    /**
+     * Chỉ hiển thị nội dung cho admin
+     */
+    const canSeeContent = permission.update ;
     const canRetakeNow =
         hasAnswered && post.retake === Retake.BEFORE_DATELINE && !expired;
 
@@ -137,6 +152,7 @@ export default function PostDetail() {
                 description: values.description,
                 deadline_at: toDeadlineIso(values.deadline_at),
                 view_each_other_answer: values.view_each_other_answer,
+                retake: values.retake,
             },
         });
         setEditOpen(false);
@@ -156,13 +172,7 @@ export default function PostDetail() {
         view_each_other_answer: post.view_each_other_answer,
     };
 
-    const viewLabel =
-        post.view_each_other_answer === View_Each_Other_Answer.NEVER
-            ? txt('view_never')
-            : post.view_each_other_answer ===
-                View_Each_Other_Answer.AFTER_ANSWER
-              ? txt('view_after_answer')
-              : txt('view_after_deadline');
+    const viewLabel = viewEachOtherLabel(txt, post.view_each_other_answer);
 
     const showOthersAnswers =
         permission.update ||
@@ -191,10 +201,11 @@ export default function PostDetail() {
                         )}
 
                         <div className="mt-3 flex flex-wrap items-center gap-2">
-                            <Badge variant="secondary" className="gap-1">
-                                <AlarmClock size={11} />
-                                {deadlineLabel ?? txt('no_deadline')}
-                            </Badge>
+                            <PostInfoBadge
+                                icon={<AlarmClock size={11} />}
+                                label={txt('label_deadline')}
+                                value={deadlineLabel ?? txt('no_deadline')}
+                            />
 
                             {expired && (
                                 <Badge
@@ -205,22 +216,27 @@ export default function PostDetail() {
                                 </Badge>
                             )}
 
-                            <Badge variant="secondary" className="gap-1">
-                                <Eye size={11} />
-                                {viewLabel}
-                            </Badge>
+                            <PostInfoBadge
+                                icon={<Eye size={11} />}
+                                label={txt('label_view_each_other')}
+                                value={viewLabel}
+                            />
 
-                            {post.retake === Retake.BEFORE_DATELINE && (
-                                <Badge variant="secondary">
-                                    {txt('retake_allowed')}
-                                </Badge>
-                            )}
+                            <PostInfoBadge
+                                icon={<RotateCcw size={11} />}
+                                label={txt('label_retake')}
+                                value={
+                                    post.retake === Retake.BEFORE_DATELINE
+                                        ? txt('retake_allowed')
+                                        : txt('retake_not_allowed')
+                                }
+                            />
 
-                            <Badge variant="secondary" className="gap-1">
-                                <FileText size={11} />
-                                {post.content?.length ?? 0}{' '}
-                                {txt('section_unit')}
-                            </Badge>
+                            <PostInfoBadge
+                                icon={<FileText size={11} />}
+                                label={txt('label_section_count')}
+                                value={`${post.content?.length ?? 0} ${txt('section_unit')}`}
+                            />
                         </div>
                     </div>
 
@@ -321,36 +337,56 @@ export default function PostDetail() {
                 </div>
             </section>
 
-            {/* ================= Nội dung đề ================= */}
-            <section className="mt-8">
-                <h2 className="text-lg font-semibold">
-                    {txt('exercise_content')}
-                </h2>
+            {/*
+              Nội dung đề và Bài làm để THÀNH TAB: đề dài sẽ đẩy phần bài làm
+              xuống rất sâu, giáo viên phải cuộn mãi mới chấm được.
+            */}
+            <Tabs defaultValue="content" className="mt-8">
+                <TabsList className="grid h-auto w-full grid-cols-2">
+                    <TabsTrigger value="content">
+                        {txt('exercise_content')}
+                    </TabsTrigger>
+                    <TabsTrigger value="submissions">
+                        {txt('others_answers')}
+                    </TabsTrigger>
+                </TabsList>
 
-                <div className="mt-4 space-y-4">
-                    {(post.content ?? []).map((section, sectionIndex) => (
-                        <SectionView
-                            key={sectionIndex}
-                            index={sectionIndex}
-                            section={section}
-                            allAnswers={post.correct_answer}
-                            // Học viên chưa làm bài sẽ KHÔNG nhận được
-                            // `correct_answer` từ BE -> tự động ẩn đáp án
-                            showAnswers={!!post.correct_answer}
-                        />
-                    ))}
-                </div>
-            </section>
+                <TabsContent value="content" className="mt-5">
+                    {canSeeContent ? (
+                        <div className="space-y-4">
+                            {(post.content ?? []).map(
+                                (section, sectionIndex) => (
+                                    <SectionView
+                                        key={sectionIndex}
+                                        index={sectionIndex}
+                                        section={section}
+                                        allAnswers={post.correct_answer}
+                                        // Chưa làm bài thì BE cũng không trả
+                                        // `correct_answer` -> tự động ẩn đáp án
+                                        showAnswers={!!post.correct_answer}
+                                    />
+                                ),
+                            )}
+                        </div>
+                    ) : (
+                        <div className="rounded-2xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
+                            {txt('content_hidden_until_start')}
+                        </div>
+                    )}
+                </TabsContent>
 
-            {/* ================= Bài làm của học viên khác ================= */}
-            <OthersAnswers
-                groupId={groupId}
-                collectionId={collectionId}
-                postId={postId}
-                post={post}
-                canGrade={!!permission.update}
-                enabled={showOthersAnswers}
-            />
+                <TabsContent value="submissions" className="mt-5">
+                    <OthersAnswers
+                        groupId={groupId}
+                        collectionId={collectionId}
+                        postId={postId}
+                        post={post}
+                        canGrade={!!permission.update}
+                        enabled={showOthersAnswers}
+                        hideHeading
+                    />
+                </TabsContent>
+            </Tabs>
 
             {/* ================= Overlays ================= */}
             {(examOpen || answerOpen) && (

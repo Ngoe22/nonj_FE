@@ -151,8 +151,11 @@ export interface ChoseCorrectFormItem extends BaseFormItem {
 
 export interface ArrangeFormItem extends BaseFormItem {
     type: Question_Item_Type.ARRANGE;
+    /**
+     * Người soạn chỉ nhập THỨ TỰ ĐÚNG. Thứ tự hiển thị cho học viên do
+     * `shuffleForDisplay` sinh ra lúc dựng content — không nằm trong form.
+     */
     correct: string[];
-    shuffled: string[];
 }
 
 export interface PairingFormItem extends BaseFormItem {
@@ -175,7 +178,6 @@ export interface MultipleChoiceFormSection {
     type: Question_Section_Type.MULTIPLE_CHOICE;
     title: string;
     content: QuestionContent;
-    time_limit: number | null;
     items: QuestionFormItem[];
 }
 
@@ -183,7 +185,6 @@ export interface EssayFormSection {
     type: Question_Section_Type.ESSAY;
     title: string;
     content: QuestionContent;
-    time_limit: number | null;
     point: number;
     sample_answer?: string;
 }
@@ -271,7 +272,6 @@ export function createEmptySection(
             type: Question_Section_Type.MULTIPLE_CHOICE,
             title: '',
             content: { text: '' },
-            time_limit: null,
             items: [],
         };
     }
@@ -279,7 +279,6 @@ export function createEmptySection(
         type: Question_Section_Type.ESSAY,
         title: '',
         content: { text: '' },
-        time_limit: null,
         point: 10,
         sample_answer: '',
     };
@@ -301,7 +300,6 @@ export function createEmptyItem(type: Question_Item_Type): QuestionFormItem {
                 ...base,
                 type: Question_Item_Type.ARRANGE,
                 correct: ['', ''],
-                shuffled: ['', ''],
             };
         case Question_Item_Type.PAIRING:
             return {
@@ -319,6 +317,31 @@ export function createEmptyItem(type: Question_Item_Type): QuestionFormItem {
                 correct_answers: [''],
             };
     }
+}
+
+/**
+ * Xáo thứ tự hiển thị cho câu dạng "sắp xếp".
+ *
+ * Người soạn chỉ nhập THỨ TỰ ĐÚNG; hệ thống tự xáo để học viên phải sắp lại.
+ * Nếu xáo ra trùng đúng thứ tự gốc thì xáo lại — đề hiển thị y hệt đáp án là
+ * đề vô nghĩa.
+ */
+export function shuffleForDisplay(correct: string[]): string[] {
+    if (correct.length < 2) return [...correct];
+
+    for (let attempt = 0; attempt < 10; attempt++) {
+        const shuffled = [...correct];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        if (shuffled.some((value, index) => value !== correct[index])) {
+            return shuffled;
+        }
+    }
+
+    // Mọi phần tử giống nhau (hoặc quá xui) -> đảo ngược để chắc chắn khác
+    return [...correct].reverse();
 }
 
 // ============================================================
@@ -344,7 +367,8 @@ export function splitQuestionSections(sections: QuestionFormSection[]): {
                 type: Question_Section_Type.ESSAY,
                 title: section.title,
                 content: section.content,
-                time_limit: section.time_limit,
+                // Giới hạn thời gian KHÔNG còn thuộc đề — đây là việc của post
+                time_limit: null,
                 point: section.point,
             });
             correct_answer.push({
@@ -377,7 +401,8 @@ export function splitQuestionSections(sections: QuestionFormSection[]): {
                     items.push({
                         ...base,
                         type: Question_Item_Type.ARRANGE,
-                        shuffled: item.shuffled,
+                        // luôn xáo lại từ thứ tự đúng — người soạn không phải tự xáo
+                        shuffled: shuffleForDisplay(item.correct),
                     });
                     answerItems.push({
                         type: Question_Item_Type.ARRANGE,
@@ -413,7 +438,7 @@ export function splitQuestionSections(sections: QuestionFormSection[]): {
             type: Question_Section_Type.MULTIPLE_CHOICE,
             title: section.title,
             content: section.content,
-            time_limit: section.time_limit,
+            time_limit: null,
             items,
         });
         correct_answer.push({
@@ -451,7 +476,6 @@ export function mergeQuestionSections(
                 type: Question_Section_Type.ESSAY,
                 title: section.title ?? '',
                 content: section.content ?? {},
-                time_limit: section.time_limit ?? null,
                 point: section.point ?? 10,
                 sample_answer: essayAnswer ?? '',
             };
@@ -488,7 +512,6 @@ export function mergeQuestionSections(
                         return {
                             ...base,
                             type: Question_Item_Type.ARRANGE,
-                            shuffled: item.shuffled ?? [],
                             correct:
                                 itemAnswer?.type === Question_Item_Type.ARRANGE
                                     ? (itemAnswer.correct ?? [])
@@ -531,7 +554,6 @@ export function mergeQuestionSections(
             type: Question_Section_Type.MULTIPLE_CHOICE,
             title: section.title ?? '',
             content: section.content ?? {},
-            time_limit: section.time_limit ?? null,
             items,
         };
     });

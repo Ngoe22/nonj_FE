@@ -23,12 +23,6 @@ const baseItemFields = {
         .max(10, 'max_value_10'),
 };
 
-const timeLimitField = z
-    .number({ message: 'enter_something' })
-    .min(1, 'min_value_1')
-    .max(240, 'max_240_minutes')
-    .nullable();
-
 // ============================================================
 // Item — CHOSE_CORRECT
 // ============================================================
@@ -62,10 +56,9 @@ const arrangeItemSchema = z.object({
         .array(z.string().min(1, 'enter_something'))
         .min(2, 'min_2_words')
         .max(20, 'max_20_words'),
-    shuffled: z
-        .array(z.string().min(1, 'enter_something'))
-        .min(2, 'min_2_words')
-        .max(20, 'max_20_words'),
+    // KHÔNG bắt người soạn nhập thứ tự hiển thị: họ chỉ nhập THỨ TỰ ĐÚNG,
+    // còn thứ tự hiển thị do `shuffleForDisplay` tự xáo lúc lưu.
+    shuffled: z.array(z.string()).max(20, 'max_20_words').optional(),
 });
 
 // ============================================================
@@ -114,7 +107,6 @@ const multipleChoiceSectionSchema = z.object({
     type: z.literal(Question_Section_Type.MULTIPLE_CHOICE),
     title: z.string().min(1, 'enter_something').max(50, 'max_char_50'),
     content: questionContentSchema,
-    time_limit: timeLimitField,
     items: z
         .array(questionItemSchema)
         .min(1, 'min_1_item')
@@ -125,7 +117,6 @@ const essaySectionSchema = z.object({
     type: z.literal(Question_Section_Type.ESSAY),
     title: z.string().min(1, 'enter_something').max(50, 'max_char_50'),
     content: questionContentSchema,
-    time_limit: timeLimitField,
     point: z
         .number({ message: 'enter_something' })
         .min(1, 'min_value_1')

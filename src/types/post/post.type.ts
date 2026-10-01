@@ -97,6 +97,8 @@ export interface UpdatePostVars {
         description?: string;
         deadline_at?: string | null;
         view_each_other_answer?: View_Each_Other_Answer;
+        /** BE `UpdatePostDto` đã nhận field này */
+        retake?: Retake;
     };
 }
 

@@ -4,8 +4,8 @@ import { useFormContext } from 'react-hook-form';
 import { useTranslations } from 'next-intl';
 import { Trash2 } from 'lucide-react';
 
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/_share/about_form/info_and_input/input.compo';
+import { RemoveIconButton } from '@/components/_share/icon_button/RemoveIconButton.compo';
 
 import { Question_Section_Type } from '@/enum/question_preparation/question_preparation.enum';
 import type { QuestionPreparationFormValues } from '@/schemas/question_preparation/question_preparation.schema';
@@ -48,15 +48,11 @@ export function SectionBuilder({ sectionIndex, onRemove }: Props) {
                     </span>
                 </div>
 
-                <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
+                <RemoveIconButton
                     onClick={onRemove}
-                    className="h-8 w-8 text-red-600 hover:bg-red-50"
-                >
-                    <Trash2 size={14} />
-                </Button>
+                    label={txt('remove')}
+                    icon={<Trash2 size={15} />}
+                />
             </div>
 
             {/* Tiêu đề phần */}

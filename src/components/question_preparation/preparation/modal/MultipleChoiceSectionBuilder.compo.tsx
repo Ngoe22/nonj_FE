@@ -16,7 +16,6 @@ import { Question_Item_Type } from '@/enum/question_preparation/question_prepara
 import type { QuestionPreparationFormValues } from '@/schemas/question_preparation/question_preparation.schema';
 import { createEmptyItem } from '@/types/question_preparation/question_preparation.type';
 import { ItemBuilder } from './ItemBuilder.compo';
-import { TimeLimitField } from './TimeLimitField.compo';
 
 interface Props {
     sectionIndex: number;
@@ -49,8 +48,6 @@ export function MultipleChoiceSectionBuilder({ sectionIndex }: Props) {
 
     return (
         <div className="space-y-4 border-t border-dashed border-border pt-3">
-            <TimeLimitField sectionIndex={sectionIndex} />
-
             {items.length > 0 && (
                 <div className="space-y-3">
                     {items.map((item, itemIndex) => (

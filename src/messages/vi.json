@@ -11,7 +11,7 @@
     "login_password_label": "Mật khẩu",
     "login_password_plh": "",
     "login_btn": "Đăng nhập",
-    "login_fail": "Sai tài email mật khẩu",
+    "login_fail": "Sai email & mật khẩu",
     "register_method_text": "Phương thức đăng ký",
     "manual_option": "Thủ công",
     "google_option": "Google",
@@ -130,7 +130,10 @@
     "create_group_cancel": "Huỷ",
     "create_group_create": "Tạo",
     "create_group_creating": "Đang tạo...",
-    "create_group_confirm_discard": "Bạn có thay đổi chưa lưu. Bỏ thay đổi?"
+    "create_group_confirm_discard": "Bạn có thay đổi chưa lưu. Bỏ thay đổi?",
+    "join_to_do_exercise": "Tham gia nhóm để làm bài tập",
+    "join_group": "Tham gia nhóm",
+    "request_to_join": "Gửi yêu cầu tham gia"
   },
   "Post_collections": {
     "title": "Thư mục",
@@ -190,7 +193,7 @@
     "create_preparation": "Tạo đề",
     "edit_preparation": "Sửa đề",
     "no_preparations": "Chưa có đề nào",
-    "preparation_not_found": "Không tìm thấy đề",
+    "preparation_not_found": "Không tìm thấy đề này — có thể đã bị xoá hoặc bạn không có quyền xem",
     "title_label": "Tiêu đề",
     "title_placeholder": "Nhập tiêu đề",
     "desc_label": "Mô tả",
@@ -225,7 +228,7 @@
     "nickname": "Tên",
     "bio": "Giới thiệu",
     "logout_btn": "Đăng xuất",
-    "load_fail": "Không tìm thấy thong tin , thử  lại sau"
+    "load_fail": "Không tải được thông tin cá nhân, thử lại sau"
   },
   "Shema": {
     "invalid_email": "Email không hợp lệ",
@@ -236,7 +239,7 @@
     "max_char_50": "Không được vượt quá 50 ký tự",
     "max_char_100": "Không được vượt quá 100 ký tự",
     "max_char_500": "Không được vượt quá 500 ký tự",
-    "only_letter_and_number_and_underscore": "Chỉ cho phép chữ cái, số và dấu gạch dưới , không cần @",
+    "only_letter_and_number_and_underscore": "Chỉ cho phép chữ cái, số và dấu gạch dưới , không cần @ , không dấu cách",
     "group_name_required": "Vui lòng nhập tên nhóm",
     "group_name_max": "Tên nhóm không được vượt quá 50 ký tự",
     "group_description_max": "Mô tả không được vượt quá 500 ký tự",
@@ -253,18 +256,25 @@
     "max_10_answers": "Tối đa 10 đáp án",
     "min_1_item": "Ít nhất 1 câu hỏi",
     "max_50_items": "Tối đa 50 câu hỏi",
-    "min_1_section": "Ít nhất 1 phần",
+    "min_1_section": "Ít nhất 1 bài tập ",
     "max_20_sections": "Tối đa 20 phần",
     "min_value_1": "Tối thiểu 1",
     "max_value_10": "Tối đa 10",
     "max_value_100": "Tối đa 100",
-    "max_240_minutes": "Tối đa 240 phút"
+    "max_240_minutes": "Tối đa 240 phút",
+    "deadline_must_be_future": "Hạn nộp phải ở tương lai"
   },
   "Toast": {
     "action_fail": "Thao tác thất bại , ... thử lại sau",
     "profile_update_fail": "Cập nhập lỗi .. thử lại sau ",
     "login_fail": "Đăng nhập thất bại",
-    "banned_account": "Tài khoản đã bị khoá"
+    "banned_account": "Tài khoản đã bị khoá",
+    "invalid_image_type": "Định dạng ảnh không hợp lệ",
+    "invalid_audio_type": "Định dạng âm thanh không hợp lệ",
+    "image_too_large": "Ảnh quá lớn (tối đa 5MB)",
+    "audio_too_large": "Âm thanh quá lớn (tối đa 20MB)",
+    "upload_failed": "Tải tệp thất bại, thử lại sau",
+    "storage_not_configured": "Máy chủ chưa cấu hình lưu trữ (R2) — không tải tệp lên được"
   },
   "Share_component": {
     "infinity_scroll_loading": "Đang tải...",
@@ -346,7 +356,13 @@
     "no_items_yet": "Chưa có câu hỏi nào",
     "cancel": "Huỷ",
     "confirm": "Xác nhận",
-    "saving": "Đang lưu..."
+    "saving": "Đang lưu...",
+    "remove": "Xoá",
+    "arrange_auto_shuffle_hint": "Hệ thống tự xáo thứ tự khi học viên làm bài",
+    "word_placeholder": "Từ / cụm từ",
+    "add_word": "Thêm từ",
+    "form_has_errors": "Chưa lưu được — cần bổ sung:",
+    "no_sections_yet": "Chưa có phần nào — thêm phần ở bên dưới"
   },
   "Post": {
     "posts": "Bài tập",
@@ -383,7 +399,7 @@
     "section_unit": "phần",
     "loading": "Đang tải...",
     "back": "Quay lại",
-    "post_not_found": "Không tìm thấy bài tập",
+    "post_not_found": "Không tìm thấy bài tập này — có thể đã bị xoá hoặc bạn không có quyền xem",
     "confirm_delete_post": "Xoá bài tập",
     "confirm_delete_post_desc": "Bạn có chắc muốn xoá \"{title}\"?",
     "cancel": "Huỷ",
@@ -440,7 +456,7 @@
     "essay_hint": "Viết bài làm của bạn",
     "essay_placeholder": "Nhập bài làm...",
     "grade": "Chấm",
-    "regrade": "Sửa điểm",
+    "regrade": "Chấm thủ tự luận ",
     "grade_title": "Chấm bài",
     "no_essay_section": "Đề này không có phần tự luận để chấm tay.",
     "auto_point": "Điểm trắc nghiệm (tự động)",
@@ -452,7 +468,21 @@
     "model_answer": "Đáp án mẫu",
     "model_answer_hint": "Sửa ở đây sẽ áp dụng cho CẢ ĐỀ — mọi học viên đều thấy đáp án mới.",
     "override_total": "Ghi đè tổng điểm",
-    "override_total_hint": "Bỏ trống = điểm trắc nghiệm tự động + điểm tự luận vừa nhập."
+    "override_total_hint": "Bỏ trống = điểm trắc nghiệm tự động + điểm tự luận vừa nhập.",
+    "form_has_errors": "Chưa lưu được — cần bổ sung:",
+    "label_deadline": "Hạn nộp",
+    "label_view_each_other": "Xem bài nhau",
+    "label_retake": "Làm lại",
+    "retake_not_allowed": "Không",
+    "label_section_count": "Số phần",
+    "not_a_member": "Bạn chưa tham gia nhóm này nên chưa xem được bài tập",
+    "join_group": "Tham gia nhóm",
+    "request_to_join": "Gửi yêu cầu tham gia",
+    "join_to_do_exercise": "Tham gia nhóm để làm bài tập",
+    "point_range_hint": "Từ 0 đến {max}",
+    "model_answer_readonly": "Đáp án mẫu / ý chính của đề — chỉ để đọc. Muốn sửa thì sửa ở đề gốc.",
+    "essay_required": "Còn {count} phần tự luận chưa viết — cần viết trước khi nộp bài",
+    "content_hidden_until_start": "Nội dung bài tập sẽ hiện sau khi bạn bắt đầu làm bài"
   },
   "Notification": {
     "title": "Thông báo",

@@ -1,10 +1,22 @@
 'use client';
 
 import { Link } from '@/i18n/navigation';
-import { AlarmClock, ArrowRight, SquarePen, Trash2 } from 'lucide-react';
+import {
+    AlarmClock,
+    ArrowRight,
+    Eye,
+    FileText,
+    RotateCcw,
+    SquarePen,
+    Trash2,
+} from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { Badge } from '@/components/ui/badge';
+import {
+    PostInfoBadge,
+    viewEachOtherLabel,
+} from '@/components/post/_share/PostInfoBadge.compo';
 import { Button } from '@/components/ui/button';
 import { formatDeadline } from '@/lib/format/datetime';
 import { isPastDeadline, type Post } from '@/types/post/post.type';
@@ -49,27 +61,47 @@ export default function PostCard({
                             </p>
                         )}
 
+                        {/* Nhãn + giá trị, giống hệt trang chi tiết */}
                         <div className="mt-3 flex flex-wrap items-center gap-2">
-                            <Badge variant="secondary" className="gap-1">
-                                <AlarmClock size={11} />
-                                {deadline ?? txt('no_deadline')}
-                            </Badge>
+                            <PostInfoBadge
+                                icon={<AlarmClock size={11} />}
+                                label={txt('label_deadline')}
+                                value={deadline ?? txt('no_deadline')}
+                            />
 
                             {expired && (
-                                <Badge variant="secondary" className="text-red-600">
+                                <Badge
+                                    variant="secondary"
+                                    className="text-destructive"
+                                >
                                     {txt('deadline_passed')}
                                 </Badge>
                             )}
 
-                            {post.retake === Retake.BEFORE_DATELINE && (
-                                <Badge variant="secondary">
-                                    {txt('retake_allowed')}
-                                </Badge>
-                            )}
+                            <PostInfoBadge
+                                icon={<Eye size={11} />}
+                                label={txt('label_view_each_other')}
+                                value={viewEachOtherLabel(
+                                    txt,
+                                    post.view_each_other_answer,
+                                )}
+                            />
 
-                            <span className="text-[11px] text-muted-foreground">
-                                {post.content?.length ?? 0} {txt('section_unit')}
-                            </span>
+                            <PostInfoBadge
+                                icon={<RotateCcw size={11} />}
+                                label={txt('label_retake')}
+                                value={
+                                    post.retake === Retake.BEFORE_DATELINE
+                                        ? txt('retake_allowed')
+                                        : txt('retake_not_allowed')
+                                }
+                            />
+
+                            <PostInfoBadge
+                                icon={<FileText size={11} />}
+                                label={txt('label_section_count')}
+                                value={`${post.content?.length ?? 0} ${txt('section_unit')}`}
+                            />
                         </div>
                     </div>
 

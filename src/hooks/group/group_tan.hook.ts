@@ -1,6 +1,9 @@
 'use client';
 
+import { useRef } from 'react';
+
 import {InfiniteData, useInfiniteQuery, useQuery, useQueryClient} from '@tanstack/react-query';
+import { clearGroupCache } from '@/helper/tanstack/groupCache.helper';
 import { api } from '@/lib/axios/axios';
 import { useRouter } from '@/i18n/navigation';
 import {
@@ -135,15 +138,24 @@ export function useDeleteGroup() {
     const router = useRouter();
     const queryClient = useQueryClient();
 
+    /**
+     * `onSuccessCallback` nhận RESPONSE của BE, KHÔNG phải id truyền vào — nên
+     * không thể dùng tham số đó làm group_id. Ghi lại id ngay trong mutationFn.
+     */
+    const deletedId = useRef('');
+
     return useTanDelete<Group>({
-        mutationFn: async (id) => {
+        mutationFn: async (id: string) => {
+            deletedId.current = id;
             await api.delete(`group/${id}`);
         },
         options: {
             onSuccess: {
                 invalidateTags: [['my_own_group'], ['my_all_group']],
-                onSuccessCallback: (id) => {
-                    queryClient.removeQueries({ queryKey: ['current_group', id] });
+                onSuccessCallback: () => {
+                    // xoá SẠCH cache của nhóm này (bộ sưu tập, bài tập, bài làm,
+                    // thành viên, đơn xin vào…) chứ không chỉ mỗi thông tin nhóm
+                    clearGroupCache(queryClient, deletedId.current);
                     router.push('/group');
                 },
             },
@@ -158,15 +170,19 @@ export function useQuitGroup() {
     const router = useRouter();
     const queryClient = useQueryClient();
 
+    /** Xem giải thích ở `useDeleteGroup` */
+    const quitId = useRef('');
+
     return useTanDelete<Group>({
-        mutationFn: async (id) => {
+        mutationFn: async (id: string) => {
+            quitId.current = id;
             await api.delete(`group_member/quit/${id}`);
         },
         options: {
             onSuccess: {
                 invalidateTags: [['my_own_group'], ['my_all_group']],
-                onSuccessCallback: (id) => {
-                    queryClient.removeQueries({ queryKey: ['current_group', id] });
+                onSuccessCallback: () => {
+                    clearGroupCache(queryClient, quitId.current);
                     router.push('/group');
                 },
             },

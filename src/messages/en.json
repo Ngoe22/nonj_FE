@@ -130,7 +130,10 @@
     "create_group_cancel": "Cancel",
     "create_group_create": "Create",
     "create_group_creating": "Creating...",
-    "create_group_confirm_discard": "You have unsaved changes. Discard?"
+    "create_group_confirm_discard": "You have unsaved changes. Discard?",
+    "join_to_do_exercise": "Join the group to do the exercises",
+    "join_group": "Join group",
+    "request_to_join": "Request to join"
   },
   "Post_collections": {
     "title": "Collections",
@@ -190,7 +193,7 @@
     "create_preparation": "New preparation",
     "edit_preparation": "Edit preparation",
     "no_preparations": "No preparations yet",
-    "preparation_not_found": "Preparation not found",
+    "preparation_not_found": "This preparation wasn't found — it may be deleted or you don't have access",
     "title_label": "Title",
     "title_placeholder": "Enter title",
     "desc_label": "Description",
@@ -225,7 +228,7 @@
     "nickname": "Name",
     "bio": "Bio",
     "logout_btn": "Logout",
-    "load_fail": "Not found profile , try again later"
+    "load_fail": "Could not load your profile, please try again"
   },
   "Shema": {
     "invalid_email": "Invalid email address",
@@ -236,7 +239,7 @@
     "max_char_50": "Must not exceed 50 characters",
     "max_char_100": "Must not exceed 100 characters",
     "max_char_500": "Must not exceed 500 characters",
-    "only_letter_and_number_and_underscore": "Only letters, numbers, and underscores are allowed , no need @",
+    "only_letter_and_number_and_underscore": "Only letters, numbers, and underscores are allowed , no need @ ,  no space",
     "group_name_required": "Group name is required",
     "group_name_max": "Group name must not exceed 50 characters",
     "group_description_max": "Description must not exceed 500 characters",
@@ -258,13 +261,20 @@
     "min_value_1": "Minimum 1",
     "max_value_10": "Maximum 10",
     "max_value_100": "Maximum 100",
-    "max_240_minutes": "Max 240 minutes"
+    "max_240_minutes": "Max 240 minutes",
+    "deadline_must_be_future": "Deadline must be in the future"
   },
   "Toast": {
     "action_fail": "Something went wrong ... , try again later",
     "profile_update_fail": "Update fail ... , try again later",
     "login_fail": "Login failed",
-    "banned_account": "Account is banned"
+    "banned_account": "Account is banned",
+    "invalid_image_type": "Invalid image format",
+    "invalid_audio_type": "Invalid audio format",
+    "image_too_large": "Image too large (max 5MB)",
+    "audio_too_large": "Audio too large (max 20MB)",
+    "upload_failed": "Upload failed, please try again",
+    "storage_not_configured": "Server storage (R2) is not configured — upload unavailable"
   },
   "Share_component": {
     "infinity_scroll_loading": "Loading...",
@@ -346,7 +356,13 @@
     "no_items_yet": "No questions yet",
     "cancel": "Cancel",
     "confirm": "Confirm",
-    "saving": "Saving..."
+    "saving": "Saving...",
+    "remove": "Remove",
+    "arrange_auto_shuffle_hint": "Order is shuffled automatically for students",
+    "word_placeholder": "Word / phrase",
+    "add_word": "Add word",
+    "form_has_errors": "Can't save yet — please fix:",
+    "no_sections_yet": "No sections yet — add one below"
   },
   "Post": {
     "posts": "Assignments",
@@ -383,7 +399,7 @@
     "section_unit": "sections",
     "loading": "Loading...",
     "back": "Back",
-    "post_not_found": "Assignment not found",
+    "post_not_found": "This assignment wasn't found — it may be deleted or you don't have access",
     "confirm_delete_post": "Delete assignment",
     "confirm_delete_post_desc": "Are you sure you want to delete \"{title}\"?",
     "cancel": "Cancel",
@@ -452,7 +468,21 @@
     "model_answer": "Model answer",
     "model_answer_hint": "Editing here updates the WHOLE assignment — every student will see the new answer.",
     "override_total": "Override total",
-    "override_total_hint": "Leave empty = auto multiple-choice points + the essay points above."
+    "override_total_hint": "Leave empty = auto multiple-choice points + the essay points above.",
+    "form_has_errors": "Can't save yet — please fix:",
+    "label_deadline": "Deadline",
+    "label_view_each_other": "Peer answers",
+    "label_retake": "Retake",
+    "retake_not_allowed": "Not allowed",
+    "label_section_count": "Sections",
+    "not_a_member": "You haven't joined this group yet",
+    "join_group": "Join group",
+    "request_to_join": "Request to join",
+    "join_to_do_exercise": "Join the group to do the exercises",
+    "point_range_hint": "Between 0 and {max}",
+    "model_answer_readonly": "Model answer from the assignment — read only. Edit it in the source assignment.",
+    "essay_required": "{count} essay section(s) still empty — please write something before submitting",
+    "content_hidden_until_start": "The assignment content appears once you start the attempt"
   },
   "Notification": {
     "title": "Notifications",

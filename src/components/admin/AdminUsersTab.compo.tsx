@@ -54,7 +54,7 @@ function UserCollectionsModal({
 
     return (
         <Dialog open={!!user} onOpenChange={(value) => !value && onClose()}>
-            <DialogContent className="max-h-[90vh] w-11/12 max-w-3xl overflow-y-auto">
+            <DialogContent className="max-h-[92dvh] w-[95vw] overflow-y-auto sm:max-w-3xl">
                 <DialogHeader>
                     <DialogTitle>
                         {txt('user_preparations')} · {user?.user_name}

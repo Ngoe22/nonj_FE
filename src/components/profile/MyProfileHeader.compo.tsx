@@ -4,13 +4,20 @@ import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 
 
 interface Props {
-    avatar_url : string |null
-    nickname : string;
-    user_name : string;
-    email : string;
+    avatar_url: string | null;
+    /**
+     * Cho phép null/undefined: BE có thể trả user chưa đặt nickname, và lúc đó
+     * `nickname.charAt(0)` sẽ ném TypeError làm TRẮNG cả trang /profile.
+     */
+    nickname?: string | null;
+    user_name: string;
+    email: string;
 }
 
-export function MyProfileHeader (  {avatar_url ,nickname ,user_name , email } : Props) {
+export function MyProfileHeader({ avatar_url, nickname, user_name, email }: Props) {
+    const displayName = nickname?.trim() || user_name?.trim() || '';
+    const initial = displayName ? displayName.charAt(0).toUpperCase() : '?';
+
     return (
         <Card className="mt-6 overflow-hidden">
             <div className="p-5 sm:p-6">
@@ -22,15 +29,13 @@ export function MyProfileHeader (  {avatar_url ,nickname ,user_name , email } : 
                         />
 
                         <AvatarFallback className="text-2xl">
-                            {nickname
-                                .charAt(0)
-                                .toUpperCase()}
+                            {initial}
                         </AvatarFallback>
                     </Avatar>
 
                     <div className="min-w-0 text-center sm:text-left">
                         <h2 className="text-xl font-semibold text-foreground">
-                            {nickname}
+                            {displayName || '—'}
                         </h2>
 
                         <p className="mt-1 text-sm text-muted-foreground">

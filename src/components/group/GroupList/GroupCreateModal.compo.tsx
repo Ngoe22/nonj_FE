@@ -4,6 +4,8 @@ import { useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
+
+import { translateErrorKey } from '@/helper/formError/formError.helper';
 import { X } from 'lucide-react';
 
 import {
@@ -32,6 +34,8 @@ interface Props {
 
 export function CreateGroupModal({open, onClose, onSubmit, isSubmitting = false }: Props) {
     const txt = useTranslations('Group');
+    // message của zod là KEY i18n -> phải dịch, không in thẳng ra
+    const txtErr = useTranslations('Shema');
 
     const {
         register,
@@ -163,9 +167,9 @@ export function CreateGroupModal({open, onClose, onSubmit, isSubmitting = false 
                                 </Select>
                             )}
                         />
-                        {errors.join_mode && (
-                            <p className="mt-1 text-sm text-red-500">
-                                {errors.join_mode.message}
+                        {errors.join_mode?.message && (
+                            <p className="mt-1 text-sm text-destructive">
+                                {translateErrorKey(txtErr, errors.join_mode.message)}
                             </p>
                         )}
                     </div>
@@ -197,9 +201,9 @@ export function CreateGroupModal({open, onClose, onSubmit, isSubmitting = false 
                                 </Select>
                             )}
                         />
-                        {errors.view_mode && (
-                            <p className="mt-1 text-sm text-red-500">
-                                {errors.view_mode.message}
+                        {errors.view_mode?.message && (
+                            <p className="mt-1 text-sm text-destructive">
+                                {translateErrorKey(txtErr, errors.view_mode.message)}
                             </p>
                         )}
                     </div>

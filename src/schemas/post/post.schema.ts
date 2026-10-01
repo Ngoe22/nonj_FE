@@ -29,6 +29,37 @@ export const postMetaSchema = z.object({
     ]),
 });
 
+/**
+ * Hạn nộp phải ở TƯƠNG LAI.
+ *
+ * `originalDeadline` là hạn ĐANG LƯU. Nếu người dùng không đổi hạn (ví dụ chỉ
+ * sửa tiêu đề của bài đã hết hạn) thì phải cho qua — nếu không, sau khi bài hết
+ * hạn sẽ không sửa được bất cứ thứ gì.
+ */
+export function isDeadlineAcceptable(
+    value?: string,
+    originalDeadline?: string,
+): boolean {
+    if (!value) return true; // bỏ hạn = hợp lệ
+
+    const next = new Date(value).getTime();
+    if (Number.isNaN(next)) return false;
+    if (next > Date.now()) return true; // ở tương lai
+
+    if (!originalDeadline) return false;
+
+    // ở quá khứ: chỉ hợp lệ khi GIỮ NGUYÊN hạn cũ
+    return new Date(originalDeadline).getTime() === next;
+}
+
+/** Schema cho form, có kèm kiểm tra hạn nộp so với hạn đang lưu */
+export function buildPostMetaSchema(originalDeadline?: string) {
+    return postMetaSchema.refine(
+        (values) => isDeadlineAcceptable(values.deadline_at, originalDeadline),
+        { message: 'deadline_must_be_future', path: ['deadline_at'] },
+    );
+}
+
 export type PostMetaFormValues = z.infer<typeof postMetaSchema>;
 
 export const postMetaDefaultValues: PostMetaFormValues = {

@@ -1,7 +1,8 @@
 'use client';
 
 import {useEffect, useRef, useState} from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
+import { usePathname, useRouter } from '@/i18n/navigation';
 import GroupSubHeader from "@/components/group/GroupInner/main/GroupSubHeader.compo";
 import GroupSettings from "@/components/group/GroupInner/GroupSetting/GroupSettings.compo";
 import GroupJoinRequests from "@/components/group/GroupInner/GroupJoinReq/GroupJoinRequests.compo";
@@ -14,6 +15,9 @@ import ConfirmModal from "@/components/group/_share/ConfirmModal.compo";
 import {useTranslations} from "next-intl";
 import {toast} from "react-toastify";
 import {useDeleteGroup, useGetGroup, useQuitGroup} from "@/hooks/group/group_tan.hook";
+import {useCreateJoinRequest} from "@/hooks/group_search/group_join_request.hook";
+import {AlertTriangle, UserPlus} from "lucide-react";
+import {useQueryClient} from "@tanstack/react-query";
 import {Group} from "@/types/group/group.type";
 
 
@@ -44,10 +48,23 @@ export default  function GroupDetail() {
     } = useGetGroup(groupId);
 
 
+    const queryClient = useQueryClient();
+    const joinMutation = useCreateJoinRequest();
+
+    const isMember = currentGroup?.permission?.is_member ?? true;
+    const isByRequest = currentGroup?.join_mode === 'BY_REQUEST';
+
+    // vào nhóm xong thì nạp lại thông tin nhóm để `is_member` chuyển true
+    useEffect(() => {
+        if (!joinMutation.isSuccess) return;
+        queryClient.invalidateQueries({ queryKey: ['current_group', groupId] });
+        queryClient.invalidateQueries({ queryKey: ['collections', groupId] });
+    }, [joinMutation.isSuccess, queryClient, groupId]);
+
     const { mutate : deleteGroup } = useDeleteGroup()
     const deleteHandler = async () =>{
 
-        console.log(currentGroup)
+        // console.log(currentGroup)
 
         if(currentGroup?.id) {
             deleteGroup(currentGroup.id)
@@ -70,8 +87,46 @@ export default  function GroupDetail() {
     //
 
 
-    const [view, setView] =
-        useState<View>('overview');
+    // Cho phép deep link từ thông báo: /group/<id>?view=join_requests
+    const searchParams = useSearchParams();
+    const viewParam = searchParams.get('view');
+    const isViewValue = (value: string | null): value is View =>
+        value === 'overview' ||
+        value === 'settings' ||
+        value === 'join_requests' ||
+        value === 'members';
+
+    const [view, setView] = useState<View>(
+        isViewValue(viewParam) ? viewParam : 'overview',
+    );
+
+    /*
+     * Bấm thông báo khi đang Ở SẴN trang nhóm chỉ đổi QUERY (component không
+     * remount) -> phải tự đồng bộ lại view, nếu không sẽ đứng nguyên ở tab cũ.
+     */
+    const [syncedViewParam, setSyncedViewParam] = useState(viewParam);
+    if (syncedViewParam !== viewParam) {
+        setSyncedViewParam(viewParam);
+        if (isViewValue(viewParam)) setView(viewParam);
+    }
+
+    const pathname = usePathname();
+    const router = useRouter();
+
+    /**
+     * Đổi mục đang xem thì đẩy luôn lên URL (hai chiều với deep link), để F5 và
+     * link chia sẻ vẫn mở đúng mục.
+     */
+    const changeView = (next: View) => {
+        setView(next);
+
+        const params = new URLSearchParams(searchParams.toString());
+        if (next === 'overview') params.delete('view');
+        else params.set('view', next);
+
+        const query = params.toString();
+        router.replace(query ? `${pathname}?${query}` : pathname);
+    };
 
     const [menuOpen, setMenuOpen] =
         useState(false);
@@ -88,7 +143,7 @@ export default  function GroupDetail() {
     const canAddCollection = true;
 
     const goOverview = () => {
-        setView('overview');
+        changeView('overview');
         setMenuOpen(false);
     };
 
@@ -159,13 +214,13 @@ export default  function GroupDetail() {
                     }
 
                     onSettings={() =>
-                        setView('settings')
+                        changeView('settings')
                     }
                     onRequests={() =>
-                        setView('join_requests')
+                        changeView('join_requests')
                     }
                     onMembers={() =>
-                        setView('members')
+                        changeView('members')
                     }
                     onQuit={() =>
                         setQuitOpen(true)
@@ -173,6 +228,34 @@ export default  function GroupDetail() {
                     onDelete={() => setGroupDeleteOpen(true)
                     }
                 />
+
+                {/*
+                  Người NGOÀI nhóm (nhóm view_mode = PUBLIC) vẫn xem được nhóm và
+                  bộ sưu tập, nhưng KHÔNG xem được bài tập — nội dung bài tập là
+                  thứ tránh bị lấy đi. Hiện dải cảnh báo thay vì để họ bấm vào
+                  rồi nhận lỗi khó hiểu.
+                */}
+                {!isMember && (
+                    <div className="mb-4 flex flex-col gap-3 rounded-xl border-2 border-status-warning bg-status-warning-bg p-3 sm:flex-row sm:items-center sm:justify-between">
+                        <p className="flex items-center gap-2 text-sm font-medium text-status-warning">
+                            <AlertTriangle size={16} />
+                            {txt('join_to_do_exercise')}
+                        </p>
+                        <button
+                            type="button"
+                            disabled={joinMutation.isPending}
+                            onClick={() =>
+                                joinMutation.mutate({ group_id: groupId })
+                            }
+                            className="inline-flex shrink-0 items-center justify-center gap-2 rounded-md border-2 border-status-warning px-3 py-1.5 text-sm font-medium text-status-warning transition hover:bg-status-warning hover:text-white disabled:opacity-60"
+                        >
+                            <UserPlus size={14} />
+                            {isByRequest
+                                ? txt('request_to_join')
+                                : txt('join_group')}
+                        </button>
+                    </div>
+                )}
 
                 <CollectionList
                     locale={locale}
@@ -190,10 +273,10 @@ export default  function GroupDetail() {
                     setCreateCollectionOpen(false)
                 }
                 onSubmit={(data) => {
-                    console.log(
-                        'CREATE COLLECTION',
-                        data
-                    );
+                    // console.log(
+                    //     'CREATE COLLECTION',
+                    //     data
+                    // );
 
                     setCreateCollectionOpen(false);
                 }}

@@ -165,7 +165,7 @@ export default function AdminReportsTab() {
                 open={!!reviewing}
                 onOpenChange={(value) => !value && setReviewing(null)}
             >
-                <DialogContent className="max-w-lg">
+                <DialogContent className="sm:max-w-lg">
                     <DialogHeader>
                         <DialogTitle>{txt('process')}</DialogTitle>
                     </DialogHeader>

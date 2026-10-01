@@ -100,17 +100,23 @@ export function notificationHref(
 
         case User_Notif_Type.GROUP_JOIN_APPROVED:
         case User_Notif_Type.GROUP_JOIN_REJECTED:
+            return `/group/${notification.content.group_id}`;
+
         case User_Notif_Type.GROUP_MEMBER_KICKED:
         case User_Notif_Type.GROUP_MEMBER_ROLE_CHANGED:
-            return `/group/${notification.content.group_id}`;
+            // đổi vai trò / bị mời ra -> xem danh sách thành viên
+            return `/group/${notification.content.group_id}?view=members`;
 
         case User_Notif_Type.GROUP_JOIN_REQUEST:
-            // người duyệt cần vào tab thành viên của nhóm
-            return `/group/${notification.content.group_id}`;
+            // người duyệt cần vào thẳng tab đơn xin vào nhóm
+            return `/group/${notification.content.group_id}?view=join_requests`;
 
         case User_Notif_Type.FRIEND_REQUEST:
+            // mở đúng tab "lời mời đến", không bắt người dùng tự chuyển tab
+            return '/friends?tab=incoming';
+
         case User_Notif_Type.FRIEND_RESPONSE:
-            return '/friends';
+            return '/friends?tab=outgoing';
 
         default:
             return null;

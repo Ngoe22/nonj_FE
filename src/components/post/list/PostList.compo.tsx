@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
-import { Plus } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { AlertTriangle, Plus, UserPlus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { useQueryClient } from '@tanstack/react-query';
 
 import PostCard from '@/components/post/list/PostCard.compo';
 import CreatePostChoiceModal from '@/components/post/modal/CreatePostChoiceModal.compo';
@@ -11,14 +12,19 @@ import PickPreparationModal from '@/components/post/modal/PickPreparationModal.c
 import PreparationBuilderModal from '@/components/question_preparation/preparation/modal/PreparationBuilderModal.compo';
 import ConfirmModal from '@/components/group/_share/ConfirmModal.compo';
 import { InfiniteScrollList } from '@/components/_share/infinity_scroll/InfiniteScrollList.compo';
+import { Button } from '@/components/ui/button';
 
 import {
+    postListKey,
     useCreatePost,
     useCreatePostFromPreparation,
     useDeletePost,
     useGetPosts,
     useUpdatePost,
 } from '@/hooks/post/post.hook';
+import { useGetGroup } from '@/hooks/group/group_tan.hook';
+import { useCreateJoinRequest } from '@/hooks/group_search/group_join_request.hook';
+import { Group_Join_Mode } from '@/enum/group/group_mode.enum';
 import {
     postMetaDefaultValues,
     toDeadlineIso,
@@ -48,7 +54,31 @@ export default function PostList({ groupId, collectionId, canCreate }: Props) {
         isFetchingNextPage,
         isLoading,
         isError,
+        error,
     } = useGetPosts(groupId, collectionId);
+
+    const { data: group } = useGetGroup(groupId);
+    const joinMutation = useCreateJoinRequest();
+    const queryClient = useQueryClient();
+
+    /**
+     * Người dùng CHƯA là thành viên nhóm -> BE trả 404 kèm mã `not_a_member`.
+     * Trước đây FE chỉ hiện lỗi tải chung chung nên rất khó hiểu: nhìn như bài
+     * tập bị lỗi, trong khi thực ra chỉ cần bấm tham gia nhóm.
+     */
+    const notMember =
+        (error as { response?: { data?: { errorCode?: string } } })?.response
+            ?.data?.errorCode === 'not_a_member';
+
+    const isByRequest = group?.join_mode === Group_Join_Mode.BY_REQUEST;
+
+    // vào nhóm xong thì nạp lại danh sách bài tập
+    useEffect(() => {
+        if (!joinMutation.isSuccess) return;
+        queryClient.invalidateQueries({
+            queryKey: postListKey(groupId, collectionId),
+        });
+    }, [joinMutation.isSuccess, queryClient, groupId, collectionId]);
 
     const createMutation = useCreatePost(groupId, collectionId);
     const createFromPreparationMutation = useCreatePostFromPreparation(
@@ -122,6 +152,8 @@ export default function PostList({ groupId, collectionId, canCreate }: Props) {
                 description: values.description,
                 deadline_at: toDeadlineIso(values.deadline_at),
                 view_each_other_answer: values.view_each_other_answer,
+                // trước đây thiếu field này nên đổi "làm lại" không lưu được
+                retake: values.retake,
             },
         });
         setEditOpen(false);
@@ -187,6 +219,31 @@ export default function PostList({ groupId, collectionId, canCreate }: Props) {
                     isLoading={isLoading}
                     isError={isError}
                     className="space-y-3"
+                    errorComponent={
+                        notMember ? (
+                            <div className="flex flex-col gap-3 rounded-xl border-2 border-status-warning bg-status-warning-bg p-3 sm:flex-row sm:items-center sm:justify-between">
+                                <p className="flex items-center gap-2 text-sm font-medium text-status-warning">
+                                    <AlertTriangle size={16} />
+                                    {txt('join_to_do_exercise')}
+                                </p>
+                                <Button
+                                    type="button"
+                                    className="shrink-0 gap-2"
+                                    disabled={joinMutation.isPending}
+                                    onClick={() =>
+                                        joinMutation.mutate({
+                                            group_id: groupId,
+                                        })
+                                    }
+                                >
+                                    <UserPlus size={14} />
+                                    {isByRequest
+                                        ? txt('request_to_join')
+                                        : txt('join_group')}
+                                </Button>
+                            </div>
+                        ) : undefined
+                    }
                     emptyComponent={
                         <div className="flex min-h-40 items-center justify-center rounded-2xl border border-dashed border-border">
                             <p className="text-sm text-muted-foreground">

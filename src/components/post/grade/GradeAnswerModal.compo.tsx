@@ -73,9 +73,12 @@ function buildDrafts(post: Post, answer: PostAnswer | null): Record<number, Draf
 /**
  * Giáo viên chấm phần TỰ LUẬN.
  *
- * - Điểm từng câu + nhận xét từng câu
- * - Ghi đè được ĐÁP ÁN MẪU (lưu vào post.correct_answer nên cả lớp thấy)
- * - Tổng = điểm trắc nghiệm (auto) + điểm tự luận (tay), hoặc ghi đè thẳng
+ * - Điểm từng phần: chỉ trong khoảng 0..điểm tối đa của CHÍNH phần đó
+ * - Nhận xét từng phần + nhận xét chung
+ * - Tổng = điểm trắc nghiệm (BE chấm tự động) + điểm tự luận (chấm tay)
+ *
+ * Đáp án mẫu / ý chính CHỈ ĐỂ ĐỌC ở đây — nó thuộc về đề, do người ra đề đặt
+ * lúc soạn. Sửa nó khi chấm sẽ làm lệch đáp án của cả lớp.
  */
 export default function GradeAnswerModal({
     open,
@@ -88,7 +91,6 @@ export default function GradeAnswerModal({
     const txt = useTranslations('Post');
 
     const [drafts, setDrafts] = useState<Record<number, Draft>>({});
-    const [totalOverride, setTotalOverride] = useState('');
     const [note, setNote] = useState('');
 
     // React khuyến nghị: điều chỉnh state khi prop đổi NGAY TRONG RENDER
@@ -97,7 +99,6 @@ export default function GradeAnswerModal({
         setWasOpen(open);
         if (open) {
             setDrafts(buildDrafts(post, answer));
-            setTotalOverride('');
             setNote(
                 (
                     answer?.review_content?.manual as ManualGradeInfo | undefined
@@ -127,6 +128,29 @@ export default function GradeAnswerModal({
 
     const previewTotal = Number((autoPoint + manualPoint).toFixed(2));
 
+    /**
+     * `type="number"` KHÔNG đủ: trình duyệt vẫn cho gõ `e`, `E`, `+`, `-`
+     * (và tiếng Việt có thể gõ cả chữ). Chỉ giữ chữ số và tối đa một dấu chấm.
+     */
+    const cleanNumeric = (raw: string) =>
+        raw
+            .replace(/[^\d.]/g, '')
+            .replace(/^(\d*\.\d*).*$/, '$1');
+
+    /** Kẹp về 0..trần của phần — làm lúc rời ô để không cản lúc đang gõ */
+    const clampPoint = (index: number, max: number) => {
+        const raw = drafts[index]?.point ?? '';
+        if (raw.trim() === '') {
+            setDraft(index, { point: '0' });
+            return;
+        }
+        const value = Number(raw);
+        const safe = Number.isFinite(value)
+            ? Math.min(Math.max(value, 0), max)
+            : 0;
+        setDraft(index, { point: String(safe) });
+    };
+
     const setDraft = (index: number, patch: Partial<Draft>) => {
         setDrafts((prev) => {
             const current = prev[index] ?? {
@@ -139,27 +163,34 @@ export default function GradeAnswerModal({
     };
 
     const submit = async () => {
-        const sections: GradeSectionVars[] = essaySections.map(({ index }) => ({
-            index,
-            point: Number(drafts[index]?.point ?? 0) || 0,
-            sample_answer: drafts[index]?.sample_answer ?? '',
-            comment: drafts[index]?.comment ?? '',
-        }));
+        const sections: GradeSectionVars[] = essaySections.map(
+            ({ section, index }) => {
+                const max = Number(section.point ?? 0);
+                const raw = Number(drafts[index]?.point ?? 0);
+                const point = Number.isFinite(raw)
+                    ? Math.min(Math.max(raw, 0), max)
+                    : 0;
+
+                return {
+                    index,
+                    point,
+                    // KHÔNG gửi `sample_answer`: BE chỉ ghi đè khi field này
+                    // được gửi, nên bỏ đi là đáp án mẫu của đề được giữ nguyên.
+                    comment: drafts[index]?.comment ?? '',
+                };
+            },
+        );
 
         await onSubmit({
             answer_id: answer?.id ?? '',
             sections,
-            point:
-                totalOverride.trim() === ''
-                    ? undefined
-                    : Number(totalOverride),
             review_note: note,
         });
     };
 
     return (
         <Dialog open={open} onOpenChange={(value) => !value && onClose()}>
-            <DialogContent className="max-h-[90vh] w-11/12 max-w-3xl overflow-y-auto">
+            <DialogContent className="max-h-[92dvh] w-[95vw] overflow-y-auto sm:max-w-4xl">
                 <DialogHeader>
                     <DialogTitle>
                         {txt('grade_title')} · {post.title}
@@ -184,10 +215,7 @@ export default function GradeAnswerModal({
                                 {txt('total_point')}:
                             </span>
                             <span className="font-semibold tabular-nums">
-                                {totalOverride.trim() === ''
-                                    ? previewTotal
-                                    : Number(totalOverride) || 0}
-                                /{maxPoint}
+                                {previewTotal}/{maxPoint}
                             </span>
                         </div>
 
@@ -236,16 +264,31 @@ export default function GradeAnswerModal({
                                                 {txt('section_point')}
                                             </label>
                                             <input
-                                                type="number"
-                                                min={0}
+                                                type="text"
+                                                inputMode="decimal"
                                                 value={draft.point}
                                                 onChange={(e) =>
                                                     setDraft(index, {
-                                                        point: e.target.value,
+                                                        point: cleanNumeric(
+                                                            e.target.value,
+                                                        ),
                                                     })
+                                                }
+                                                onBlur={() =>
+                                                    clampPoint(
+                                                        index,
+                                                        Number(
+                                                            section.point ?? 0,
+                                                        ),
+                                                    )
                                                 }
                                                 className={fieldClass}
                                             />
+                                            <p className="mt-1 text-[11px] text-muted-foreground">
+                                                {txt('point_range_hint', {
+                                                    max: section.point,
+                                                })}
+                                            </p>
                                         </div>
                                         <div>
                                             <label className="mb-1 block text-xs font-medium text-muted-foreground">
@@ -269,44 +312,18 @@ export default function GradeAnswerModal({
                                         <label className="mb-1 block text-xs font-medium text-muted-foreground">
                                             {txt('model_answer')}
                                         </label>
-                                        <textarea
-                                            value={draft.sample_answer}
-                                            onChange={(e) =>
-                                                setDraft(index, {
-                                                    sample_answer:
-                                                        e.target.value,
-                                                })
-                                            }
-                                            className={`${fieldClass} min-h-24 resize-y`}
-                                        />
+                                        <p className="whitespace-pre-wrap rounded-xl border border-dashed border-border bg-surface p-3 text-sm">
+                                            {draft.sample_answer || '—'}
+                                        </p>
                                         <p className="mt-1 text-[11px] text-muted-foreground">
-                                            {txt('model_answer_hint')}
+                                            {txt('model_answer_readonly')}
                                         </p>
                                     </div>
                                 </section>
                             );
                         })}
 
-                        <div className="grid gap-3 border-t border-dashed border-border pt-4 sm:grid-cols-2">
-                            <div>
-                                <label className="mb-1 block text-sm font-medium">
-                                    {txt('override_total')}
-                                </label>
-                                <input
-                                    type="number"
-                                    min={0}
-                                    value={totalOverride}
-                                    onChange={(e) =>
-                                        setTotalOverride(e.target.value)
-                                    }
-                                    placeholder={String(previewTotal)}
-                                    className={fieldClass}
-                                />
-                                <p className="mt-1 text-[11px] text-muted-foreground">
-                                    {txt('override_total_hint')}
-                                </p>
-                            </div>
-
+                        <div className="border-t border-dashed border-border pt-4">
                             <div>
                                 <label className="mb-1 block text-sm font-medium">
                                     {txt('review_note')}

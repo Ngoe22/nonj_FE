@@ -57,13 +57,21 @@ export default function NotificationBell() {
             document.removeEventListener('mousedown', handleClickOutside);
     }, [open]);
 
-    const handleSelect = async (notification: AppNotification) => {
-        if (!notification.is_read) {
-            await markRead.mutateAsync(notification.id);
-        }
-
+    const handleSelect = (notification: AppNotification) => {
         const href = notificationHref(notification);
         setOpen(false);
+
+        /*
+         * KHÔNG `await` việc đánh dấu đã đọc.
+         *
+         * Trước đây await nó trước khi điều hướng, nên chỉ cần API đó lỗi (mạng,
+         * thông báo đã đọc ở tab khác…) là `await` ném ra và `router.push` phía
+         * dưới KHÔNG BAO GIỜ chạy — bấm thông báo không đi đâu cả.
+         */
+        if (!notification.is_read) {
+            markRead.mutate(notification.id);
+        }
+
         if (href) router.push(href);
     };
 

@@ -218,3 +218,156 @@ body {
     @apply font-sans;
     }
 }
+/* --------------------------------
+   Thanh cuộn tối giản — dùng chung toàn trang
+   Mảnh, hơi mờ, bo tròn. Không đổi màu nền track để không lộ "rãnh".
+-------------------------------- */
+
+/* Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in oklab, var(--muted-foreground) 28%, transparent)
+        transparent;
+}
+
+/* Chromium / WebKit / Edge */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    /* viền trong suốt + background-clip -> thumb mảnh hơn khung */
+    border: 3px solid transparent;
+    border-radius: 9999px;
+    background-clip: content-box;
+    background-color: color-mix(in oklab, var(--muted-foreground) 28%, transparent);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: color-mix(in oklab, var(--muted-foreground) 50%, transparent);
+}
+
+/* --------------------------------
+   Ẩn mũi tên tăng/giảm mặc định của input[type=number]
+-------------------------------- */
+
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type='number'] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+/* --------------------------------
+   Icon lịch của input datetime-local
+   Mặc định trình duyệt vẽ icon MÀU ĐEN, ở theme tối gần như vô hình.
+   `color-scheme` bảo trình duyệt vẽ theo bảng màu tối; filter đổi sang tông CAM
+   để hạn nộp gây chú ý (đây là mốc thời gian quan trọng nhất của bài tập).
+-------------------------------- */
+
+input[type='datetime-local']::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: 0.75;
+    /* đen -> cam; chỉnh 3 số đầu nếu muốn đậm/nhạt khác */
+    filter: invert(62%) sepia(83%) saturate(1600%) hue-rotate(1deg)
+        brightness(98%) contrast(88%);
+}
+
+input[type='datetime-local']::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+}
+
+.dark input[type='datetime-local'] {
+    color-scheme: dark;
+}
+
+/* --------------------------------
+   Toast theo phong cách của web.
+
+   ⚠️ react-toastify v11 TỰ CHÈN CSS vào <head> lúc chạy, tức là SAU css của app.
+   Với cùng độ ưu tiên (1 class) thì css của thư viện THẮNG — đó là lý do bản sửa
+   đầu tiên không có tác dụng. Nên ở đây nhân đôi class
+   (`.Toastify__toast.Toastify__toast-theme--light`) để chắc chắn thắng, không
+   phải dùng `!important`.
+-------------------------------- */
+
+.Toastify__toast.Toastify__toast-theme--light,
+.Toastify__toast.Toastify__toast-theme--dark {
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--border);
+    background: var(--popover);
+    color: var(--popover-foreground);
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    line-height: 1.4;
+    box-shadow: 0 12px 32px rgb(0 0 0 / 0.14);
+    padding: 12px 14px;
+    min-height: 0;
+}
+
+.dark .Toastify__toast.Toastify__toast-theme--light,
+.dark .Toastify__toast.Toastify__toast-theme--dark {
+    box-shadow: 0 12px 32px rgb(0 0 0 / 0.5);
+}
+
+.Toastify__toast.Toastify__toast-theme--light .Toastify__toast-body,
+.Toastify__toast.Toastify__toast-theme--dark .Toastify__toast-body {
+    padding: 0;
+    color: inherit;
+    font-family: inherit;
+}
+
+/* Vạch tiến độ lấy đúng màu trạng thái của app */
+.Toastify__toast .Toastify__progress-bar {
+    height: 3px;
+    background: var(--muted-foreground);
+}
+.Toastify__toast--success .Toastify__progress-bar {
+    background: var(--status-success);
+}
+.Toastify__toast--error .Toastify__progress-bar {
+    background: var(--status-error);
+}
+.Toastify__toast--info .Toastify__progress-bar {
+    background: var(--status-info);
+}
+.Toastify__toast--warning .Toastify__progress-bar {
+    background: var(--status-warning);
+}
+
+/* Icon lấy màu theo trạng thái */
+.Toastify__toast--success .Toastify__toast-icon svg {
+    fill: var(--status-success);
+}
+.Toastify__toast--error .Toastify__toast-icon svg {
+    fill: var(--status-error);
+}
+.Toastify__toast--info .Toastify__toast-icon svg {
+    fill: var(--status-info);
+}
+.Toastify__toast--warning .Toastify__toast-icon svg {
+    fill: var(--status-warning);
+}
+
+/* Nút đóng: cùng lý do nhân đôi class (base + --light/--dark) */
+.Toastify__close-button.Toastify__close-button--light,
+.Toastify__close-button.Toastify__close-button--dark {
+    color: var(--muted-foreground);
+    opacity: 0.6;
+    align-self: center;
+}
+.Toastify__close-button.Toastify__close-button--light:hover,
+.Toastify__close-button.Toastify__close-button--dark:hover {
+    opacity: 1;
+    color: var(--foreground);
+}

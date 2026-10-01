@@ -54,13 +54,13 @@ export default function CollectionModal({
         await onSubmit(values);
     });
 
-    const titleError = errors.title?.message
-        ? { ...errors.title, message: txtErr(errors.title.message as any) }
-        : undefined;
-
-    const descError = errors.desc?.message
-        ? { ...errors.desc, message: txtErr(errors.desc.message as any) }
-        : undefined;
+    // const titleError = errors.title?.message
+    //     ? { ...errors.title, message: txtErr(errors.title.message as any) }
+    //     : undefined;
+    //
+    // const descError = errors.desc?.message
+    //     ? { ...errors.desc, message: txtErr(errors.desc.message as any) }
+    //     : undefined;
 
     return (
         <Modal
@@ -79,7 +79,7 @@ export default function CollectionModal({
                     </label>
                     <Input
                         register={register('title')}
-                        error={titleError}
+                        error={errors.title}
                         placeholder={txt('title_placeholder')}
                     />
                 </div>
@@ -90,7 +90,7 @@ export default function CollectionModal({
                     </label>
                     <Input
                         register={register('desc')}
-                        error={descError}
+                        error={errors.desc}
                         type="textarea"
                         placeholder={txt('desc_placeholder')}
                         inputStyles="mt-1 text-sm font-medium rounded-md p-2 w-full border-2 border-status-info min-h-[100px] resize-y"

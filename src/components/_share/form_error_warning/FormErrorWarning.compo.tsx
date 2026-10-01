@@ -1,16 +1,15 @@
-import {ReactNode} from "react";
-import { Badge } from "@/components/ui/badge"
-import {useTranslations} from "next-intl";
+import { Badge } from '@/components/ui/badge';
+import { useTranslations } from 'next-intl';
 
+import { translateErrorKey } from '@/helper/formError/formError.helper';
 
-export function InvalidInput({ msg }: { msg?: string }) {
+export function InvalidInput({ msg  , style }: { msg?: string , style?: string }) {
+    const txt = useTranslations('Shema');
+    if (!msg) return null;
 
-    const txt = useTranslations( 'Shema' )
-    if (!msg) return null
-    return <Badge
-        variant="destructive"
-        className={'mt-2'}
-    >
-        {txt(msg)}
-    </Badge>
+    return (
+        <Badge variant="destructive" className={ style ?  style :'mt-2'}>
+            {translateErrorKey(txt, msg)}
+        </Badge>
+    );
 }
