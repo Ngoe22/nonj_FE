@@ -17,7 +17,8 @@ import {
   AdminTextFilter,
   IconAction,
 } from '@/components/admin/_share/AdminListShell.compo';
-import AdminContentModal from '@/components/admin/_share/AdminContentModal.compo';
+import AdminDetailModal from '@/components/admin/_share/AdminDetailModal.compo';
+import { SectionView } from '@/components/question_preparation/preparation/detail/SectionView.compo';
 import { useAdminSoftDelete } from '@/hooks/admin/admin.hook';
 import type { AdminPreparationRow } from '@/types/admin/admin.type';
 
@@ -25,7 +26,7 @@ export default function AdminPreparationsPage() {
   const txt = useTranslations('Admin');
   const remove = useAdminSoftDelete('preparation');
 
-  const [content, setContent] = useState<AdminPreparationRow | null>(null);
+  const [detail, setDetail] = useState<AdminPreparationRow | null>(null);
   const [deleting, setDeleting] = useState<AdminPreparationRow | null>(null);
 
   const confirmDelete = async () => {
@@ -48,7 +49,7 @@ export default function AdminPreparationsPage() {
 
       <AdminListShell<AdminPreparationRow>
         resource="preparation"
-        onRowClick={setContent}
+        onRowClick={setDetail}
         columns={[
           { key: 'id', label: 'ID' },
           { key: 'title', label: txt('title_col') },
@@ -98,12 +99,31 @@ export default function AdminPreparationsPage() {
         )}
       />
 
-      {content && (
-        <AdminContentModal
-          title={content.title}
-          content={content.content}
-          onClose={() => setContent(null)}
-        />
+      {detail && (
+        <AdminDetailModal
+          title={detail.title}
+          onClose={() => setDetail(null)}
+          fields={[
+            { label: 'ID', value: detail.id },
+            { label: txt('title_col'), value: detail.title },
+            { label: txt('owner'), value: detail.user?.user_name },
+            { label: `${txt('owner')} ID`, value: detail.user?.id },
+            { label: txt('collection'), value: detail.collection?.title },
+            { label: `${txt('collection')} ID`, value: detail.collection?.id },
+            { label: txt('created_at'), value: detail.created_at },
+            { label: txt('updated_at'), value: detail.updated_at },
+            { label: txt('deleted_at'), value: detail.deleted_at },
+          ]}
+        >
+          <h4 className="mb-2 text-xs tracking-wide text-muted-foreground uppercase">
+            {txt('assignment_content')}
+          </h4>
+          <div className="space-y-3">
+            {(detail.content ?? []).map((section, index) => (
+              <SectionView key={index} section={section} index={index} showAnswers />
+            ))}
+          </div>
+        </AdminDetailModal>
       )}
 
       <AdminConfirm

@@ -19,6 +19,7 @@ import {
   IconAction,
   adminInputClass,
 } from '@/components/admin/_share/AdminListShell.compo';
+import AdminDetailModal from '@/components/admin/_share/AdminDetailModal.compo';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useAdminReviewReport, useAdminSoftDelete } from '@/hooks/admin/admin.hook';
@@ -130,6 +131,7 @@ export default function AdminReportsPage() {
   const remove = useAdminSoftDelete('report');
 
   const [reviewing, setReviewing] = useState<AdminReportRow | null>(null);
+  const [detail, setDetail] = useState<AdminReportRow | null>(null);
   const [deleting, setDeleting] = useState<AdminReportRow | null>(null);
 
   const confirmDelete = async () => {
@@ -149,7 +151,7 @@ export default function AdminReportsPage() {
 
       <AdminListShell<AdminReportRow>
         resource="report"
-        onRowClick={setReviewing}
+        onRowClick={setDetail}
         columns={[
           { key: 'id', label: 'ID' },
           { key: 'reporter', label: txt('reporter') },
@@ -217,6 +219,28 @@ export default function AdminReportsPage() {
           </>
         )}
       />
+
+      {detail && (
+        <AdminDetailModal
+          title={`${txt('review_report')} · ${detail.id.slice(0, 8)}`}
+          onClose={() => setDetail(null)}
+          fields={[
+            { label: 'ID', value: detail.id },
+            { label: txt('reporter'), value: detail.user_report?.user_name },
+            { label: `${txt('reporter')} ID`, value: detail.user_report?.id },
+            { label: 'target_type', value: detail.target_type },
+            { label: 'target_id', value: detail.target_id },
+            { label: txt('reason'), value: detail.reason },
+            { label: 'description', value: detail.description, multiline: true },
+            { label: txt('status'), value: detail.status },
+            { label: txt('action_taken'), value: detail.action_taken },
+            { label: txt('review_note'), value: detail.review_note, multiline: true },
+            { label: txt('created_at'), value: detail.created_at },
+            { label: txt('updated_at'), value: detail.updated_at },
+            { label: txt('deleted_at'), value: detail.deleted_at },
+          ]}
+        />
+      )}
 
       {reviewing && <ReviewModal report={reviewing} onClose={() => setReviewing(null)} />}
 

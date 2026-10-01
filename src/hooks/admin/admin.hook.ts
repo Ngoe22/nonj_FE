@@ -255,6 +255,36 @@ export function useAdminUserOutgoing(user_id: string, enabled = true) {
   });
 }
 
+/**
+ * Reset mật khẩu của user — admin KHÔNG nhập mật khẩu, chỉ bấm nút và BE sinh
+ * mật khẩu mới rồi GỬI QUA EMAIL.
+ */
+export function useAdminResetPassword() {
+  return useMutation({
+    mutationFn: async (user_id: string) => {
+      await api.patch(`admin/users/${user_id}/reset_password`);
+    },
+  });
+}
+
+/**
+ * Xoá mềm quan hệ bạn bè.
+ *
+ * KHÁC các mục khác: BE nhận cặp `user_id` + `friend_id` qua DELETE body (vì
+ * quan hệ 2 chiều lưu 2 dòng), không xoá theo id.
+ */
+export function useAdminDeleteFriendship() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (vars: { user_id: string; friend_id: string }) => {
+      await api.delete('admin/friendship', { data: vars });
+    },
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ['admin', 'friendship'] }),
+  });
+}
+
 // ============================================================
 // SỐ NGƯỜI ĐANG ONLINE
 // ============================================================

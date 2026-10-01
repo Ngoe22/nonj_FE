@@ -9,6 +9,7 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {RegisterFormValues, registerSchema} from "@/schemas/auth/register.schemas";
 import {InvalidInput} from "@/components/_share/form_error_warning/FormErrorWarning.compo";
 import {GoogleLoginButton} from "@/components/auth/GoogleLoginButton.compo";
+import UsernameCheck from "@/components/_share/check_field/UsernameCheck.compo";
 
 export default function RegisterForm() {
     const router = useRouter();
@@ -17,10 +18,14 @@ export default function RegisterForm() {
     const {
         register,
         handleSubmit,
+        watch,
         formState: { errors },
     } = useForm<RegisterFormValues>({
         resolver: zodResolver(registerSchema),
     });
+
+    // giá trị đang gõ ở ô username — truyền cho nút "Kiểm tra" trùng
+    const userNameValue = watch('user_name') ?? '';
 
     const registerMutation = useRegister();
 
@@ -76,6 +81,9 @@ export default function RegisterForm() {
                         placeholder={txt('manual_register_user_name_plh')}
                         className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition placeholder:text-muted-foreground"
                     />
+                    <div className="mt-2">
+                        <UsernameCheck value={userNameValue} mode="username" />
+                    </div>
                     {errors.user_name && <InvalidInput msg = {errors.user_name.message}  />}
 
                 </div>

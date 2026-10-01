@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'react-toastify';
-import { Ban, Check, Pencil } from 'lucide-react';
+import { Ban, Check, KeyRound, Pencil } from 'lucide-react';
 
 import {
   AdminConfirm,
@@ -19,9 +19,10 @@ import {
   AdminTextFilter,
   adminInputClass,
 } from '@/components/admin/_share/AdminListShell.compo';
+import AdminDetailModal from '@/components/admin/_share/AdminDetailModal.compo';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { useAdminUpdateUser } from '@/hooks/admin/admin.hook';
+import { useAdminResetPassword, useAdminUpdateUser } from '@/hooks/admin/admin.hook';
 import { User_Role, User_Status } from '@/enum/user/user.enum';
 import type { AdminUserRow } from '@/types/admin/admin.type';
 
@@ -37,12 +38,18 @@ function EditUserModal({
   const txt = useTranslations('Admin');
   const update = useAdminUpdateUser();
 
+  const [userName, setUserName] = useState(row.user_name ?? '');
+  const [email, setEmail] = useState(row.email ?? '');
   const [nickname, setNickname] = useState(row.nickname ?? '');
+  const [bio, setBio] = useState(row.bio ?? '');
   const [role, setRole] = useState(row.role);
 
   const save = async () => {
     try {
-      await update.mutateAsync({ user_id: row.id, body: { nickname, role } });
+      await update.mutateAsync({
+        user_id: row.id,
+        body: { user_name: userName, email, nickname, bio, role },
+      });
       toast.success(txt('updated_ok'));
       onClose();
     } catch {
@@ -64,6 +71,12 @@ function EditUserModal({
         </h3>
 
         <div className="mt-4 space-y-3">
+          <AdminField label={txt('username')}>
+            <input value={userName} onChange={(e) => setUserName(e.target.value)} className={adminInputClass} />
+          </AdminField>
+          <AdminField label={txt('email')}>
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className={adminInputClass} />
+          </AdminField>
           <AdminField label={txt('nickname')}>
             <input
               value={nickname}
@@ -72,6 +85,9 @@ function EditUserModal({
             />
           </AdminField>
 
+          <AdminField label="bio">
+            <textarea value={bio} onChange={(e) => setBio(e.target.value)} className={`${adminInputClass} min-h-16 resize-y`} />
+          </AdminField>
           <AdminField label={txt('role')}>
             <select
               value={role}
@@ -100,9 +116,12 @@ function EditUserModal({
 export default function AdminUsersPage() {
   const txt = useTranslations('Admin');
   const update = useAdminUpdateUser();
+  const reset = useAdminResetPassword();
 
+  const [detail, setDetail] = useState<AdminUserRow | null>(null);
   const [editing, setEditing] = useState<AdminUserRow | null>(null);
   const [banning, setBanning] = useState<AdminUserRow | null>(null);
+  const [resetting, setResetting] = useState<AdminUserRow | null>(null);
 
   const toggleStatus = async (row: AdminUserRow) => {
     const next =
@@ -123,6 +142,7 @@ export default function AdminUsersPage() {
 
       <AdminListShell<AdminUserRow>
         resource="user"
+        onRowClick={setDetail}
         columns={[
           { key: 'id', label: 'ID' },
           { key: 'user_name', label: txt('user_name') },
@@ -184,6 +204,9 @@ export default function AdminUsersPage() {
             >
               {row.status === User_Status.BANNED ? <Check size={14} /> : <Ban size={14} />}
             </IconAction>
+            <IconAction label={txt('reset_password')} onClick={() => setResetting(row)}>
+              <KeyRound size={14} />
+            </IconAction>
             <IconAction label={txt('edit')} onClick={() => setEditing(row)}>
               <Pencil size={14} />
             </IconAction>
@@ -211,6 +234,25 @@ export default function AdminUsersPage() {
         )}
       />
 
+      {detail && (
+        <AdminDetailModal
+          title={`${detail.user_name ?? ''} · ${detail.id.slice(0, 8)}`}
+          onClose={() => setDetail(null)}
+          fields={[
+            { label: 'ID', value: detail.id },
+            { label: txt('username'), value: detail.user_name },
+            { label: txt('email'), value: detail.email },
+            { label: txt('nickname'), value: detail.nickname },
+            { label: 'bio', value: detail.bio, multiline: true },
+            { label: txt('role'), value: detail.role },
+            { label: txt('status'), value: detail.status },
+            { label: txt('created_at'), value: detail.created_at },
+            { label: txt('updated_at'), value: detail.updated_at },
+            { label: txt('deleted_at'), value: detail.deleted_at },
+          ]}
+        />
+      )}
+
       {editing && <EditUserModal row={editing} onClose={() => setEditing(null)} />}
 
       <AdminConfirm
@@ -220,6 +262,25 @@ export default function AdminUsersPage() {
         pending={update.isPending}
         onCancel={() => setBanning(null)}
         onConfirm={() => banning && toggleStatus(banning)}
+      />
+
+      <AdminConfirm
+        open={!!resetting}
+        title={txt('reset_password_confirm_title')}
+        message={txt('reset_password_confirm_message')}
+        pending={reset.isPending}
+        onCancel={() => setResetting(null)}
+        onConfirm={async () => {
+          if (!resetting) return;
+          try {
+            await reset.mutateAsync(resetting.id);
+            toast.success(txt('password_sent'));
+            setResetting(null);
+          } catch (err: unknown) {
+            const code = (err as { response?: { data?: { errorCode?: string } } })?.response?.data?.errorCode;
+            toast.error(code === 'email_send_failed' ? txt('email_send_failed') : txt('action_fail'));
+          }
+        }}
       />
     </div>
   );

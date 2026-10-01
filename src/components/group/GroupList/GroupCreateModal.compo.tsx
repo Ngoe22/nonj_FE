@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
+import UsernameCheck from '@/components/_share/check_field/UsernameCheck.compo';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 
@@ -41,6 +42,7 @@ export function CreateGroupModal({open, onClose, onSubmit, isSubmitting = false 
         register,
         handleSubmit,
         control,
+        watch,
         reset,
         formState: { errors, isDirty },
     } = useForm<CreateGroupFormValues>({
@@ -48,6 +50,8 @@ export function CreateGroupModal({open, onClose, onSubmit, isSubmitting = false 
         defaultValues: createGroupDefaultValues,
         mode: 'onSubmit',
     });
+
+    const slugValue = watch('slug') ?? '';
 
     useEffect(() => {
         if (!open) reset(createGroupDefaultValues);
@@ -124,6 +128,9 @@ export function CreateGroupModal({open, onClose, onSubmit, isSubmitting = false 
                             error={errors.slug}
                             placeholder={txt('create_group_slug_placeholder')}
                         />
+                        <div className="mt-2">
+                            <UsernameCheck value={slugValue} mode="slug" />
+                        </div>
                     </div>
 
                     {/* Description */}

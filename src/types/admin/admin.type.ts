@@ -89,6 +89,12 @@ export interface AdminRelationshipRow extends AdminBaseRow {
   status: Friend_Request_Status;
 }
 
+export interface AdminFriendshipRow extends AdminBaseRow {
+  user?: AdminUserBrief | null;
+  user_friend?: AdminUserBrief | null;
+  be_friend_at?: string | null;
+}
+
 export interface AdminReportRow extends AdminBaseRow {
   target_type: Target_Type;
   target_id: string;
@@ -183,19 +189,21 @@ export type AdminQuery =
 
 export type AdminResource =
   | 'user'
+  | 'friend_request'
+  | 'friendship'
   | 'group'
   | 'post'
   | 'preparation'
-  | 'relationship'
   | 'report';
 
 /** Endpoint danh sách của từng mục sidebar */
 export const ADMIN_ENDPOINT: Record<AdminResource, string> = {
   user: 'admin/users',
+  friend_request: 'admin/friend_request',
+  friendship: 'admin/friendship',
   group: 'admin/group/many',
   post: 'admin/post',
   preparation: 'admin/question_preparation',
-  relationship: 'admin/friend_request',
   report: 'admin/report',
 };
 
@@ -215,8 +223,10 @@ export function adminRestorePath(
   if (resource === 'post') return `admin/post/${id}/restore`;
   if (resource === 'preparation')
     return `admin/question_preparation/restore/${id}`;
-  if (resource === 'relationship')
+  if (resource === 'friend_request')
     return `admin/friend_request/restore/${id}`;
+  if (resource === 'friendship')
+    return `admin/friendship/restore/${id}`;
   return `admin/report/restore/${id}`;
 }
 
@@ -233,7 +243,8 @@ export function adminDeletePath(
   if (resource === 'group') return `admin/group/${id}`;
   if (resource === 'post') return `admin/post/${id}`;
   if (resource === 'preparation') return `admin/question_preparation/${id}`;
-  if (resource === 'relationship') return `admin/friend_request/${id}`;
+  if (resource === 'friend_request') return `admin/friend_request/${id}`;
+  if (resource === 'friendship') return null; // friendship xoá bằng DELETE + body cặp id
   if (resource === 'report') return `admin/report/${id}`;
   return null;
 }

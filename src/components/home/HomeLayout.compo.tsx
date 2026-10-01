@@ -6,7 +6,7 @@ import Sidebar from "@/components/home/Sidebar.compo";
 import {useSidebarStore} from "@/stores/side_bar/side_bar.store";
 import {useThemeStore} from "@/stores/theme/theme.store";
 import {useGetMyProfile} from "@/hooks/profile/useGetMyProfile.hook";
-import {Link} from "@/i18n/navigation";
+import {Link, useRouter} from "@/i18n/navigation";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import NotificationBell from "@/components/notification/NotificationBell.compo";
 import NotificationSocketProvider from "@/components/notification/NotificationSocketProvider.compo";
@@ -21,10 +21,19 @@ export default function HomeLayout({ children }: HomeLayoutProps) {
     const initTheme = useThemeStore((state) => state.initTheme);
 
     const { data: user, isLoading } = useGetMyProfile();
+    const router = useRouter();
 
     useEffect(() => {
         initTheme();
     }, [initTheme]);
+
+    // Tài khoản Google mới CHƯA chọn username (BE để user_name = null) -> chặn
+    // dùng app, đưa thẳng về màn chọn username cho tới khi đặt xong.
+    useEffect(() => {
+        if (!isLoading && user && !user.user_name) {
+            router.replace('/username');
+        }
+    }, [isLoading, user, router]);
 
     return (
         <div className="min-h-screen  p-2  sm:p-4 md:p-5 bg-background ">
@@ -78,7 +87,7 @@ export default function HomeLayout({ children }: HomeLayoutProps) {
                                 className="block h-8 w-8 shrink-0 overflow-hidden rounded-full"
                             >
                                 <Avatar className="h-full w-full">
-                                    <AvatarImage src={user?.avatar_url ?? undefined} alt={user?.user_name} />
+                                    <AvatarImage src={user?.avatar_url ?? undefined} alt={user?.user_name ?? ''} />
                                     <AvatarFallback>
                                         {user?.nickname?.charAt(0).toUpperCase() ?? '?'}
                                     </AvatarFallback>

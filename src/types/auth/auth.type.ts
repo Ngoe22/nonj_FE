@@ -1,7 +1,7 @@
 export interface AuthUserInfo {
     id: string;
     email: string;
-    user_name: string;
+    user_name: string | null;
     nickname: string;
     bio: string | null;
     avatar_url: string | null;

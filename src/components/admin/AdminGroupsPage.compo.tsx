@@ -19,6 +19,7 @@ import {
   IconAction,
   adminInputClass,
 } from '@/components/admin/_share/AdminListShell.compo';
+import AdminDetailModal from '@/components/admin/_share/AdminDetailModal.compo';
 import { Button } from '@/components/ui/button';
 import {
   useAdminGroupCollections,
@@ -253,26 +254,30 @@ export default function AdminGroupsPage() {
       {editing && <EditGroupModal row={editing} onClose={() => setEditing(null)} />}
 
       {detail && (
-        <div
-          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 p-4"
-          onClick={() => setDetail(null)}
+        <AdminDetailModal
+          title={detail.name}
+          subtitle={`${detail.slug} · ${detail.total_member} ${txt('members')}`}
+          onClose={() => setDetail(null)}
+          fields={[
+            { label: 'ID', value: detail.id },
+            { label: 'slug', value: detail.slug },
+            { label: txt('name'), value: detail.name },
+            { label: 'description', value: detail.description, multiline: true },
+            { label: txt('founder'), value: detail.founder?.user_name },
+            { label: `${txt('founder')} ID`, value: detail.founder?.id },
+            { label: 'join_mode', value: detail.join_mode },
+            { label: 'view_mode', value: detail.view_mode },
+            { label: txt('total_member'), value: detail.total_member },
+            { label: txt('created_at'), value: detail.created_at },
+            { label: txt('updated_at'), value: detail.updated_at },
+            { label: txt('deleted_at'), value: detail.deleted_at },
+          ]}
         >
-          <div
-            className="flex max-h-[85vh] w-full max-w-xl flex-col rounded-xl border border-border bg-surface p-5"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h2 className="font-medium">{detail.name}</h2>
-            <p className="mt-1 text-sm text-muted-foreground">
-              {detail.slug} · {detail.total_member} {txt('members')}
-            </p>
-            <h3 className="mt-4 mb-2 text-xs tracking-wide text-muted-foreground uppercase">
-              {txt('collections')}
-            </h3>
-            <div className="min-h-0 flex-1 overflow-auto">
-              <GroupCollections groupId={detail.id} />
-            </div>
-          </div>
-        </div>
+          <h4 className="mb-2 text-xs tracking-wide text-muted-foreground uppercase">
+            {txt('collections')}
+          </h4>
+          <GroupCollections groupId={detail.id} />
+        </AdminDetailModal>
       )}
 
       <AdminConfirm

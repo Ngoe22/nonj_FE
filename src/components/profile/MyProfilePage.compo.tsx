@@ -11,6 +11,7 @@ import {useTranslations} from "next-intl";
 import {MyProfileHeader} from "@/components/profile/MyProfileHeader.compo";
 import {MyProfileInfo} from "@/components/profile/MyProfileInfo.compo";
 import {useLogout} from "@/hooks/auth/useLogout.hook";
+import ChangePasswordForm from "@/components/profile/ChangePasswordForm.compo";
 
 // import { myProfile } from '@/mock/group';
 
@@ -41,7 +42,7 @@ export default function MyProfilePage() {
             <MyProfileHeader
                 email={myProfile.email}
                 nickname={myProfile.nickname}
-                user_name={myProfile.user_name}
+                user_name={myProfile.user_name ?? ''}
                 avatar_url={myProfile.avatar_url}
             />
 
@@ -54,11 +55,16 @@ export default function MyProfilePage() {
                     bio: myProfile.bio ?? '',
                 }}
                 uneditAble={{
-                    user_name: myProfile.user_name,
+                    user_name: myProfile.user_name ?? '',
                     email: myProfile.email,
                 }}
             />
 
+
+            {/* Đổi mật khẩu — chỉ tự đổi cho bản thân */}
+            <Card className="mt-4 p-5 sm:p-6">
+                <ChangePasswordForm />
+            </Card>
 
             {/*logout*/}
             <Card className="mt-4 p-5 sm:p-6">

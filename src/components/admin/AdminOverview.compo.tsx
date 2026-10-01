@@ -16,10 +16,16 @@ import { useAdminList, useAdminOnlineCount } from '@/hooks/admin/admin.hook';
 const STATS = [
   { resource: 'user', labelKey: 'nav_users', href: '/admin/users', icon: <Users size={16} /> },
   {
-    resource: 'relationship',
-    labelKey: 'nav_relationships',
-    href: '/admin/relationships',
+    resource: 'friend_request',
+    labelKey: 'nav_friend_requests',
+    href: '/admin/friend_requests',
     icon: <UsersRound size={16} />,
+  },
+  {
+    resource: 'friendship',
+    labelKey: 'nav_friends',
+    href: '/admin/friends',
+    icon: <Users size={16} />,
   },
   { resource: 'group', labelKey: 'nav_groups', href: '/admin/groups', icon: <FolderTree size={16} /> },
   { resource: 'post', labelKey: 'nav_posts', href: '/admin/posts', icon: <ClipboardList size={16} /> },

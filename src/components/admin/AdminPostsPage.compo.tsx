@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { toast } from 'react-toastify';
-import { Eye, Pencil, Trash2 } from 'lucide-react';
+import { Pencil, Trash2 } from 'lucide-react';
 
 import {
   AdminConfirm,
@@ -19,7 +19,8 @@ import {
   IconAction,
   adminInputClass,
 } from '@/components/admin/_share/AdminListShell.compo';
-import AdminContentModal from '@/components/admin/_share/AdminContentModal.compo';
+import AdminDetailModal from '@/components/admin/_share/AdminDetailModal.compo';
+import { SectionView } from '@/components/question_preparation/preparation/detail/SectionView.compo';
 import { Button } from '@/components/ui/button';
 import { useAdminSoftDelete, useAdminUpdatePost } from '@/hooks/admin/admin.hook';
 import type { AdminPostRow } from '@/types/admin/admin.type';
@@ -90,7 +91,7 @@ export default function AdminPostsPage() {
   const searchParams = useSearchParams();
   const remove = useAdminSoftDelete('post');
 
-  const [content, setContent] = useState<AdminPostRow | null>(null);
+  const [detail, setDetail] = useState<AdminPostRow | null>(null);
   const [editing, setEditing] = useState<AdminPostRow | null>(null);
   const [deleting, setDeleting] = useState<AdminPostRow | null>(null);
 
@@ -121,21 +122,18 @@ export default function AdminPostsPage() {
         key={`${urlGroup ?? ''}|${urlCollection ?? ''}`}
         resource="post"
         initialFilters={initialFilters}
-        onRowClick={setContent}
+        onRowClick={setDetail}
         columns={[
           { key: 'id', label: 'ID' },
           { key: 'title', label: txt('title_col') },
           { key: 'author', label: txt('author') },
-          { key: 'group', label: txt('group') },
+          { key: 'group', label: 'Group ID' },
           { key: 'collection', label: txt('collection') },
           { key: 'deadline', label: txt('deadline') },
           { key: 'created_at', label: txt('created_at') },
         ]}
         renderActions={(row) => (
           <>
-            <IconAction label={txt('view_content')} onClick={() => setContent(row)}>
-              <Eye size={14} />
-            </IconAction>
             <IconAction label={txt('edit')} onClick={() => setEditing(row)}>
               <Pencil size={14} />
             </IconAction>
@@ -179,8 +177,8 @@ export default function AdminPostsPage() {
               </span>
             </td>
             <AdminTextCell value={row.user?.user_name} width="max-w-[130px]" />
-            {/* chỉ hiện slug của nhóm, không còn là link nhảy sang trang người dùng */}
-            <AdminTextCell value={row.group?.slug} width="max-w-[150px]" />
+            {/* nhóm hiển thị theo ID (slug CHỈ ở trang Nhóm) */}
+            <AdminIdCell id={row.group?.id ?? ''} />
             <AdminTextCell value={row.post_collection?.title} width="max-w-[180px]" />
             <AdminDateCell value={row.deadline_at} />
             <AdminDateCell value={row.created_at} />
@@ -188,12 +186,34 @@ export default function AdminPostsPage() {
         )}
       />
 
-      {content && (
-        <AdminContentModal
-          title={content.title}
-          content={content.content}
-          onClose={() => setContent(null)}
-        />
+      {detail && (
+        <AdminDetailModal
+          title={detail.title}
+          onClose={() => setDetail(null)}
+          fields={[
+            { label: 'ID', value: detail.id },
+            { label: txt('title_col'), value: detail.title },
+            { label: txt('description'), value: detail.description, multiline: true },
+            { label: txt('author'), value: detail.user?.user_name },
+            { label: `${txt('author')} ID`, value: detail.user?.id },
+            { label: 'Group ID', value: detail.group?.id },
+            { label: txt('collection'), value: detail.post_collection?.title },
+            { label: `${txt('collection')} ID`, value: detail.post_collection?.id },
+            { label: txt('deadline'), value: detail.deadline_at },
+            { label: txt('created_at'), value: detail.created_at },
+            { label: txt('updated_at'), value: detail.updated_at },
+            { label: txt('deleted_at'), value: detail.deleted_at },
+          ]}
+        >
+          <h4 className="mb-2 text-xs tracking-wide text-muted-foreground uppercase">
+            {txt('assignment_content')}
+          </h4>
+          <div className="space-y-3">
+            {(detail.content ?? []).map((section, index) => (
+              <SectionView key={index} section={section} index={index} showAnswers />
+            ))}
+          </div>
+        </AdminDetailModal>
       )}
 
       {editing && <EditPostModal row={editing} onClose={() => setEditing(null)} />}

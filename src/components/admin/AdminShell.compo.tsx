@@ -34,10 +34,11 @@ const NAV: NavItem[] = [
   { href: '/admin', labelKey: 'nav_dashboard', icon: <LayoutDashboard size={16} /> },
   { href: '/admin/users', labelKey: 'nav_users', icon: <Users size={16} /> },
   {
-    href: '/admin/relationships',
-    labelKey: 'nav_relationships',
+    href: '/admin/friend_requests',
+    labelKey: 'nav_friend_requests',
     icon: <UsersRound size={16} />,
   },
+  { href: '/admin/friends', labelKey: 'nav_friends', icon: <Users size={16} /> },
   { href: '/admin/groups', labelKey: 'nav_groups', icon: <FolderTree size={16} /> },
   { href: '/admin/posts', labelKey: 'nav_posts', icon: <ClipboardList size={16} /> },
   {

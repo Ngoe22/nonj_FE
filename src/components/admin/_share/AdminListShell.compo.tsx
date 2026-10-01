@@ -325,6 +325,24 @@ interface Props<T> {
   onRowClick?: (row: T) => void;
 }
 
+/**
+ * KHUNG danh sách DÙNG CHUNG cho cả 7 mục admin (user / friend_request /
+ * friendship / group / post / preparation / report).
+ *
+ * Tại sao gom lại một chỗ:
+ *   - Mọi trang cần CÙNG một cách hoạt động: thanh lọc + bảng + phân trang +
+ *     tick "hiện cả đã xoá" + nút khôi phục. Viết 7 lần thì lệch nhau ngay.
+ *   - Logic khó (đổi filter phải quay trang 1, tách "đang gõ" vs "đã áp dụng",
+ *     điền filter sẵn từ URL, cột trạng thái xoá động) chỉ cần đúng MỘT lần.
+ *
+ * Cách nó hoạt động:
+ *   - `draft`  = ô lọc đang gõ (KHÔNG gọi API theo từng ký tự).
+ *   - `applied` = giá trị đã bấm "Tìm" -> mới đưa vào `query` để gọi API.
+ *   - `renderFilters` do từng trang cung cấp để vẽ ô lọc riêng của mình.
+ *   - `renderRow` trả về các `<td>`; shell tự thêm cột "thao tác" ở cuối và —
+ *     khi bật "hiện cả đã xoá" — thêm CỘT "trạng thái xoá".
+ *   - Bảng `overflow-auto` nên CHỈ vùng dữ liệu cuộn (thân trang đứng yên).
+ */
 export function AdminListShell<T extends { id: string; is_deleted: boolean }>({
   resource,
   renderFilters,
@@ -336,12 +354,7 @@ export function AdminListShell<T extends { id: string; is_deleted: boolean }>({
 }: Props<T>) {
   const txt = useTranslations('Admin');
 
-  /**
-   * `draft` = đang gõ, `applied` = đã bấm Tìm.
-   *
-   * Tách hai state để KHÔNG gọi API theo từng ký tự — gõ id dài mà cứ fetch thì
-   * vừa tốn request vừa nhảy kết quả liên tục.
-   */
+
   const seed = initialFilters ?? {};
   const [draft, setDraft] = useState<Record<string, string>>(seed);
   // điền sẵn thì phải TÌM LUÔN, không thì bảng trống cho tới khi bấm Tìm
@@ -361,8 +374,10 @@ export function AdminListShell<T extends { id: string; is_deleted: boolean }>({
       created_from: appliedRange.from
         ? new Date(appliedRange.from).toISOString()
         : undefined,
+      // datetime-local đã gồm cả giờ:phút, nên KHÔNG thêm hậu tố cuối ngày
+      // nữa (trước đây type=date phải gắn 23:59:59 để hết ngày).
       created_to: appliedRange.to
-        ? new Date(`${appliedRange.to}T23:59:59`).toISOString()
+        ? new Date(appliedRange.to).toISOString()
         : undefined,
     }),
     [applied, page, withDeleted, appliedRange],
@@ -396,8 +411,11 @@ export function AdminListShell<T extends { id: string; is_deleted: boolean }>({
     ? Math.max(1, Math.ceil(pageData.total / (pageData.limit || ADMIN_PAGE_SIZE)))
     : 1;
 
+  // Khi bật "hiện cả đã xoá" thì thêm MỘT cột nữa — các trạng thái loading/empty
+  // phải colSpan đúng tổng cột, nếu không bảng vỡ.
+  const totalCols = columns.length + 1 + (withDeleted ? 1 : 0);
+
   return (
-    // `h-full` + `min-h-0` để phần bảng tự cuộn, thân trang không cuộn
     <form onSubmit={submit} className="flex min-h-0 flex-1 flex-col gap-3">
       {/* -------------------- Bộ lọc -------------------- */}
       <div className="shrink-0 rounded-xl border border-border bg-surface p-3">
@@ -406,7 +424,7 @@ export function AdminListShell<T extends { id: string; is_deleted: boolean }>({
 
           <AdminField label={txt('created_from')}>
             <input
-              type="date"
+              type="datetime-local"
               value={draftFrom}
               onChange={(e) => setDraftFrom(e.target.value)}
               className={adminInputClass}
@@ -415,7 +433,7 @@ export function AdminListShell<T extends { id: string; is_deleted: boolean }>({
 
           <AdminField label={txt('created_to')}>
             <input
-              type="date"
+              type="datetime-local"
               value={draftTo}
               onChange={(e) => setDraftTo(e.target.value)}
               className={adminInputClass}
@@ -463,6 +481,11 @@ export function AdminListShell<T extends { id: string; is_deleted: boolean }>({
                   {column.label}
                 </th>
               ))}
+              {withDeleted && (
+                <th className="w-[110px] px-3 py-2 text-left text-[11px] font-medium tracking-wide text-muted-foreground uppercase">
+                  {txt('deleted_status')}
+                </th>
+              )}
               <th className="w-[132px] px-3 py-2 text-right text-[11px] font-medium tracking-wide text-muted-foreground uppercase">
                 {txt('actions')}
               </th>
@@ -473,7 +496,7 @@ export function AdminListShell<T extends { id: string; is_deleted: boolean }>({
             {isLoading && (
               <tr>
                 <td
-                  colSpan={columns.length + 1}
+                  colSpan={totalCols}
                   className="px-3 py-12 text-center text-muted-foreground"
                 >
                   {txt('loading')}
@@ -484,7 +507,7 @@ export function AdminListShell<T extends { id: string; is_deleted: boolean }>({
             {isError && !isLoading && (
               <tr>
                 <td
-                  colSpan={columns.length + 1}
+                  colSpan={totalCols}
                   className="px-3 py-12 text-center text-destructive"
                 >
                   {txt('load_fail')}
@@ -495,7 +518,7 @@ export function AdminListShell<T extends { id: string; is_deleted: boolean }>({
             {!isLoading && !isError && pageData?.items.length === 0 && (
               <tr>
                 <td
-                  colSpan={columns.length + 1}
+                  colSpan={totalCols}
                   className="px-3 py-12 text-center text-muted-foreground"
                 >
                   {txt('empty')}
@@ -512,6 +535,16 @@ export function AdminListShell<T extends { id: string; is_deleted: boolean }>({
                 } ${row.is_deleted ? 'opacity-55' : ''}`}
               >
                 {renderRow(row, index)}
+
+                {withDeleted && (
+                  <td className="px-3 py-2 align-top">
+                    {row.is_deleted ? (
+                      <Badge variant="destructive">{txt('deleted')}</Badge>
+                    ) : (
+                      <span className="text-muted-foreground">—</span>
+                    )}
+                  </td>
+                )}
 
                 <td className="px-3 py-2 text-right align-top whitespace-nowrap">
                   <span className="inline-flex items-center gap-1">
