@@ -33,7 +33,10 @@
     "register_fail": "Đăng ký thất bại",
     "continue_with_google": "Tiếp tục với Google",
     "continue_with_google_register": "Đăng ký với Google",
-    "duplicated_info": "Tên đăng nhập hoặc email này đã được dùng"
+    "duplicated_info": "Tên đăng nhập hoặc email này đã được dùng",
+    "or": "hoặc",
+    "google_login_hint": "Đăng nhập nhanh, không cần mật khẩu",
+    "google_register_hint": "Tạo tài khoản bằng Google, không cần mật khẩu"
   },
   "Sidebar": {
     "home": "Trang chủ",

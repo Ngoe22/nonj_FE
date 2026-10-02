@@ -7,7 +7,6 @@ import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {RegisterFormValues, registerSchema} from "@/schemas/auth/register.schemas";
 import {InvalidInput} from "@/components/_share/form_error_warning/FormErrorWarning.compo";
-import {GoogleLoginButton} from "@/components/auth/GoogleLoginButton.compo";
 import UsernameCheck from "@/components/_share/check_field/UsernameCheck.compo";
 
 export default function RegisterForm() {

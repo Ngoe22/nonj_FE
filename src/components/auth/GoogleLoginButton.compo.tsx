@@ -101,23 +101,31 @@ export function GoogleLoginButton({ mode = 'login', onSuccess }: Props) {
         }
     }, [mode]);
 
-    return (
-        <div className="flex w-full flex-col items-center gap-2">
-            {/*
-              Google tự chèn button vào đây. Ép mọi div/iframe con giãn hết cỡ để
-              nút không bị lệch khỏi khung.
-            */}
-            <div
-                ref={containerRef}
-                className="flex min-h-[44px] w-full justify-center [&>div]:!w-full [&_iframe]:!w-full"
-            />
+    const pending = googleAuth.isPending;
 
-            {googleAuth.isPending && (
-                <span className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <Loader2 size={14} className="animate-spin" />
-                    {txt('continue_with_google')}
-                </span>
-            )}
+    return (
+        // Khung viền bao ngoài, nút Google căn GIỮA bên trong
+        <div className="w-full rounded-2xl border border-border bg-surface/40 px-5 py-5">
+            <div className="flex flex-col items-center gap-3">
+                {/*
+                  Google tự chèn button vào đây. Căn giữa + ép mọi div/iframe con
+                  giãn hết cỡ để nút không bị lệch khỏi khung.
+                */}
+                <div
+                    ref={containerRef}
+                    className="flex min-h-[44px] w-full justify-center [&>div]:!w-full [&_iframe]:!w-full"
+                />
+
+                {/* Dòng gợi ý nhỏ bên dưới nút */}
+                <p className="flex items-center gap-2 text-center text-xs text-muted-foreground">
+                    {pending && <Loader2 size={14} className="animate-spin" />}
+                    {pending
+                        ? txt('continue_with_google')
+                        : mode === 'register'
+                          ? txt('google_register_hint')
+                          : txt('google_login_hint')}
+                </p>
+            </div>
         </div>
     );
 }

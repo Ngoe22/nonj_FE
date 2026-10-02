@@ -33,7 +33,10 @@
     "register_fail": "Register fail",
     "continue_with_google": "Continue with Google",
     "continue_with_google_register": "Sign up with Google",
-    "duplicated_info": "That username or email is already taken"
+    "duplicated_info": "That username or email is already taken",
+    "or": "or",
+    "google_login_hint": "Quick sign in — no password needed",
+    "google_register_hint": "Create your account with Google — no password needed"
   },
   "Sidebar": {
     "home": "Home",

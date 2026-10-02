@@ -77,9 +77,14 @@ export default function LoginForm() {
 
 
 
-            <div
-                className={`m-10 border-b border-2`}
-            ></div>
+            {/* Dải phân cách "hoặc" */}
+            <div className="my-6 flex items-center gap-3">
+                <span className="h-px flex-1 bg-border" />
+                <span className="text-xs font-medium tracking-wide text-muted-foreground">
+                    {txt('or')}
+                </span>
+                <span className="h-px flex-1 bg-border" />
+            </div>
 
             <GoogleLoginButton mode="login" />
 
