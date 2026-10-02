@@ -82,8 +82,8 @@ export function GoogleLoginButton({ mode = 'login', onSuccess }: Props) {
                 shape: 'rectangular',
                 logo_alignment: 'left',
                 locale: 'vi',
-                text:
-                    mode === 'register' ? 'signup_with' : 'signin_with',
+                text: mode === 'register' ? 'signup_with' : 'signin_with',
+                width: BUTTON_WIDTH,
             });
 
             return true;
@@ -102,6 +102,10 @@ export function GoogleLoginButton({ mode = 'login', onSuccess }: Props) {
     }, [mode]);
 
     const pending = googleAuth.isPending;
+    // Google vẽ nút theo `width` px cố định BÊN TRONG iframe, không giãn theo
+    // CSS. Nên phải khai báo width ở đây VÀ cho khung đúng bề rộng đó, nếu không
+    // nút sẽ lệch về bên trái.
+    const BUTTON_WIDTH = 320;
 
     return (
         // Khung viền bao ngoài, nút Google căn GIỮA bên trong
@@ -113,7 +117,8 @@ export function GoogleLoginButton({ mode = 'login', onSuccess }: Props) {
                 */}
                 <div
                     ref={containerRef}
-                    className="flex min-h-[44px] w-full justify-center [&>div]:!w-full [&_iframe]:!w-full"
+                    className="mx-auto min-h-[44px] w-full [&>div]:!w-full [&_iframe]:!w-full"
+                    style={{ maxWidth: `${BUTTON_WIDTH}px` }}
                 />
 
                 {/* Dòng gợi ý nhỏ bên dưới nút */}
