@@ -126,7 +126,7 @@ export default function AdminPostsPage() {
         columns={[
           { key: 'id', label: 'ID' },
           { key: 'title', label: txt('title_col') },
-          { key: 'author', label: txt('author') },
+          { key: 'author', label: 'Author ID' },
           { key: 'group', label: 'Group ID' },
           { key: 'collection', label: txt('collection') },
           { key: 'deadline', label: txt('deadline') },
@@ -176,7 +176,7 @@ export default function AdminPostsPage() {
                 <AdminDeletedBadge isDeleted={row.is_deleted} />
               </span>
             </td>
-            <AdminTextCell value={row.user?.user_name} width="max-w-[130px]" />
+            <AdminIdCell id={row.user?.id ?? ''} />
             {/* nhóm hiển thị theo ID (slug CHỈ ở trang Nhóm) */}
             <AdminIdCell id={row.group?.id ?? ''} />
             <AdminTextCell value={row.post_collection?.title} width="max-w-[180px]" />

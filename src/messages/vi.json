@@ -32,7 +32,8 @@
     "register_btn": "Đăng ký",
     "register_fail": "Đăng ký thất bại",
     "continue_with_google": "Tiếp tục với Google",
-    "continue_with_google_register": "Đăng ký với Google"
+    "continue_with_google_register": "Đăng ký với Google",
+    "duplicated_info": "Tên đăng nhập hoặc email này đã được dùng"
   },
   "Sidebar": {
     "home": "Trang chủ",
@@ -133,7 +134,13 @@
     "create_group_confirm_discard": "Bạn có thay đổi chưa lưu. Bỏ thay đổi?",
     "join_to_do_exercise": "Tham gia nhóm để làm bài tập",
     "join_group": "Tham gia nhóm",
-    "request_to_join": "Gửi yêu cầu tham gia"
+    "request_to_join": "Gửi yêu cầu tham gia",
+    "join_request_pending": "Đã gửi yêu cầu tham gia — đang chờ duyệt",
+    "join_request_sent": "Đã gửi yêu cầu tham gia nhóm",
+    "joined_group": "Đã tham gia nhóm",
+    "loading": "Đang tải…",
+    "group_not_found": "Không tìm thấy nhóm, hoặc bạn không có quyền xem nhóm này",
+    "back_to_groups": "Về danh sách nhóm"
   },
   "Post_collections": {
     "title": "Thư mục",
@@ -229,7 +236,9 @@
     "nickname": "Tên",
     "bio": "Giới thiệu",
     "logout_btn": "Đăng xuất",
-    "load_fail": "Không tải được thông tin cá nhân, thử lại sau"
+    "load_fail": "Không tải được thông tin cá nhân, thử lại sau",
+    "change_avatar": "Đổi ảnh đại diện",
+    "avatar_updated": "Đã cập nhật ảnh đại diện"
   },
   "Shema": {
     "invalid_email": "Email không hợp lệ",
@@ -263,7 +272,8 @@
     "max_value_10": "Tối đa 10",
     "max_value_100": "Tối đa 100",
     "max_240_minutes": "Tối đa 240 phút",
-    "deadline_must_be_future": "Hạn nộp phải ở tương lai"
+    "deadline_must_be_future": "Hạn nộp phải ở tương lai",
+    "only_letter_and_number": "Chỉ cho phép chữ cái và số, không dấu cách, không ký tự đặc biệt"
   },
   "Toast": {
     "action_fail": "Thao tác thất bại , ... thử lại sau",
@@ -313,7 +323,9 @@
     "invalid_audio_type": "Chỉ chấp nhận file MP3",
     "image_too_large": "Ảnh tối đa 5MB",
     "audio_too_large": "File mp3 tối đa 20MB",
-    "upload_failed": "Tải lên thất bại"
+    "upload_failed": "Tải lên thất bại",
+    "image_count": "Ảnh",
+    "audio_count": "Mp3"
   },
   "Question_builder": {
     "create_preparation": "Tạo đề",
@@ -484,7 +496,13 @@
     "point_range_hint": "Từ 0 đến {max}",
     "model_answer_readonly": "Đáp án mẫu / ý chính của đề — chỉ để đọc. Muốn sửa thì sửa ở đề gốc.",
     "essay_required": "Còn {count} phần tự luận chưa viết — cần viết trước khi nộp bài",
-    "content_hidden_until_start": "Nội dung bài tập sẽ hiện sau khi bạn bắt đầu làm bài"
+    "report": "Báo cáo vi phạm ",
+    "join_request_pending": "Đã gửi yêu cầu tham gia — đang chờ duyệt",
+    "join_request_sent": "Đã gửi yêu cầu tham gia nhóm",
+    "joined_group": "Đã tham gia nhóm",
+    "pick_collection_first": "Hãy chọn thư mục đề ở trên",
+    "load_failed": "Không tải được danh sách, thử lại giúp mình",
+    "content_admin_only": "Nội dung đề chỉ hiển thị trong lúc làm bài"
   },
   "Notification": {
     "title": "Thông báo",
@@ -642,7 +660,7 @@
     "owner": "Chủ sở hữu",
     "sender": "Người gửi",
     "receiver": "Người nhận",
-    "any_side_user": "Tên (một trong hai phía)",
+    "any_side_user": "User name (một trong hai phía)",
     "relationship_detail": "Chi tiết quan hệ",
     "friends": "Bạn bè",
     "ingoing": "Lời mời đến",
@@ -704,6 +722,89 @@
     "taken": "Đã bị dùng",
     "slug": "Slug",
     "description": "Mô tả",
-    "email_send_failed": "Không gửi được email — kiểm tra RESEND_API_KEY và địa chỉ email của người dùng"
+    "email_send_failed": "Không gửi được email — kiểm tra RESEND_API_KEY và địa chỉ email của người dùng",
+    "nav_join_requests": "Yêu cầu vào nhóm",
+    "join_requests_hint": "Duyệt / từ chối / xoá yêu cầu tham gia nhóm — tìm theo request/user/group id, trạng thái, thời gian",
+    "approve": "Duyệt",
+    "reject": "Từ chối",
+    "promote_admin": "Nâng quyền SYSTEM_ADMIN",
+    "demote_admin": "Hạ quyền về USER",
+    "confirm_promote_title": "Nâng quyền SYSTEM_ADMIN?",
+    "confirm_promote_message": "Người dùng này sẽ có toàn quyền quản trị hệ thống.",
+    "confirm_demote_title": "Hạ quyền về USER thường?",
+    "confirm_demote_message": "Người dùng này sẽ mất quyền quản trị.",
+    "cannot_demote_self": "Không thể tự hạ quyền chính mình",
+    "security_block": "Mật khẩu & bảo mật",
+    "reset_password_self": "Reset mật khẩu",
+    "reset_password_self_hint": "Gửi mật khẩu mới vào email của bạn và đăng xuất khỏi mọi thiết bị",
+    "reset_password_sent": "Đã gửi mật khẩu mới vào email — vui lòng đăng nhập lại",
+    "confirm_reset_self_title": "Reset mật khẩu của bạn?",
+    "confirm_reset_self_message": "Mật khẩu mới sẽ được gửi vào email. Bạn sẽ bị đăng xuất khỏi TẤT CẢ thiết bị và phải đăng nhập lại bằng mật khẩu trong mail.",
+    "send_mail": "Gửi mail",
+    "logout_all_devices": "Đăng xuất tất cả thiết bị",
+    "logout_all_devices_hint": "Thu hồi mọi phiên đăng nhập trên tất cả thiết bị",
+    "confirm_logout_all_title": "Đăng xuất tất cả thiết bị?",
+    "confirm_logout_all_message": "Mọi phiên đăng nhập trên tất cả thiết bị sẽ bị thu hồi, kể cả thiết bị này.",
+    "must_check_first": "Bấm Kiểm tra trước khi tiếp tục",
+    "invalid_username_format": "Chỉ dùng chữ, số và dấu _ (3–50 ký tự)",
+    "invalid_slug_format": "Chỉ dùng chữ và số (1–50 ký tự)",
+    "nav_config": "Cấu hình",
+    "config_title": "Cấu hình hệ thống",
+    "config_description": "Giới hạn ảnh/mp3 cho bài tập và kho đề",
+    "config_post_max_images": "Số ảnh tối đa / bài",
+    "config_post_max_audio": "Số mp3 tối đa / bài",
+    "config_save": "Lưu",
+    "config_saving": "Đang lưu…",
+    "config_saved": "Đã lưu cấu hình",
+    "config_save_failed": "Lưu thất bại",
+    "config_invalid": "Giá trị phải là số nguyên ≥ 0",
+    "config_loading": "Đang tải…",
+    "config_load_failed": "Không tải được cấu hình, thử lại giúp mình",
+    "config_home_text": "Nội dung giới thiệu trang chủ",
+    "config_home_text_hint": "Hiện ở đầu trang chủ. Để trống nếu không muốn hiện.",
+    "config_contact_facebook": "Link Facebook liên hệ",
+    "config_contact_email": "Email liên hệ",
+    "config_contact_hint": "Để trống thì phần liên hệ sẽ ẩn trên trang chủ.",
+    "config_group_limits": "Giới hạn ảnh / mp3",
+    "config_group_content": "Nội dung trang chủ",
+    "config_group_contact": "Liên hệ"
+  },
+  "Report": {
+    "report_violation": "Báo cáo vi phạm",
+    "report_user": "Báo cáo người dùng",
+    "report_group": "Báo cáo nhóm",
+    "report_post": "Báo cáo bài tập",
+    "report_post_answer": "Báo cáo câu trả lời",
+    "target": "Đối tượng",
+    "reason": "Lý do",
+    "reason_placeholder": "Chọn lý do…",
+    "description": "Mô tả chi tiết",
+    "reason_SPAM": "Spam",
+    "reason_INAPPROPRIATE_CONTENT": "Nội dung không phù hợp",
+    "reason_HARASSMENT": "Quấy rối",
+    "reason_OFF_TOPIC": "Lạc đề",
+    "reason_OTHER": "Khác",
+    "next": "Tiếp tục",
+    "back": "Quay lại",
+    "cancel": "Huỷ",
+    "submit": "Gửi báo cáo",
+    "submitting": "Đang gửi…",
+    "confirm_title": "Xác nhận gửi báo cáo?",
+    "confirm_warning": "Nếu báo cáo sai sự thật, tài khoản của bạn có thể bị khoá.",
+    "report_sent": "Đã gửi báo cáo",
+    "report_fail": "Gửi báo cáo thất bại, thử lại sau"
+  },
+  "Home": {
+    "welcome": "Chào mừng tới NONJ",
+    "welcome_desc": "Nơi bạn soạn đề, giao bài và luyện tập cùng nhóm.",
+    "quick_links": "Bắt đầu nhanh",
+    "group_desc": "Nhóm của bạn — nơi giao bài và làm bài",
+    "preparation_desc": "Soạn đề cá nhân, lấy ra giao cho nhóm",
+    "friend_desc": "Kết bạn và xem tiến độ của nhau",
+    "discover_desc": "Tìm nhóm mới để tham gia",
+    "contact": "Liên hệ",
+    "contact_desc": "Cần hỗ trợ? Nhắn cho chúng mình qua:",
+    "contact_facebook": "Facebook",
+    "contact_email": "Gmail"
   }
 }

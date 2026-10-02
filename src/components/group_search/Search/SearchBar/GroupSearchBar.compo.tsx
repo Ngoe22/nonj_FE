@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AtSign, Check, Search, TextInitial } from 'lucide-react';
@@ -50,12 +49,20 @@ export default function GroupSearchBar({ mode, onModeChange, onSearch }: Props) 
         mode: 'onSubmit',
     });
 
-    // Reset form khi đổi mode
-    useEffect(() => {
-        reset(defaults);
+    /**
+     * Đổi mode + xoá keyword trong CÙNG một event.
+     *
+     * Trước đây xoá keyword trong `useEffect([mode])` — effect chạy SAU render,
+     * nên render đầu tiên của mode mới vẫn mang keyword CŨ và mount query của
+     * mode mới với keyword đó (tìm slug bằng tên hoặc ngược lại): tốn 1 request
+     * sai và nháy kết quả không liên quan.
+     */
+    const changeMode = (next: SearchGroupMode) => {
+        if (next === mode) return;
         onSearch('');
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [mode]);
+        reset(next === 'slug' ? slugSearchDefaultValues : nameSearchDefaultValues);
+        onModeChange(next);
+    };
 
     const submit = handleSubmit((values) => {
         onSearch(values.keyword.trim());
@@ -83,12 +90,12 @@ export default function GroupSearchBar({ mode, onModeChange, onSearch }: Props) 
                         </DropdownMenuTrigger>
 
                         <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => onModeChange('slug')}>
+                            <DropdownMenuItem onClick={() => changeMode('slug')}>
                                 <span>{txt('search_by_group_code')}</span>
                                 {mode === 'slug' && <Check size={16} className="ml-auto" />}
                             </DropdownMenuItem>
 
-                            <DropdownMenuItem onClick={() => onModeChange('name')}>
+                            <DropdownMenuItem onClick={() => changeMode('name')}>
                                 <span>{txt('search_by_name')}</span>
                                 {mode === 'name' && <Check size={16} className="ml-auto" />}
                             </DropdownMenuItem>

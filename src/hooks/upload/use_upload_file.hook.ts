@@ -13,13 +13,57 @@ import type {
 interface UploadVars {
     file: File;
     fileType: UploadFileType;
+    /**
+     * Thư mục lưu trên R2 (vd `avatars`). Bỏ trống thì BE tự chọn theo `fileType`.
+     * Giá trị phải nằm trong `STORAGE_FOLDER` của BE, nếu không BE trả 400.
+     */
+    folder?: string;
+}
+
+/**
+ * Theo dõi các object VỪA upload trong phiên soạn hiện tại.
+ *
+ * Vì sao cần: file được đẩy thẳng lên R2 ngay lúc chọn (presigned URL), nên nếu
+ * người dùng upload ảnh/mp3 rồi bấm Huỷ hoặc đóng form mà KHÔNG lưu, file vẫn
+ * nằm trên cloud. Cron 7 ngày có dọn, nhưng để lâu vừa tốn dung lượng vừa khó
+ * hiểu. Với danh sách này, FE gọi `storage/discard` để xoá NGAY khi đóng form.
+ *
+ * An toàn: BE chỉ xoá object `ref_count === 0` -> file đã được bài nào đó dùng
+ * sẽ không bị xoá kể cả khi ta gọi nhầm.
+ */
+const pendingUploadKeys = new Set<string>();
+
+/** Ghi nhận 1 object vừa upload xong */
+function trackPendingUpload(key: string): void {
+    if (key) pendingUploadKeys.add(key);
+}
+
+/** Phiên soạn mới -> quên các key của phiên trước */
+export function clearPendingUploads(): void {
+    pendingUploadKeys.clear();
+}
+
+/**
+ * Xoá các file vừa upload mà không dùng tới (gọi khi đóng form KHÔNG lưu).
+ * Lỗi mạng thì bỏ qua im lặng — cron 7 ngày vẫn dọn.
+ */
+export async function discardPendingUploads(): Promise<void> {
+    const keys = [...pendingUploadKeys];
+    pendingUploadKeys.clear();
+    if (keys.length === 0) return;
+
+    try {
+        await api.post('storage/discard', { keys });
+    } catch {
+        // im lặng: cron phía BE sẽ dọn sau
+    }
 }
 
 export function useUploadFile() {
     const txt = useTranslations('Toast');
 
     return useMutation<UploadFileResponse, Error, UploadVars>({
-        mutationFn: async ({ file, fileType }) => {
+        mutationFn: async ({ file, fileType, folder }) => {
             // 1. Validate
             const isImage = file.type.startsWith('image/');
             const isAudio = file.type.startsWith('audio/');
@@ -45,6 +89,7 @@ export function useUploadFile() {
                     fileName: file.name,
                     contentType: file.type,
                     fileType,
+                    ...(folder ? { folder } : {}),
                 },
             );
             const urlData = res.data.data;
@@ -57,6 +102,10 @@ export function useUploadFile() {
             });
 
             if (!uploadRes.ok) throw new Error('upload_failed');
+
+            // Upload xong nhưng CHƯA chắc được dùng -> theo dõi để xoá nếu người
+            // dùng đóng form mà không lưu.
+            trackPendingUpload(urlData.key);
 
             return urlData;
         },

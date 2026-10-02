@@ -300,7 +300,15 @@ export function useExamSession({
             }
 
             submittedRef.current = true;
-            await onSubmit(buildSubmission(content, answers));
+            try {
+                await onSubmit(buildSubmission(content, answers));
+            } catch (error) {
+                // Nộp fail (mạng/4xx) -> reset để cho phép bấm Nộp lại.
+                // Trước đây ref giữ `true` vĩnh viễn -> bấm Nộp không làm gì,
+                // người dùng kẹt, buộc thoát exam (mất toàn bộ draft).
+                submittedRef.current = false;
+                throw error;
+            }
         },
         [content, answers, onSubmit, pages],
     );

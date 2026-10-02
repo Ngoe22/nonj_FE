@@ -1,14 +1,17 @@
 import { z } from 'zod';
 
 // ============================================================
-// Slug — chỉ a-z, 0-9, _
+// Slug — chỉ a-z, 0-9 (KHỚP BE: slug nhóm là `/^[a-zA-Z0-9]+$/`)
+//
+// Trước đây cho phép thêm `_`, nhưng BE không sinh slug có `_` nên gõ `_` vào
+// ô tìm kiếm là chắc chắn không ra kết quả.
 // ============================================================
 export const slugSearchSchema = z.object({
     keyword: z
         .string()
         .min(1, 'enter_something')
         .max(50, 'max_char_50')
-        .regex(/^[a-zA-Z0-9_]+$/, 'only_letter_and_number_and_underscore'),
+        .regex(/^[a-zA-Z0-9]+$/, 'only_letter_and_number'),
 });
 
 // ============================================================

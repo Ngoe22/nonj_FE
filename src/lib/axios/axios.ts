@@ -1,16 +1,21 @@
 
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 
-const BE_URL = process.env.NEXT_PUBLIC_BE_URL || 'http://localhost:4000';
+import { getBeUrl } from '@/lib/api/beUrl';
 
 export const api = axios.create({
-    baseURL: BE_URL,
+    baseURL: getBeUrl(),
     withCredentials: true,
 });
 
 // ============ RESPONSE: refresh khi 401 ============
 let isRefreshing = false;
-let pendingQueue: Array<() => void> = [];
+// Mỗi request chờ refresh cần cả resolve LẪN reject — nếu chỉ lưu resolve thì khi
+// refresh thất bại, các promise xếp hàng sẽ KHÔNG BAO GIỜ kết thúc (treo vĩnh viễn).
+let pendingQueue: Array<{
+    resolve: () => void;
+    reject: (error: unknown) => void;
+}> = [];
 
 interface RetryConfig extends InternalAxiosRequestConfig {
     _retry?: boolean;
@@ -36,8 +41,11 @@ api.interceptors.response.use(
         originalRequest._retry = true;
 
         if (isRefreshing) {
-            return new Promise((resolve) => {
-                pendingQueue.push(() => resolve(api(originalRequest)));
+            return new Promise((resolve, reject) => {
+                pendingQueue.push({
+                    resolve: () => resolve(api(originalRequest)),
+                    reject,
+                });
             });
         }
 
@@ -45,20 +53,25 @@ api.interceptors.response.use(
 
         try {
             await axios.post(
-                `${BE_URL}/auth/refresh`,
+                `${getBeUrl()}/auth/refresh`,
                 {},
                 { withCredentials: true },
             );
 
-            pendingQueue.forEach((cb) => cb());
+            pendingQueue.forEach((p) => p.resolve());
             pendingQueue = [];
 
             return api(originalRequest);
         } catch (refreshError) {
+            // reject HẾT request đang chờ để chúng không treo vĩnh viễn
+            pendingQueue.forEach((p) => p.reject(refreshError));
             pendingQueue = [];
 
             if (typeof window !== 'undefined') {
-                window.location.href = '/auth';
+                // giữ locale hiện tại thay vì cứng '/auth' (raw '/auth' sẽ bị
+                // middleware redirect về locale mặc định 'vi', mất ngôn ngữ)
+                const locale = window.location.pathname.split('/')[1] || 'vi';
+                window.location.href = `/${locale}/auth`;
             }
             return Promise.reject(refreshError);
         } finally {

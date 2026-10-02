@@ -53,7 +53,7 @@ export default function AdminPreparationsPage() {
         columns={[
           { key: 'id', label: 'ID' },
           { key: 'title', label: txt('title_col') },
-          { key: 'owner', label: txt('owner') },
+          { key: 'owner', label: 'Owner ID' },
           { key: 'collection', label: txt('collection') },
           { key: 'created_at', label: txt('created_at') },
         ]}
@@ -92,7 +92,7 @@ export default function AdminPreparationsPage() {
                 <AdminDeletedBadge isDeleted={row.is_deleted} />
               </span>
             </td>
-            <AdminTextCell value={row.user?.user_name} width="max-w-[140px]" />
+            <AdminIdCell id={row.user?.id ?? ''} />
             <AdminTextCell value={row.collection?.title} width="max-w-[200px]" />
             <AdminDateCell value={row.created_at} />
           </>

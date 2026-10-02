@@ -128,7 +128,7 @@ export default function Sidebar() {
                     icon={<LogOut size={19} />}
                     label={txt('logout')}
                     isOpen={isOpen}
-                    onClick={() => logout.mutate()}
+                    onClick={() => logout.mutate('one')}
                 />
             </div>
         </aside>

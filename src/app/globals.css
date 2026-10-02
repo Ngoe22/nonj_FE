@@ -292,6 +292,26 @@ input[type='datetime-local']::-webkit-calendar-picker-indicator:hover {
 }
 
 /* --------------------------------
+   Select gốc (<select>) ở theme tối
+
+   Popup của <select> do HỆ ĐIỀU HÀNH/browser vẽ, KHÔNG theo class Tailwind của
+   app. Mặc định trình duyệt vẫn vẽ popup nền SÁNG, còn chữ thì thừa hưởng màu
+   chữ trắng của theme tối -> TRẮNG TRÊN TRẮNG, không đọc được (bug đã gặp ở
+   modal "Pick from my questions").
+
+   `color-scheme: dark` bảo trình duyệt vẽ popup theo bảng màu tối.
+   Thêm rule cho `option` vì vài trình duyệt không áp `color-scheme` cho popup.
+-------------------------------- */
+.dark select {
+    color-scheme: dark;
+}
+
+.dark select option {
+    background-color: var(--surface);
+    color: var(--foreground);
+}
+
+/* --------------------------------
    Toast theo phong cách của web.
 
    ⚠️ react-toastify v11 TỰ CHÈN CSS vào <head> lúc chạy, tức là SAU css của app.

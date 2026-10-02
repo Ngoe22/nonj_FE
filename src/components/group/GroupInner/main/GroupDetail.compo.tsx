@@ -16,7 +16,7 @@ import {useTranslations} from "next-intl";
 import {toast} from "react-toastify";
 import {useDeleteGroup, useGetGroup, useQuitGroup} from "@/hooks/group/group_tan.hook";
 import {useCreateJoinRequest} from "@/hooks/group_search/group_join_request.hook";
-import {AlertTriangle, UserPlus} from "lucide-react";
+import {AlertTriangle, Clock, UserPlus} from "lucide-react";
 import {useQueryClient} from "@tanstack/react-query";
 import {Group} from "@/types/group/group.type";
 
@@ -52,6 +52,8 @@ export default  function GroupDetail() {
     const joinMutation = useCreateJoinRequest();
 
     const isMember = currentGroup?.permission?.is_member ?? true;
+    /** đã gửi yêu cầu tham gia và đang chờ duyệt */
+    const daGuiYeuCau = currentGroup?.has_pending_request === true;
     const isByRequest = currentGroup?.join_mode === 'BY_REQUEST';
 
     // vào nhóm xong thì nạp lại thông tin nhóm để `is_member` chuyển true
@@ -147,7 +149,40 @@ export default  function GroupDetail() {
         setMenuOpen(false);
     };
 
-    if (!currentGroup) return <div>...</div>;
+    // Tách loading và LỖI: trước đây gộp cả hai vào `!currentGroup` -> nhóm
+    // không tồn tại / không có quyền thì trang treo ở "..." vĩnh viễn, người
+    // dùng không biết chuyện gì và cũng không có nút quay lại.
+    if (isLoading) {
+        return (
+            <div className="mx-auto w-full max-w-5xl px-4 py-6 sm:px-6">
+                <div className="flex min-h-56 items-center justify-center rounded-2xl border border-dashed border-border">
+                    <p className="text-sm text-muted-foreground">
+                        {txt('loading')}
+                    </p>
+                </div>
+            </div>
+        );
+    }
+
+    if (isError || !currentGroup) {
+        return (
+            <div className="mx-auto w-full max-w-5xl px-4 py-6 sm:px-6">
+                <div className="flex min-h-56 flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-border px-4 text-center">
+                    <AlertTriangle size={20} className="text-muted-foreground" />
+                    <p className="text-sm text-muted-foreground">
+                        {txt('group_not_found')}
+                    </p>
+                    <button
+                        type="button"
+                        onClick={() => router.push('/group')}
+                        className="rounded-xl border border-border px-4 py-2 text-sm font-medium transition hover:bg-surface-hover"
+                    >
+                        {txt('back_to_groups')}
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
 
     if (view !== 'overview') {
@@ -227,6 +262,7 @@ export default  function GroupDetail() {
                     }
                     onDelete={() => setGroupDeleteOpen(true)
                     }
+                    groupId={groupId}
                 />
 
                 {/*
@@ -236,25 +272,44 @@ export default  function GroupDetail() {
                   rồi nhận lỗi khó hiểu.
                 */}
                 {!isMember && (
-                    <div className="mb-4 flex flex-col gap-3 rounded-xl border-2 border-status-warning bg-status-warning-bg p-3 sm:flex-row sm:items-center sm:justify-between">
-                        <p className="flex items-center gap-2 text-sm font-medium text-status-warning">
-                            <AlertTriangle size={16} />
-                            {txt('join_to_do_exercise')}
-                        </p>
-                        <button
-                            type="button"
-                            disabled={joinMutation.isPending}
-                            onClick={() =>
-                                joinMutation.mutate({ group_id: groupId })
-                            }
-                            className="inline-flex shrink-0 items-center justify-center gap-2 rounded-md border-2 border-status-warning px-3 py-1.5 text-sm font-medium text-status-warning transition hover:bg-status-warning hover:text-white disabled:opacity-60"
-                        >
-                            <UserPlus size={14} />
-                            {isByRequest
-                                ? txt('request_to_join')
-                                : txt('join_group')}
-                        </button>
-                    </div>
+                    daGuiYeuCau ? (
+                        /* đã gửi yêu cầu -> hiện trạng thái chờ, KHÔNG hiện lại nút
+                           Join (nếu không người dùng tưởng nút hỏng và bấm liên tục) */
+                        <div className="mb-4 flex items-center gap-2 rounded-xl border-2 border-status-info bg-status-info-bg p-3 text-sm font-medium text-status-info">
+                            <Clock size={16} />
+                            {txt('join_request_pending')}
+                        </div>
+                    ) : (
+                        <div className="mb-4 flex flex-col gap-3 rounded-xl border-2 border-status-warning bg-status-warning-bg p-3 sm:flex-row sm:items-center sm:justify-between">
+                            <p className="flex items-center gap-2 text-sm font-medium text-status-warning">
+                                <AlertTriangle size={16} />
+                                {txt('join_to_do_exercise')}
+                            </p>
+                            <button
+                                type="button"
+                                disabled={joinMutation.isPending}
+                                onClick={() =>
+                                    joinMutation.mutate(
+                                        { group_id: groupId },
+                                        {
+                                            onSuccess: () =>
+                                                toast.success(
+                                                    isByRequest
+                                                        ? txt('join_request_sent')
+                                                        : txt('joined_group'),
+                                                ),
+                                        },
+                                    )
+                                }
+                                className="inline-flex shrink-0 items-center justify-center gap-2 rounded-md border-2 border-status-warning px-3 py-1.5 text-sm font-medium text-status-warning transition hover:bg-status-warning hover:text-white disabled:opacity-60"
+                            >
+                                <UserPlus size={14} />
+                                {isByRequest
+                                    ? txt('request_to_join')
+                                    : txt('join_group')}
+                            </button>
+                        </div>
+                    )
                 )}
 
                 <CollectionList

@@ -10,9 +10,17 @@ import { FileUploadButton } from '@/components/_share/upload/UploadFileBtn.compo
 interface Props {
     /** Đường dẫn tới content trong form — vd: `sections.0.content` */
     namePrefix: `sections.${number}.content`;
+    /** `true` khi đã đạt giới hạn tổng ảnh -> tắt nút thêm ảnh */
+    imagesDisabled?: boolean;
+    /** `true` khi đã đạt giới hạn tổng mp3 -> tắt nút thêm mp3 */
+    audioDisabled?: boolean;
 }
 
-export function QuestionContentEditor({ namePrefix }: Props) {
+export function QuestionContentEditor({
+    namePrefix,
+    imagesDisabled,
+    audioDisabled,
+}: Props) {
     const txt = useTranslations('Question_builder');
     const {
         register,
@@ -46,6 +54,7 @@ export function QuestionContentEditor({ namePrefix }: Props) {
             <div className="flex flex-wrap gap-2">
                 <FileUploadButton
                     fileType="image"
+                    disabled={imagesDisabled}
                     value={imgUrl}
                     onChange={(url) =>
                         setValue(`${namePrefix}.img_url`, url ?? '', {
@@ -55,6 +64,7 @@ export function QuestionContentEditor({ namePrefix }: Props) {
                 />
                 <FileUploadButton
                     fileType="audio"
+                    disabled={audioDisabled}
                     value={mp3Url}
                     onChange={(url) =>
                         setValue(`${namePrefix}.mp3_url`, url ?? '', {

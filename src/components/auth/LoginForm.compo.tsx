@@ -1,6 +1,5 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { useLogin } from '@/hooks/auth/useLogin';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
@@ -11,7 +10,6 @@ import {GoogleLoginButton} from "@/components/auth/GoogleLoginButton.compo";
 
 export default function LoginForm() {
     const txt = useTranslations('Auth');
-    const router = useRouter();
     const loginMutation = useLogin();
 
     const {
@@ -23,8 +21,9 @@ export default function LoginForm() {
     });
 
     const loginSubmit = async (data: LoginFormValues) => {
+        // useLogin.onSuccess đã push('/') bằng router i18n (giữ locale) —
+        // push thêm ở đây bằng next/navigation raw sẽ mất locale (en->vi).
         await loginMutation.mutateAsync(data);
-        router.push('/');
     };
 
     return (

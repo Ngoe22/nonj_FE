@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { FormProvider, useForm, useFieldArray } from 'react-hook-form';
+import { FormProvider, useForm, useFieldArray, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { AlertCircle, Plus } from 'lucide-react';
@@ -32,6 +32,11 @@ import {
     translateErrorKey,
 } from '@/helper/formError/formError.helper';
 import { SectionBuilder } from './SectionBuilder.compo';
+import { useGetMediaLimits } from '@/hooks/config/use_get_media_limits.hook';
+import {
+    clearPendingUploads,
+    discardPendingUploads,
+} from '@/hooks/upload/use_upload_file.hook';
 
 interface Props {
     open: boolean;
@@ -55,6 +60,7 @@ export default function PreparationBuilderModal({
 }: Props) {
     const txt = useTranslations('Question_builder');
     const txtErr = useTranslations('Shema');
+    const uploadTxt = useTranslations('Upload');
 
     const form = useForm<
         QuestionPreparationFormInput,
@@ -80,10 +86,28 @@ export default function PreparationBuilderModal({
         remove: removeSection,
     } = useFieldArray({ control, name: 'sections' });
 
+    // Giới hạn ảnh/mp3 (admin chỉnh được) + đếm số đã dùng để hiển thị X/Y
+    const { data: limits } = useGetMediaLimits();
+
+    const sectionsWatch = useWatch({ control, name: 'sections' }) ?? [];
+    const imagesUsed = sectionsWatch.filter(
+        (sec) => sec?.content?.img_url,
+    ).length;
+    const audioUsed = sectionsWatch.filter(
+        (sec) => sec?.content?.mp3_url,
+    ).length;
+
+    const maxImages = limits?.post_max_images ?? 2;
+    const maxAudio = limits?.post_max_audio ?? 2;
+    const imagesDisabled = imagesUsed >= maxImages;
+    const audioDisabled = audioUsed >= maxAudio;
+
     // Nạp lại dữ liệu mỗi lần mở modal (create -> rỗng, edit -> đề đang sửa)
     useEffect(() => {
         if (!open) return;
         reset(initialValues ?? questionPreparationDefaultValues);
+        // Phiên soạn mới -> quên các file đã upload ở phiên trước
+        clearPendingUploads();
     }, [open, initialValues, reset]);
 
 
@@ -92,10 +116,22 @@ export default function PreparationBuilderModal({
 
     const submit = handleSubmit(async (values) => {
         await onSubmit(values);
+        // Lưu thành công -> ảnh/mp3 đã được bài tham chiếu -> đừng xoá nữa.
+        // (`discard` phía BE cũng chỉ xoá object ref_count = 0 nên vẫn an toàn.)
+        clearPendingUploads();
     });
 
+    /**
+     * Đóng form mà KHÔNG lưu (bấm Huỷ / phím Esc / bấm ra ngoài):
+     * xoá ngay các file vừa upload nhưng chưa bài nào dùng tới.
+     */
+    const handleClose = () => {
+        void discardPendingUploads();
+        onClose();
+    };
+
     return (
-        <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
+        <Dialog open={open} onOpenChange={(v) => !v && handleClose()}>
 
             <DialogContent className="flex h-[92dvh] w-[95vw] flex-col gap-4 overflow-hidden p-5 sm:max-w-6xl sm:p-6">
                 <DialogHeader className="shrink-0 pr-10">
@@ -143,6 +179,16 @@ export default function PreparationBuilderModal({
                                 />
                             </div>
 
+                            {/* Bộ đếm ảnh/mp3 đã dùng */}
+                            <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                                <span className={imagesDisabled ? 'font-semibold text-destructive' : ''}>
+                                    {uploadTxt('image_count')}: {imagesUsed}/{maxImages}
+                                </span>
+                                <span className={audioDisabled ? 'font-semibold text-destructive' : ''}>
+                                    {uploadTxt('audio_count')}: {audioUsed}/{maxAudio}
+                                </span>
+                            </div>
+
                             {/* Danh sách section */}
                             <div className="space-y-4">
                                 {sections.map((section, index) => (
@@ -150,6 +196,8 @@ export default function PreparationBuilderModal({
                                         key={section.id}
                                         sectionIndex={index}
                                         onRemove={() => removeSection(index)}
+                                        imagesDisabled={imagesDisabled}
+                                        audioDisabled={audioDisabled}
                                     />
                                 ))}
                             </div>
@@ -200,7 +248,7 @@ export default function PreparationBuilderModal({
                             <Button
                                 type="button"
                                 variant="outline"
-                                onClick={onClose}
+                                onClick={handleClose}
                                 disabled={isSubmitting}
                             >
                                 {txt('cancel')}

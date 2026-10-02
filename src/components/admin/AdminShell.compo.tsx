@@ -12,8 +12,11 @@ import {
   LayoutDashboard,
   LogOut,
   Menu,
+  Save,
   Server,
+  Settings,
   ShieldCheck,
+  UserPlus,
   Users,
   UsersRound,
   X,
@@ -40,6 +43,11 @@ const NAV: NavItem[] = [
   },
   { href: '/admin/friends', labelKey: 'nav_friends', icon: <Users size={16} /> },
   { href: '/admin/groups', labelKey: 'nav_groups', icon: <FolderTree size={16} /> },
+  {
+    href: '/admin/join_requests',
+    labelKey: 'nav_join_requests',
+    icon: <UserPlus size={16} />,
+  },
   { href: '/admin/posts', labelKey: 'nav_posts', icon: <ClipboardList size={16} /> },
   {
     href: '/admin/preparations',
@@ -47,6 +55,7 @@ const NAV: NavItem[] = [
     icon: <FileText size={16} />,
   },
   { href: '/admin/reports', labelKey: 'nav_reports', icon: <Flag size={16} /> },
+  { href: '/admin/config', labelKey: 'nav_config', icon: <Settings size={16} /> },
 ];
 
 /**
@@ -148,7 +157,7 @@ export default function AdminShell({ children }: { children: ReactNode }) {
 
           <button
             type="button"
-            onClick={() => logoutMutation.mutate()}
+            onClick={() => logoutMutation.mutate('all')}
             className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm text-muted-foreground transition hover:bg-destructive/10 hover:text-destructive"
           >
             <LogOut size={15} />

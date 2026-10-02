@@ -8,11 +8,14 @@ import {
     Eye,
     FileText,
     Pencil,
+    MoreVertical,
     Play,
     RotateCcw,
     Trash2,
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import ReportButton from '@/components/_share/report/ReportButton.compo';
+import { Target_Type } from '@/enum/report/report.enum';
 
 import { Badge } from '@/components/ui/badge';
 import {
@@ -58,6 +61,7 @@ import { isPastDeadline, type SubmissionSection } from '@/types/post/post.type';
 export default function PostDetail() {
     const txt = useTranslations('Post');
     const router = useRouter();
+    const [reportMenuOpen, setReportMenuOpen] = useState(false);
     const { groupId, collectionId, postId } = usePostParams();
 
     const { data: post, isLoading, isError } = useGetPost(
@@ -118,9 +122,13 @@ export default function PostDetail() {
     const canTake = permission.take && !expired && !hasAnswered;
 
     /**
-     * Chỉ hiển thị nội dung cho admin
+     * CHỦ ĐÍCH: chỉ admin/founder xem được nội dung đề ở tab này.
+     *
+     * Học viên KHÔNG xem trước nội dung — đề chỉ hiện trong lúc làm bài (màn
+     * thi). Vì vậy đừng đổi thành `|| hasAnswered`: nộp bài xong vẫn không hiện
+     * ở đây.
      */
-    const canSeeContent = permission.update ;
+    const canSeeContent = permission.update;
     const canRetakeNow =
         hasAnswered && post.retake === Retake.BEFORE_DATELINE && !expired;
 
@@ -182,13 +190,36 @@ export default function PostDetail() {
         <div className="mx-auto w-full max-w-4xl px-4 py-6 sm:px-6">
             {/* ================= Header ================= */}
             <div className="border-b border-border pb-5">
-                <Link
-                    href={`/group/${groupId}/collection/${collectionId}`}
-                    className="inline-flex items-center gap-2 text-sm text-muted-foreground transition hover:text-foreground"
-                >
-                    <ArrowLeft size={17} />
-                    {txt('back')}
-                </Link>
+                <div className="flex items-center justify-between">
+                    <Link
+                        href={`/group/${groupId}/collection/${collectionId}`}
+                        className="inline-flex items-center gap-2 text-sm text-muted-foreground transition hover:text-foreground"
+                    >
+                        <ArrowLeft size={17} />
+                        {txt('back')}
+                    </Link>
+
+                    {/* 3 chấm đối diện nút back -> báo cáo vi phạm */}
+                    <div className="relative">
+                        <button
+                            type="button"
+                            onClick={() => setReportMenuOpen((o) => !o)}
+                            className="rounded-lg p-2 text-muted-foreground transition hover:bg-surface-hover"
+                            aria-label={txt('report')}
+                        >
+                            <MoreVertical size={18} />
+                        </button>
+                        {reportMenuOpen && (
+                            <div className="absolute right-0 top-10 z-30 w-52 rounded-xl border border-border bg-surface p-1.5 shadow-xl">
+                                <ReportButton
+                                    target_type={Target_Type.POST}
+                                    target_id={postId}
+                                    variant="menu"
+                                />
+                            </div>
+                        )}
+                    </div>
+                </div>
 
                 <div className="mt-4 flex items-start justify-between gap-4">
                     <div className="min-w-0">
@@ -370,7 +401,7 @@ export default function PostDetail() {
                         </div>
                     ) : (
                         <div className="rounded-2xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
-                            {txt('content_hidden_until_start')}
+                            {txt('content_admin_only')}
                         </div>
                     )}
                 </TabsContent>

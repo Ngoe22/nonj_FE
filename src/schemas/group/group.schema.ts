@@ -8,7 +8,9 @@ export const createGroupSchema = z.object({
         .string()
         .min(1, 'enter_something')
         .max(50, 'max_char_50')
-        .regex(/^[a-zA-Z0-9_]+$/, 'only_letter_and_number_and_underscore'),
+        // KHỚP regex của BE (`Group` entity: /^[a-zA-Z0-9]+$/). Trước đây FE cho
+        // phép thêm `_` nên submit sẽ bị BE trả 400.
+        .regex(/^[a-zA-Z0-9]+$/, 'only_letter_and_number'),
 
     name: z
         .string()
@@ -17,7 +19,7 @@ export const createGroupSchema = z.object({
 
     description: z
         .string()
-        .max(500, 'max_char_50')
+        .max(500, 'max_char_500')
         .optional()
         .or(z.literal('')),
 

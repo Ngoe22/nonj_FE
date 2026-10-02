@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { AlertTriangle, Plus, UserPlus } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import { AlertTriangle, Clock, Plus, UserPlus } from 'lucide-react';
+import { toast } from 'react-toastify';
 import { useTranslations } from 'next-intl';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -32,6 +33,7 @@ import {
 } from '@/schemas/post/post.schema';
 import { toDateTimeLocal } from '@/lib/format/datetime';
 import { splitQuestionSections } from '@/types/question_preparation/question_preparation.type';
+import { questionPreparationDefaultValues } from '@/schemas/question_preparation/question_preparation.schema';
 import type { QuestionPreparationFormValues } from '@/schemas/question_preparation/question_preparation.schema';
 import type {
     CreatePostFromPreparationVars,
@@ -72,6 +74,15 @@ export default function PostList({ groupId, collectionId, canCreate }: Props) {
 
     const isByRequest = group?.join_mode === Group_Join_Mode.BY_REQUEST;
 
+    /**
+     * Đã gửi yêu cầu tham gia và đang CHỜ DUYỆT.
+     *
+     * Lấy từ chính dữ liệu nhóm (BE trả `has_pending_request`). Không có cờ này
+     * thì sau khi bấm Join, banner vẫn hiện lại y như cũ -> người dùng tưởng nút
+     * không chạy và bấm liên tục, sinh ra hàng loạt yêu cầu trùng.
+     */
+    const daGuiYeuCau = group?.has_pending_request === true;
+
     // vào nhóm xong thì nạp lại danh sách bài tập
     useEffect(() => {
         if (!joinMutation.isSuccess) return;
@@ -111,6 +122,15 @@ export default function PostList({ groupId, collectionId, canCreate }: Props) {
         setMetaOpen(false);
         setBuilderOpen(true);
     };
+
+    // Ổn định theo `draftMeta` (chỉ đổi 1 lần ở bước 1) — xem chú thích ở prop.
+    const manualInitialValues = useMemo(
+        () =>
+            draftMeta
+                ? { ...questionPreparationDefaultValues, title: draftMeta.title }
+                : undefined,
+        [draftMeta],
+    );
 
     /** Bước 2: ghép meta + nội dung rồi gửi BE */
     const handleManualCreate = async (
@@ -221,27 +241,43 @@ export default function PostList({ groupId, collectionId, canCreate }: Props) {
                     className="space-y-3"
                     errorComponent={
                         notMember ? (
-                            <div className="flex flex-col gap-3 rounded-xl border-2 border-status-warning bg-status-warning-bg p-3 sm:flex-row sm:items-center sm:justify-between">
-                                <p className="flex items-center gap-2 text-sm font-medium text-status-warning">
-                                    <AlertTriangle size={16} />
-                                    {txt('join_to_do_exercise')}
-                                </p>
-                                <Button
-                                    type="button"
-                                    className="shrink-0 gap-2"
-                                    disabled={joinMutation.isPending}
-                                    onClick={() =>
-                                        joinMutation.mutate({
-                                            group_id: groupId,
-                                        })
-                                    }
-                                >
-                                    <UserPlus size={14} />
-                                    {isByRequest
-                                        ? txt('request_to_join')
-                                        : txt('join_group')}
-                                </Button>
-                            </div>
+                            daGuiYeuCau ? (
+                                <div className="flex items-center gap-2 rounded-xl border-2 border-status-info bg-status-info-bg p-3 text-sm font-medium text-status-info">
+                                    <Clock size={16} />
+                                    {txt('join_request_pending')}
+                                </div>
+                            ) : (
+                                <div className="flex flex-col gap-3 rounded-xl border-2 border-status-warning bg-status-warning-bg p-3 sm:flex-row sm:items-center sm:justify-between">
+                                    <p className="flex items-center gap-2 text-sm font-medium text-status-warning">
+                                        <AlertTriangle size={16} />
+                                        {txt('join_to_do_exercise')}
+                                    </p>
+                                    <Button
+                                        type="button"
+                                        className="shrink-0 gap-2"
+                                        disabled={joinMutation.isPending}
+                                        onClick={() =>
+                                            joinMutation.mutate(
+                                                { group_id: groupId },
+                                                {
+                                                    // phản hồi rõ để không bấm lại
+                                                    onSuccess: () =>
+                                                        toast.success(
+                                                            isByRequest
+                                                                ? txt('join_request_sent')
+                                                                : txt('joined_group'),
+                                                        ),
+                                                },
+                                            )
+                                        }
+                                    >
+                                        <UserPlus size={14} />
+                                        {isByRequest
+                                            ? txt('request_to_join')
+                                            : txt('join_group')}
+                                    </Button>
+                                </div>
+                            )
                         ) : undefined
                     }
                     emptyComponent={
@@ -283,6 +319,12 @@ export default function PostList({ groupId, collectionId, canCreate }: Props) {
                 open={builderOpen}
                 mode="create"
                 titleOverride={txt('create_manually')}
+                // Điền sẵn tiêu đề đã nhập ở bước 1 (schema builder bắt buộc
+                // title, nếu để trống thì user phải gõ lại y hệt).
+                // ⚠️ PHẢI là tham chiếu ỔN ĐỊNH: PreparationBuilderModal có
+                // `useEffect(..., [initialValues])` -> object literal tạo mới mỗi
+                // render sẽ reset form liên tục, nuốt hết nội dung đang gõ.
+                initialValues={manualInitialValues}
                 onClose={() => {
                     setBuilderOpen(false);
                     setDraftMeta(null);

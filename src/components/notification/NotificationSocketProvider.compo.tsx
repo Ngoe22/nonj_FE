@@ -16,6 +16,7 @@ import {
 } from '@/hooks/notification/notification.hook';
 import { User_Notif_Type } from '@/enum/notification/notification.enum';
 import type { AppNotification } from '@/types/notification/notification.type';
+import { getBeUrl } from '@/lib/api/beUrl';
 import { notificationText } from '@/components/notification/notification.helper';
 
 /**
@@ -102,8 +103,7 @@ export default function NotificationSocketProvider() {
     }, [txt]);
 
     useEffect(() => {
-        const baseUrl =
-            process.env.NEXT_PUBLIC_BE_URL || 'http://localhost:3000';
+        const baseUrl = getBeUrl();
 
         const socket: Socket = io(`${baseUrl}/notif`, {
             withCredentials: true,

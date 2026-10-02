@@ -7,6 +7,8 @@ import {
     UserPlus,
 } from 'lucide-react';
 import {useTranslations} from "next-intl";
+import ReportButton from "@/components/_share/report/ReportButton.compo";
+import { Target_Type } from "@/enum/report/report.enum";
 
 interface GroupMenuProps {
     open: boolean;
@@ -19,7 +21,9 @@ interface GroupMenuProps {
     onRequests: () => void;
     onMembers: () => void;
     onQuit: () => void;
-    onDelete : () => void
+    onDelete : () => void;
+    /** Id nhóm — để báo cáo vi phạm */
+    groupId : string;
 }
 
 export default function GroupMenu({
@@ -33,7 +37,8 @@ export default function GroupMenu({
                                       onRequests,
                                       onMembers,
                                       onQuit,
-                                      onDelete
+                                      onDelete,
+                                      groupId
                                   }: GroupMenuProps) {
 
    const txt = useTranslations('Group')
@@ -77,6 +82,12 @@ export default function GroupMenu({
             )}
 
             <div className="my-1 border-t border-border" />
+
+            <ReportButton
+                target_type={Target_Type.GROUP}
+                target_id={groupId}
+                variant="menu"
+            />
 
             { AbleToLeave &&
                 (<button

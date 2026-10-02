@@ -70,9 +70,6 @@ export default function AdminFriendsPage() {
             <AdminField label={txt('id')}>
               <AdminTextFilter value={query.id ?? ''} onChange={(v) => setFilter('id', v)} />
             </AdminField>
-            <AdminField label={txt('any_side_user')}>
-              <AdminTextFilter value={query.user_name ?? ''} onChange={(v) => setFilter('user_name', v)} />
-            </AdminField>
             <AdminField label={txt('user')}>
               <AdminTextFilter value={query.a_user_name ?? ''} onChange={(v) => setFilter('a_user_name', v)} />
             </AdminField>

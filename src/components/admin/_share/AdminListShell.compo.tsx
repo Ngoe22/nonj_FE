@@ -18,10 +18,11 @@ import {
 } from '@/hooks/admin/admin.hook';
 import { copyToClipboard } from '@/helper/clipboard/clipboard.helper';
 import { formatDeadline } from '@/lib/format/datetime';
-import type {
-  AdminPage,
-  AdminQuery,
-  AdminResource,
+import {
+  canRestoreAdminResource,
+  type AdminPage,
+  type AdminQuery,
+  type AdminResource,
 } from '@/types/admin/admin.type';
 
 // ============================================================
@@ -383,7 +384,7 @@ export function AdminListShell<T extends { id: string; is_deleted: boolean }>({
     [applied, page, withDeleted, appliedRange],
   );
 
-  const { data, isLoading, isError } = useAdminList<T>(resource, query);
+  const { data, isLoading, isFetching, isError } = useAdminList<T>(resource, query);
   const restore = useAdminRestore(resource);
 
   const setFilter = (key: string, value: string) =>
@@ -515,6 +516,20 @@ export function AdminListShell<T extends { id: string; is_deleted: boolean }>({
               </tr>
             )}
 
+            {/* `placeholderData` giữ dữ liệu CŨ khi đổi bộ lọc nên `isLoading`
+                là false; nếu không báo gì thì người dùng tưởng bảng đã cập nhật
+                (kể cả `total` ở footer vẫn là số cũ). */}
+            {isFetching && !isLoading && (
+              <tr>
+                <td
+                  colSpan={totalCols}
+                  className="px-3 py-1 text-center text-[11px] text-muted-foreground"
+                >
+                  {txt('loading')}
+                </td>
+              </tr>
+            )}
+
             {!isLoading && !isError && pageData?.items.length === 0 && (
               <tr>
                 <td
@@ -550,7 +565,7 @@ export function AdminListShell<T extends { id: string; is_deleted: boolean }>({
                   <span className="inline-flex items-center gap-1">
                     {renderActions?.(row)}
 
-                    {row.is_deleted && (
+                    {row.is_deleted && canRestoreAdminResource(resource) && (
                       <button
                         type="button"
                         title={txt('restore')}

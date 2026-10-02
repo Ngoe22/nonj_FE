@@ -32,7 +32,8 @@
     "register_btn": "Submit",
     "register_fail": "Register fail",
     "continue_with_google": "Continue with Google",
-    "continue_with_google_register": "Sign up with Google"
+    "continue_with_google_register": "Sign up with Google",
+    "duplicated_info": "That username or email is already taken"
   },
   "Sidebar": {
     "home": "Home",
@@ -133,7 +134,13 @@
     "create_group_confirm_discard": "You have unsaved changes. Discard?",
     "join_to_do_exercise": "Join the group to do the exercises",
     "join_group": "Join group",
-    "request_to_join": "Request to join"
+    "request_to_join": "Request to join",
+    "join_request_pending": "Join request sent — waiting for approval",
+    "join_request_sent": "Join request sent",
+    "joined_group": "Joined the group",
+    "loading": "Loading…",
+    "group_not_found": "Group not found, or you do not have permission to view it",
+    "back_to_groups": "Back to groups"
   },
   "Post_collections": {
     "title": "Collections",
@@ -229,7 +236,9 @@
     "nickname": "Name",
     "bio": "Bio",
     "logout_btn": "Logout",
-    "load_fail": "Could not load your profile, please try again"
+    "load_fail": "Could not load your profile, please try again",
+    "change_avatar": "Change avatar",
+    "avatar_updated": "Avatar updated"
   },
   "Shema": {
     "invalid_email": "Invalid email address",
@@ -263,7 +272,8 @@
     "max_value_10": "Maximum 10",
     "max_value_100": "Maximum 100",
     "max_240_minutes": "Max 240 minutes",
-    "deadline_must_be_future": "Deadline must be in the future"
+    "deadline_must_be_future": "Deadline must be in the future",
+    "only_letter_and_number": "Letters and digits only — no spaces, no special characters"
   },
   "Toast": {
     "action_fail": "Something went wrong ... , try again later",
@@ -313,7 +323,9 @@
     "invalid_audio_type": "Only MP3 allowed",
     "image_too_large": "Image max 5MB",
     "audio_too_large": "Audio max 20MB",
-    "upload_failed": "Upload failed"
+    "upload_failed": "Upload failed",
+    "image_count": "Images",
+    "audio_count": "Audio"
   },
   "Question_builder": {
     "create_preparation": "New preparation",
@@ -484,7 +496,13 @@
     "point_range_hint": "Between 0 and {max}",
     "model_answer_readonly": "Model answer from the assignment — read only. Edit it in the source assignment.",
     "essay_required": "{count} essay section(s) still empty — please write something before submitting",
-    "content_hidden_until_start": "The assignment content appears once you start the attempt"
+    "report": "Report violation ",
+    "join_request_pending": "Join request sent — waiting for approval",
+    "join_request_sent": "Join request sent",
+    "joined_group": "Joined the group",
+    "pick_collection_first": "Choose a folder above first",
+    "load_failed": "Could not load the list, please try again",
+    "content_admin_only": "The content is only shown while taking the attempt"
   },
   "Notification": {
     "title": "Notifications",
@@ -642,7 +660,7 @@
     "owner": "Owner",
     "sender": "Sender",
     "receiver": "Receiver",
-    "any_side_user": "Name (either side)",
+    "any_side_user": "User name (either side)",
     "relationship_detail": "Relationship detail",
     "friends": "Friends",
     "ingoing": "Incoming",
@@ -704,6 +722,89 @@
     "taken": "Taken",
     "slug": "Slug",
     "description": "Description",
-    "email_send_failed": "Could not send email — check RESEND_API_KEY and the user's email address"
+    "email_send_failed": "Could not send email — check RESEND_API_KEY and the user's email address",
+    "nav_join_requests": "Group join requests",
+    "join_requests_hint": "Approve / reject / delete join requests — search by request/user/group id, status, time",
+    "approve": "Approve",
+    "reject": "Reject",
+    "promote_admin": "Promote to SYSTEM_ADMIN",
+    "demote_admin": "Demote to USER",
+    "confirm_promote_title": "Promote to SYSTEM_ADMIN?",
+    "confirm_promote_message": "This user will gain full system admin access.",
+    "confirm_demote_title": "Demote to regular USER?",
+    "confirm_demote_message": "This user will lose admin access.",
+    "cannot_demote_self": "You cannot demote yourself",
+    "security_block": "Password & security",
+    "reset_password_self": "Reset password",
+    "reset_password_self_hint": "Email a new password to you and sign out of every device",
+    "reset_password_sent": "New password emailed — please sign in again",
+    "confirm_reset_self_title": "Reset your password?",
+    "confirm_reset_self_message": "A new password will be emailed to you. You will be signed out of ALL devices and must sign in again with the emailed password.",
+    "send_mail": "Send email",
+    "logout_all_devices": "Sign out of all devices",
+    "logout_all_devices_hint": "Revoke every signed-in session on all devices",
+    "confirm_logout_all_title": "Sign out of all devices?",
+    "confirm_logout_all_message": "Every session on every device will be revoked, including this one.",
+    "must_check_first": "Press Check before continuing",
+    "invalid_username_format": "Letters, digits and _ only (3–50 chars)",
+    "invalid_slug_format": "Letters and digits only (1–50 chars)",
+    "nav_config": "Settings",
+    "config_title": "System settings",
+    "config_description": "Image / audio limits for posts and question bank",
+    "config_post_max_images": "Max images per post",
+    "config_post_max_audio": "Max audio per post",
+    "config_save": "Save",
+    "config_saving": "Saving…",
+    "config_saved": "Saved",
+    "config_save_failed": "Failed to save",
+    "config_invalid": "Value must be an integer ≥ 0",
+    "config_loading": "Loading…",
+    "config_load_failed": "Could not load the settings, please try again",
+    "config_home_text": "Home page intro text",
+    "config_home_text_hint": "Shown at the top of the home page. Leave empty to hide.",
+    "config_contact_facebook": "Contact Facebook link",
+    "config_contact_email": "Contact email",
+    "config_contact_hint": "Leave empty to hide the contact section on the home page.",
+    "config_group_limits": "Image / audio limits",
+    "config_group_content": "Home page content",
+    "config_group_contact": "Contact"
+  },
+  "Report": {
+    "report_violation": "Report violation",
+    "report_user": "Report user",
+    "report_group": "Report group",
+    "report_post": "Report assignment",
+    "report_post_answer": "Report answer",
+    "target": "Target",
+    "reason": "Reason",
+    "reason_placeholder": "Choose a reason…",
+    "description": "Description",
+    "reason_SPAM": "Spam",
+    "reason_INAPPROPRIATE_CONTENT": "Inappropriate content",
+    "reason_HARASSMENT": "Harassment",
+    "reason_OFF_TOPIC": "Off topic",
+    "reason_OTHER": "Other",
+    "next": "Next",
+    "back": "Back",
+    "cancel": "Cancel",
+    "submit": "Submit report",
+    "submitting": "Submitting…",
+    "confirm_title": "Confirm report?",
+    "confirm_warning": "If the report is found to be false, your account may be locked.",
+    "report_sent": "Report submitted",
+    "report_fail": "Failed to submit report, please retry"
+  },
+  "Home": {
+    "welcome": "Welcome to NONJ",
+    "welcome_desc": "Where you write questions, assign work and practise with your group.",
+    "quick_links": "Quick start",
+    "group_desc": "Your groups — assign and take exams",
+    "preparation_desc": "Write your own questions, reuse them in groups",
+    "friend_desc": "Add friends and track each other",
+    "discover_desc": "Find new groups to join",
+    "contact": "Contact",
+    "contact_desc": "Need help? Reach us via:",
+    "contact_facebook": "Facebook",
+    "contact_email": "Email"
   }
 }

@@ -47,8 +47,40 @@ export function useSetUsername() {
       const res = await api.post('user/username', { user_name });
       return res.data.data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      /**
+       * Ghi NGAY user mới vào cache thay vì chỉ `invalidateQueries`.
+       *
+       * `invalidateQueries` chỉ ĐÁNH DẤU cache cũ là stale rồi refetch ở NỀN —
+       * nghĩa là trong lúc đó `useGetMyProfile` vẫn trả `user_name = null`.
+       * `HomeLayout` có guard "chưa có username thì đá về /username", nên nó đọc
+       * phải cache cũ và đá ngược lại — đúng lỗi "đăng ký username xong vẫn còn
+       * modal".
+       *
+       * `setQueryData` là đồng bộ nên chạy xong trước khi `mutateAsync` resolve,
+       * tức là trước khi `router.replace('/')` ở UsernameSetup.
+       *
+       * Response `POST /user/username` có ĐÚNG shape của `GET /user/me` (cả hai
+       * đều đi qua `getMyInfo`) nên ghi thẳng vào cache được.
+       */
+      if (data) queryClient.setQueryData(['my_profile'], data);
+
       queryClient.invalidateQueries({ queryKey: ['my_profile'] });
+    },
+  });
+}
+
+/**
+ * Reset mật khẩu CỦA CHÍNH MÌNH.
+ *
+ * `POST /auth/reset_password` (cần đang đăng nhập) sẽ: sinh mật khẩu mới → gửi
+ * vào email → **thu hồi toàn bộ phiên** trên mọi thiết bị. Vì vậy sau khi gọi
+ * thành công, FE phải đưa người dùng về trang đăng nhập.
+ */
+export function useResetMyPassword() {
+  return useMutation({
+    mutationFn: async () => {
+      await api.post('auth/reset_password');
     },
   });
 }

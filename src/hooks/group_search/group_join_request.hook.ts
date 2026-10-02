@@ -23,6 +23,17 @@ const AFFECTED_TAGS: string[][] = [
     OUTGOING_JOIN_REQUESTS_TAG,
     SEARCH_GROUP_SLUG_TAG,
     SEARCH_GROUP_NAME_TAG,
+
+    // Bài tập trong nhóm + thông tin nhóm.
+    //
+    // Thiếu 2 cái này là bug "bấm Join không phản ứng": nhóm PUBLIC thì join
+    // xong phải thấy bài ngay, nhóm BY_REQUEST thì banner phải đổi sang trạng
+    // thái đã gửi. Không invalidate -> UI đứng im -> người dùng tưởng nút hỏng
+    // và bấm liên tục, tạo ra hàng loạt yêu cầu trùng.
+    ['posts'],
+    ['current_group'],
+    ['my_all_group'],
+    ['my_own_group'],
 ];
 
 // ============================================================

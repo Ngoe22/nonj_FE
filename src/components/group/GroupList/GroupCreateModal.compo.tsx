@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import UsernameCheck from '@/components/_share/check_field/UsernameCheck.compo';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -53,6 +53,12 @@ export function CreateGroupModal({open, onClose, onSubmit, isSubmitting = false 
 
     const slugValue = watch('slug') ?? '';
 
+    // slug ĐÃ check xong — chỉ cho tạo nhóm khi giá trị đang gõ trùng giá trị
+    // đã check thành công (tránh submit rồi mới báo trùng slug)
+    const [checkedSlug, setCheckedSlug] = useState<string | null>(null);
+    const slugReady =
+        checkedSlug !== null && checkedSlug === slugValue.trim();
+
     useEffect(() => {
         if (!open) reset(createGroupDefaultValues);
     }, [open, reset]);
@@ -76,6 +82,10 @@ export function CreateGroupModal({open, onClose, onSubmit, isSubmitting = false 
 
     const submit
         = handleSubmit(async (values) => {
+        // Chặn cả đường Enter, không chỉ `disabled` trên nút: slug phải được
+        // Kiểm tra thành công trước khi tạo nhóm.
+        if (!slugReady) return;
+
         await onSubmit(values);
     });
 
@@ -129,7 +139,13 @@ export function CreateGroupModal({open, onClose, onSubmit, isSubmitting = false 
                             placeholder={txt('create_group_slug_placeholder')}
                         />
                         <div className="mt-2">
-                            <UsernameCheck value={slugValue} mode="slug" />
+                            <UsernameCheck
+                                value={slugValue}
+                                mode="slug"
+                                onResult={(r) =>
+                                    setCheckedSlug(r.available ? r.value : null)
+                                }
+                            />
                         </div>
                     </div>
 
@@ -227,7 +243,7 @@ export function CreateGroupModal({open, onClose, onSubmit, isSubmitting = false 
                         </button>
                         <button
                             type="submit"
-                            disabled={isSubmitting}
+                            disabled={isSubmitting || !slugReady}
                             className="rounded-xl bg-foreground px-4 py-2.5 text-sm font-medium text-background transition hover:opacity-90 disabled:opacity-50"
                         >
                             {isSubmitting

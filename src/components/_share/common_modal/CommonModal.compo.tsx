@@ -35,7 +35,7 @@ export default function Modal(
                     <button
                         type="button"
                         onClick={onClose}
-                        className="rounded-lg p-2 text-mute transition hover:bg-surface-hover hover:text-foreground"
+                        className="rounded-lg p-2 text-muted-foreground transition hover:bg-surface-hover hover:text-foreground"
                     >
                         <X size={18} />
                     </button>

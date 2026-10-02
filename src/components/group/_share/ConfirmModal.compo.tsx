@@ -1,5 +1,6 @@
 'use client';
 
+import {useState} from "react";
 import Modal from "@/components/_share/common_modal/CommonModal.compo";
 import {useTranslations} from "next-intl";
 
@@ -10,13 +11,29 @@ interface ConfirmModalProps {
     description: string;
     confirmText?: string;
     cancelText?: string;
-    onConfirm: () => void;
+    onConfirm: () => void | Promise<void>;
     onClose: () => void;
 }
 
-export default function ConfirmModal({open, title, description, confirmText = 'Delete', cancelText = 'Cancel', onConfirm, onClose}: ConfirmModalProps) {
+export default function ConfirmModal({open, title, description, confirmText, cancelText, onConfirm, onClose}: ConfirmModalProps) {
 
     const txt = useTranslations('Post_collections')
+    // `onConfirm` có thể là async (gọi API) — không chặn thì bấm nhanh 2 lần sẽ
+    // gửi 2 request (xoá bộ sưu tập, kick thành viên...).
+    const [pending, setPending] = useState(false)
+
+    const handleConfirm = async () => {
+        if (pending) return
+        const result = onConfirm()
+        if (result instanceof Promise) {
+            setPending(true)
+            try {
+                await result
+            } finally {
+                setPending(false)
+            }
+        }
+    }
 
     return (
         <Modal
@@ -34,15 +51,16 @@ export default function ConfirmModal({open, title, description, confirmText = 'D
                     onClick={onClose}
                     className="rounded-xl border border-border px-4 py-2 text-sm font-medium hover:bg-surface-hover"
                 >
-                    {txt('cancel')}
+                    {cancelText ?? txt('cancel')}
                 </button>
 
                 <button
                     type="button"
-                    onClick={onConfirm}
-                    className="rounded-xl bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
+                    disabled={pending}
+                    onClick={handleConfirm}
+                    className="rounded-xl bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                    {txt('confirm')}
+                    {confirmText ?? txt('confirm')}
                 </button>
             </div>
         </Modal>

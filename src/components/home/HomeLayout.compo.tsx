@@ -20,7 +20,7 @@ export default function HomeLayout({ children }: HomeLayoutProps) {
     const { isOpen, toggleSidebar } = useSidebarStore();
     const initTheme = useThemeStore((state) => state.initTheme);
 
-    const { data: user, isLoading } = useGetMyProfile();
+    const { data: user, isLoading, isFetching } = useGetMyProfile();
     const router = useRouter();
 
     useEffect(() => {
@@ -30,10 +30,14 @@ export default function HomeLayout({ children }: HomeLayoutProps) {
     // Tài khoản Google mới CHƯA chọn username (BE để user_name = null) -> chặn
     // dùng app, đưa thẳng về màn chọn username cho tới khi đặt xong.
     useEffect(() => {
-        if (!isLoading && user && !user.user_name) {
+        // `isFetching`: đang nạp lại profile ở NỀN (vd ngay sau khi đặt username
+        // xong). Lúc đó cache có thể còn giá trị CŨ nên phải chờ — nếu không sẽ
+        // đá ngược về /username dù username đã đặt thành công.
+        if (isLoading || isFetching) return;
+        if (user && !user.user_name) {
             router.replace('/username');
         }
-    }, [isLoading, user, router]);
+    }, [isLoading, isFetching, user, router]);
 
     return (
         <div className="min-h-screen  p-2  sm:p-4 md:p-5 bg-background ">

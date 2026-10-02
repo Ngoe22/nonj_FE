@@ -19,8 +19,24 @@ export function useGoogleAuth() {
 
     return useMutation<AuthUserInfo, Error, GoogleAuthVars>({
         mutationFn: async ({ credential }) => {
-            const res = await api.post<AuthUserInfo>('/auth/google', { credential });
-            return res.data;
+            /**
+             * BE bọc mọi response trong `{path,statusCode,message,data,timestamp}`
+             * (TransformInterceptor), và `googleAuth` trả `info` TRỰC TIẾP nên
+             * user nằm ở `res.data.data`.
+             *
+             * Trước đây lấy `res.data` (cả envelope) rồi ghi vào cache
+             * `my_profile`. Hệ quả: `user.user_name` LUÔN undefined ->
+             * guard ở HomeLayout đá về /username MỌI LẦN login Google, kể cả
+             * tài khoản đã có username. Vào màn đó rồi thì cache (stale 5 phút)
+             * vẫn sai shape nên không tự thoát, và nhập lại username cũ thì
+             * nút Check báo "đã bị dùng" -> kẹt hẳn.
+             *
+             * (So sánh: `useLogin` của email làm ĐÚNG — `res.data.data.info`.)
+             */
+            const res = await api.post<{ data: AuthUserInfo }>('/auth/google', {
+                credential,
+            });
+            return res.data.data;
         },
 
         onSuccess: (user) => {

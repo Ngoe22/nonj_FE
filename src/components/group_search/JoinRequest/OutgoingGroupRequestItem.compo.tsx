@@ -52,7 +52,7 @@ export default function OutgoingGroupRequestItem({ request }: Props) {
                         size="sm"
                         disabled={cancelMutation.isPending}
                         onClick={handleCancel}
-                        className="text-red-600 hover:bg-red-50"
+                        className="text-red-600 hover:bg-red-50 hover:text-red-500 focus:outline-none"
                     >
                         <Trash2 size={14} />
                         {txt('cancel_request')}

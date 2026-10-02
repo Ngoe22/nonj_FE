@@ -107,13 +107,15 @@ export function SectionView({
             {/* ============ MULTIPLE CHOICE ============ */}
             {isMultipleChoice && (
                 <div className="mt-3 space-y-2">
-                    {section.items.length === 0 && (
+                    {/* `items` có thể thiếu ở dữ liệu cũ/hỏng -> guard để không
+                        crash cả trang chi tiết */}
+                    {(section.items ?? []).length === 0 && (
                         <p className="rounded-lg border border-dashed border-border py-4 text-center text-xs text-muted-foreground">
                             {txt('no_items')}
                         </p>
                     )}
 
-                    {section.items.map((item, itemIndex) => (
+                    {(section.items ?? []).map((item, itemIndex) => (
                         <ItemView
                             key={itemIndex}
                             item={item}

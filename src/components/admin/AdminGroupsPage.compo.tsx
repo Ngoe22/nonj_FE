@@ -180,7 +180,7 @@ export default function AdminGroupsPage() {
           { key: 'id', label: 'ID' },
           { key: 'slug', label: 'slug' },
           { key: 'name', label: txt('name') },
-          { key: 'founder', label: txt('founder') },
+          { key: 'founder', label: 'Founder ID' },
           { key: 'join_mode', label: 'join' },
           { key: 'view_mode', label: 'view' },
           { key: 'total_member', label: txt('total_member') },
@@ -239,7 +239,7 @@ export default function AdminGroupsPage() {
             <AdminIdCell id={row.id} />
             <AdminTextCell value={row.slug} width="max-w-[150px]" />
             <AdminTextCell value={row.name} width="max-w-[190px]" />
-            <AdminTextCell value={row.founder?.user_name} width="max-w-[130px]" />
+            <AdminIdCell id={row.founder?.id ?? ''} />
             <td className="w-[104px] px-3 py-2 align-top text-muted-foreground text-xs">{row.join_mode}</td>
             <td className="w-[90px] px-3 py-2 align-top text-muted-foreground text-xs">{row.view_mode}</td>
             <td className="w-[92px] px-3 py-2 align-top tabular-nums">

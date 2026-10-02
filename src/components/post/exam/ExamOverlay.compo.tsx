@@ -76,8 +76,10 @@ export function ExamOverlay({
 
         const delta = (e.changedTouches[0]?.clientX ?? start) - start;
         if (Math.abs(delta) < SWIPE_THRESHOLD) return;
-        if (delta > 0) goNext();
-        else goPrev();
+        // Vuốt sang PHẢI (delta > 0) = lùi về câu trước, sang TRÁI = tới câu
+        // sau (chuẩn carousel LTR). Trước đây ngược chiều.
+        if (delta > 0) goPrev();
+        else goNext();
     };
 
     // ---------------- submit ----------------

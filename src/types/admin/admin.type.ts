@@ -1,5 +1,6 @@
 import type {
   Group_Join_Mode,
+  Group_Join_Request_Status,
   Group_View_Mode,
 } from '@/enum/group/group_mode.enum';
 import type { User_Role, User_Status } from '@/enum/user/user.enum';
@@ -93,6 +94,13 @@ export interface AdminFriendshipRow extends AdminBaseRow {
   user?: AdminUserBrief | null;
   user_friend?: AdminUserBrief | null;
   be_friend_at?: string | null;
+}
+
+export interface AdminJoinRequestRow extends AdminBaseRow {
+  sender?: AdminUserBrief | null;
+  group?: { id: string; slug: string; name: string } | null;
+  status: Group_Join_Request_Status;
+  reviewed_at?: string | null;
 }
 
 export interface AdminReportRow extends AdminBaseRow {
@@ -192,6 +200,7 @@ export type AdminResource =
   | 'friend_request'
   | 'friendship'
   | 'group'
+  | 'join_request'
   | 'post'
   | 'preparation'
   | 'report';
@@ -202,6 +211,7 @@ export const ADMIN_ENDPOINT: Record<AdminResource, string> = {
   friend_request: 'admin/friend_request',
   friendship: 'admin/friendship',
   group: 'admin/group/many',
+  join_request: 'admin/group_join_request',
   post: 'admin/post',
   preparation: 'admin/question_preparation',
   report: 'admin/report',
@@ -217,7 +227,7 @@ export const ADMIN_ENDPOINT: Record<AdminResource, string> = {
 export function adminRestorePath(
   resource: AdminResource,
   id: string,
-): string {
+): string | null {
   if (resource === 'user') return `admin/users/${id}/restore`;
   if (resource === 'group') return `admin/group/${id}/restore`;
   if (resource === 'post') return `admin/post/${id}/restore`;
@@ -227,7 +237,15 @@ export function adminRestorePath(
     return `admin/friend_request/restore/${id}`;
   if (resource === 'friendship')
     return `admin/friendship/restore/${id}`;
-  return `admin/report/restore/${id}`;
+  if (resource === 'report') return `admin/report/restore/${id}`;
+  // `join_request` bị XOÁ CỨNG ở BE (không có `deleted_at`) nên KHÔNG có
+  // endpoint restore. Trước đây rơi vào fallback của `report` -> gọi sai route.
+  return null;
+}
+
+/** Resource có hỗ trợ khôi phục bản ghi đã xoá mềm? */
+export function canRestoreAdminResource(resource: AdminResource): boolean {
+  return resource !== 'join_request';
 }
 
 /**

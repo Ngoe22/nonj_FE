@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import {useRegister} from "@/hooks/auth/useRegister";
 import {useTranslations} from "next-intl";
 import {useForm} from "react-hook-form";
@@ -12,7 +11,6 @@ import {GoogleLoginButton} from "@/components/auth/GoogleLoginButton.compo";
 import UsernameCheck from "@/components/_share/check_field/UsernameCheck.compo";
 
 export default function RegisterForm() {
-    const router = useRouter();
     const txt = useTranslations('Auth')
 
     const {
@@ -27,14 +25,25 @@ export default function RegisterForm() {
     // giá trị đang gõ ở ô username — truyền cho nút "Kiểm tra" trùng
     const userNameValue = watch('user_name') ?? '';
 
+    // Username ĐÃ check xong là giá trị nào. Chỉ cho đăng ký khi giá trị đang gõ
+    // TRÙNG giá trị đã check thành công -> không bao giờ submit rồi mới ăn lỗi
+    // trùng ở service.
+    const [checkedName, setCheckedName] = useState<string | null>(null);
+    const nameReady =
+        checkedName !== null && checkedName === userNameValue.trim();
+
     const registerMutation = useRegister();
 
 
     const registerSubmit = async (data:RegisterFormValues) => {
+        // Chặn cả ở đây, không chỉ `disabled` trên nút: bấm Enter trong ô nhập
+        // vẫn có thể kích hoạt submit.
+        if (!nameReady) return;
+
         try {
-            const result = await registerMutation.mutateAsync(data);
-            // console.log(result)
-            router.push('/'); // Chỉ chuyển trang khi thành công
+            // useRegister.onSuccess đã push('/') bằng router i18n — push thêm ở
+            // đây bằng next/navigation raw sẽ mất locale (en->vi).
+            await registerMutation.mutateAsync(data);
         } catch (error) {
             console.error( error);
         }
@@ -82,7 +91,13 @@ export default function RegisterForm() {
                         className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground outline-none transition placeholder:text-muted-foreground"
                     />
                     <div className="mt-2">
-                        <UsernameCheck value={userNameValue} mode="username" />
+                        <UsernameCheck
+                            value={userNameValue}
+                            mode="username"
+                            onResult={(r) =>
+                                setCheckedName(r.available ? r.value : null)
+                            }
+                        />
                     </div>
                     {errors.user_name && <InvalidInput msg = {errors.user_name.message}  />}
 
@@ -134,7 +149,7 @@ export default function RegisterForm() {
 
                 <button
                     type="submit"
-                    disabled={registerMutation.isPending}
+                    disabled={registerMutation.isPending || !nameReady}
                     className="w-full rounded-xl bg-foreground px-4 py-3 text-sm font-semibold text-background transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                     {registerMutation.isPending
@@ -146,7 +161,13 @@ export default function RegisterForm() {
             </form>
             {registerMutation.isError && (
                 <p className="rounded-xl border border-status-error bg-[var(--status-error-bg)] px-4 py-3 text-sm text-[var(--status-error)]">
-                    {txt('register_fail')}
+                    {(
+                        registerMutation.error as {
+                            response?: { data?: { errorCode?: string } };
+                        }
+                    )?.response?.data?.errorCode === 'duplicated_info'
+                        ? txt('duplicated_info')
+                        : txt('register_fail')}
                 </p>
             )}
 

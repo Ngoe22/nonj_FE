@@ -8,6 +8,8 @@ import {useTranslations} from "next-intl";
 type UpdateProfileBody = {
     nickname?: string;
     bio?: string;
+    /** URL ảnh đại diện sau khi upload lên R2 (null = gỡ ảnh) */
+    avatar_url?: string | null;
 };
 
 type Profile = {

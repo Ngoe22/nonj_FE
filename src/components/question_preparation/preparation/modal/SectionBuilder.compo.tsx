@@ -16,9 +16,16 @@ import { EssaySectionBuilder } from './EssaySectionBuilder.compo';
 interface Props {
     sectionIndex: number;
     onRemove: () => void;
+    imagesDisabled?: boolean;
+    audioDisabled?: boolean;
 }
 
-export function SectionBuilder({ sectionIndex, onRemove }: Props) {
+export function SectionBuilder({
+    sectionIndex,
+    onRemove,
+    imagesDisabled,
+    audioDisabled,
+}: Props) {
     const txt = useTranslations('Question_builder');
     const {
         register,
@@ -70,6 +77,8 @@ export function SectionBuilder({ sectionIndex, onRemove }: Props) {
             {/* Đề bài chung của phần */}
             <QuestionContentEditor
                 namePrefix={`${basePath}.content` as `sections.${number}.content`}
+                imagesDisabled={imagesDisabled}
+                audioDisabled={audioDisabled}
             />
 
             {/* UI riêng theo loại phần */}

@@ -5,6 +5,7 @@ import { io } from 'socket.io-client';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { api } from '@/lib/axios/axios';
+import { getBeUrl } from '@/lib/api/beUrl';
 import {
   ADMIN_ENDPOINT,
   adminDeletePath,
@@ -57,7 +58,9 @@ export function useAdminRestore(resource: AdminResource) {
 
   return useMutation({
     mutationFn: async (id: string) => {
-      await api.patch(adminRestorePath(resource, id));
+      const path = adminRestorePath(resource, id);
+      if (!path) throw new Error('resource_not_restorable');
+      await api.patch(path);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin', resource] });
@@ -285,6 +288,63 @@ export function useAdminDeleteFriendship() {
   });
 }
 
+/** Duyệt / từ chối yêu cầu tham gia nhóm (admin) */
+export function useAdminUpdateJoinRequest() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (vars: {
+      join_request_id: string;
+      status: 'APPROVED' | 'REJECTED';
+    }) => {
+      await api.patch(`admin/group_join_request/${vars.join_request_id}`, {
+        status: vars.status,
+      });
+    },
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ['admin', 'join_request'] }),
+  });
+}
+
+/** Xoá CỨNG một yêu cầu tham gia nhóm (không phải xoá mềm) */
+export function useAdminDeleteJoinRequest() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (join_request_id: string) => {
+      await api.delete(`admin/group_join_request/${join_request_id}`);
+    },
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ['admin', 'join_request'] }),
+  });
+}
+
+/** Nâng quyền user lên SYSTEM_ADMIN (endpoint riêng, không lẫn vào edit info) */
+export function useAdminPromote() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (user_id: string) => {
+      await api.patch(`admin/users/${user_id}/promote`);
+    },
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ['admin', 'user'] }),
+  });
+}
+
+/** Hạ quyền SYSTEM_ADMIN về USER thường */
+export function useAdminDemote() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (user_id: string) => {
+      await api.patch(`admin/users/${user_id}/demote`);
+    },
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ['admin', 'user'] }),
+  });
+}
+
 // ============================================================
 // SỐ NGƯỜI ĐANG ONLINE
 // ============================================================
@@ -311,7 +371,7 @@ export function useAdminOnlineCount() {
         if (active) setTotal(null);
       });
 
-    const baseUrl = process.env.NEXT_PUBLIC_BE_URL || 'http://localhost:3000';
+    const baseUrl = getBeUrl();
 
     const socket = io(`${baseUrl}/notif`, {
       withCredentials: true,

@@ -32,8 +32,10 @@ interface Props {
     isSubmitting?: boolean;
 }
 
+// PHẢI có `bg-surface text-foreground`: nếu không, popup của <select> do browser
+// vẽ sẽ là nền sáng + chữ trắng (thừa hưởng từ theme tối) -> không đọc được.
 const fieldClass =
-    'mt-1 w-full rounded-md border-2 border-status-info p-2 text-sm outline-none';
+    'mt-1 w-full rounded-md border-2 border-status-info bg-surface p-2 text-sm text-foreground outline-none';
 
 /**
  * Giao bài bằng cách lấy từ kho `question_preparation` của chính mình.
@@ -68,8 +70,14 @@ export default function PickPreparationModal({
     // Chưa chọn thư mục -> mặc định cái đầu tiên, SUY RA khi render (không effect)
     const effectiveCollectionId = collectionId || collections?.[0]?.id || '';
 
-    const { data: preparations, isLoading: loadingPreparations } =
-        useGetMyPreparationsPicker(effectiveCollectionId);
+    // Dùng `isPending` (KHÔNG phải `isLoading`): với query bị `enabled: false`,
+    // TanStack v5 trả `isLoading = false` nhưng `isPending = true` -> dùng
+    // `isLoading` sẽ rơi ngay vào nhánh "chưa có đề" dù thực ra chưa chọn gì.
+    const {
+        data: preparations,
+        isPending: loadingPreparations,
+        isError: preparationError,
+    } = useGetMyPreparationsPicker(effectiveCollectionId);
 
     const form = useForm<PostMetaFormValues>({
         resolver: zodResolver(postMetaSchema),
@@ -124,6 +132,11 @@ export default function PickPreparationModal({
                                     onChange={(e) => {
                                         setCollectionId(e.target.value);
                                         setPreparationId('');
+                                        // Đổi thư mục -> xoá tiêu đề auto-fill của
+                                        // đề cũ, tránh gửi nhầm tiêu đề của thư mục khác.
+                                        setValue('title', '', {
+                                            shouldDirty: true,
+                                        });
                                     }}
                                     className={fieldClass}
                                 >
@@ -140,17 +153,34 @@ export default function PickPreparationModal({
 
                             {/* -------- chọn đề -------- */}
                             <div>
-                                <label className="mb-1 block text-sm font-medium">
-                                    {txt('pick_preparation')}
+                                <label className="mb-1 flex items-center justify-between text-sm font-medium">
+                                    <span>{txt('pick_preparation')}</span>
+                                    {/* Đếm để người dùng thấy list ĐÃ load, không
+                                        tưởng là trống khi đang tải */}
+                                    {!loadingPreparations &&
+                                        (preparations?.length ?? 0) > 0 && (
+                                            <span className="text-xs font-normal text-muted-foreground">
+                                                {preparations!.length}{' '}
+                                                {txt('section_unit')}
+                                            </span>
+                                        )}
                                 </label>
 
-                                {loadingPreparations ? (
+                                {!effectiveCollectionId ? (
+                                    <p className="rounded-xl border border-dashed border-border p-4 text-center text-xs text-muted-foreground">
+                                        {txt('pick_collection_first')}
+                                    </p>
+                                ) : loadingPreparations ? (
                                     <p className="flex items-center gap-2 py-4 text-sm text-muted-foreground">
                                         <Loader2
                                             size={14}
                                             className="animate-spin"
                                         />
                                         {txt('loading')}
+                                    </p>
+                                ) : preparationError ? (
+                                    <p className="rounded-xl border border-dashed border-destructive/40 p-4 text-center text-xs text-destructive">
+                                        {txt('load_failed')}
                                     </p>
                                 ) : (preparations?.length ?? 0) === 0 ? (
                                     <p className="rounded-xl border border-dashed border-border p-4 text-center text-xs text-muted-foreground">

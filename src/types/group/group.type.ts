@@ -28,6 +28,16 @@ export type Group = {
          */
         is_member: boolean,
     }
+
+    /** Người đang xem đã là thành viên nhóm chưa */
+    is_joined?: boolean;
+    /**
+     * Đã có yêu cầu tham gia đang CHỜ DUYỆT chưa.
+     *
+     * Dùng để hiện trạng thái "đã gửi yêu cầu" thay vì cứ hiện lại nút Join —
+     * nếu không người dùng tưởng nút không chạy và bấm liên tục.
+     */
+    has_pending_request?: boolean;
 }
 
 export type UpdateGroup = {

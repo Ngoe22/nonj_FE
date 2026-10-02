@@ -94,10 +94,13 @@ function StatusBadge({ status }: { status: Group_Join_Request_Status }) {
     const styles: Record<Group_Join_Request_Status, string> = {
         [Group_Join_Request_Status.PENDING]:
             'bg-status-pending-bg text-status-pending',
+        // `status-approved`/`status-rejected` KHÔNG có trong globals.css nên
+        // class không được sinh -> badge mất nền, chữ thừa hưởng màu trang.
+        // Dùng đúng token đang có: success / error.
         [Group_Join_Request_Status.APPROVED]:
-            'bg-status-approved-bg text-status-approved',
+            'bg-status-success-bg text-status-success',
         [Group_Join_Request_Status.REJECTED]:
-            'bg-status-rejected-bg text-status-rejected',
+            'bg-status-error-bg text-status-error',
     };
 
     const labels: Record<Group_Join_Request_Status, string> = {

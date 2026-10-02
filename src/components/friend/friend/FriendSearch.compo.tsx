@@ -25,6 +25,8 @@ import {
 } from '@/schemas/friend/friend.schema';
 import UserDetailModal from "@/components/_share/user_info/UserDetailModal.compo";
 import {ActionButtons} from "@/components/friend/friend/ActionBtn.compo";
+import ReportButton from "@/components/_share/report/ReportButton.compo";
+import { Target_Type } from "@/enum/report/report.enum";
 
 
 
@@ -47,7 +49,7 @@ export default function FriendSearch() {
 
 // Keyword đã submit (dùng cho query) — input do react-hook-form giữ
     const [submitted, setSubmitted] = useState('');
-    const { data: user, isLoading } = useSearchUser(submitted);
+    const { data: user, isLoading, isError } = useSearchUser(submitted);
 
 
 // schema
@@ -81,7 +83,11 @@ export default function FriendSearch() {
     const isPending =
         addFriend.isPending || unfriend.isPending ;
 
-    const showCard = !!submitted && (isLoading || !!user);
+    // PHẢI có `isError`: BE ném 404 `user_not_found` và hook đặt `retry:false`
+    // nên khi không tìm thấy, `isLoading` = false và `user` = undefined ->
+    // `showCard` = false, nhánh `no_user_found` bên trong KHÔNG BAO GIỜ chạy và
+    // người dùng không thấy phản hồi gì.
+    const showCard = !!submitted && (isLoading || isError || !!user);
 
     const btn = user ?
     <ActionButtons
@@ -143,6 +149,11 @@ export default function FriendSearch() {
                             onClose={ () => setSubmitted('') }
                         >
                             {btn}
+                            <ReportButton
+                                target_type={Target_Type.USER}
+                                target_id={user.id}
+                                variant="button"
+                            />
                         </UserDetailModal>
                     )}
                 </Card>
