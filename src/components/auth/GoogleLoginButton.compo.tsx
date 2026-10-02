@@ -2,10 +2,11 @@
 
 import { useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
-import { useGoogleAuth } from '@/hooks/auth/use_google_auth.hook';
-import {Loader2} from "lucide-react";
+import { Loader2 } from 'lucide-react';
 
-// ✅ Biến module-level — không bao giờ bị reset
+import { useGoogleAuth } from '@/hooks/auth/use_google_auth.hook';
+
+/** Biến module-level — không bao giờ bị reset giữa các lần mount */
 let isGoogleInitialized = false;
 
 declare global {
@@ -19,127 +20,104 @@ interface Props {
     onSuccess?: () => void;
 }
 
+/**
+ * Nút "Tiếp tục với Google".
+ *
+ * ⚠️ Dùng NÚT CHÍNH CHỦ của Google (`renderButton` để Google tự vẽ).
+ *
+ * Trước đây component bọc 1 nút custom + phủ 1 overlay trong suốt chứa iframe
+ * Google lên trên. Cách đó KHÔNG đáng tin: iframe không phủ đúng kích thước nút
+ * (Google vẽ iframe theo `width` px cố định, còn nút custom thì co giãn), và
+ * overlay còn bị `aria-hidden` khiến trình duyệt chặn focus — hậu quả là bấm
+ * vào nút KHÔNG PHẢN ỨNG.
+ *
+ * Dùng nút chính chủ thì chắc chắn bấm được, lại còn đúng chuẩn thương hiệu
+ * Google (người dùng tin hơn).
+ */
 export function GoogleLoginButton({ mode = 'login', onSuccess }: Props) {
     const txt = useTranslations('Auth');
     const googleAuth = useGoogleAuth();
 
     const containerRef = useRef<HTMLDivElement>(null);
+    // Giữ bản mới nhất để callback của Google không bị "đóng băng" giá trị cũ
     const googleAuthRef = useRef(googleAuth);
+    const onSuccessRef = useRef(onSuccess);
+    const modeRef = useRef(mode);
 
-    // Không gán ref trong lúc render (vi phạm react-hooks/refs) → cập nhật trong effect
     useEffect(() => {
         googleAuthRef.current = googleAuth;
+        onSuccessRef.current = onSuccess;
+        modeRef.current = mode;
     });
 
     useEffect(() => {
-        const handleCredential = (response: any) => {
-            googleAuthRef.current.mutate(
-                { credential: response.credential },
-                { onSuccess },
-            );
-        };
+        let cancelled = false;
 
-        const init = () => {
-            // ✅ Dùng biến module-level thay vì useRef
-            if (!window.google?.accounts?.id) return false;
-            if (isGoogleInitialized) {
-                // Nếu đã initialize rồi, chỉ cần render lại button
-                if (containerRef.current) {
-                    window.google.accounts.id.renderButton(containerRef.current, {
-                        theme: 'outline',
-                        size: 'large',
-                        width: 400,
-                        text: mode === 'register' ? 'signup_with' : 'signin_with',
-                        locale: 'vi',
-                    });
-                }
-                return true;
+        const render = (): boolean => {
+            if (!window.google?.accounts?.id || !containerRef.current) {
+                return false;
             }
 
-            window.google.accounts.id.initialize({
-                client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
-                callback: handleCredential,
-                auto_select: false,
-                cancel_on_tap_outside: true,
+            if (!isGoogleInitialized) {
+                window.google.accounts.id.initialize({
+                    client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+                    callback: (response: { credential?: string }) => {
+                        if (!response?.credential) return;
+                        googleAuthRef.current.mutate(
+                            { credential: response.credential },
+                            { onSuccess: onSuccessRef.current },
+                        );
+                    },
+                    auto_select: false,
+                    cancel_on_tap_outside: true,
+                });
+                isGoogleInitialized = true;
+            }
+
+            window.google.accounts.id.renderButton(containerRef.current, {
+                type: 'standard',
+                // hợp với nền tối của app
+                theme: 'filled_black',
+                size: 'large',
+                shape: 'rectangular',
+                logo_alignment: 'left',
+                locale: 'vi',
+                text:
+                    mode === 'register' ? 'signup_with' : 'signin_with',
             });
 
-            if (containerRef.current) {
-                window.google.accounts.id.renderButton(containerRef.current, {
-                    theme: 'outline',
-                    size: 'large',
-                    width: 400,
-                    text: mode === 'register' ? 'signup_with' : 'signin_with',
-                    locale: 'vi',
-                });
-            }
-
-            isGoogleInitialized = true; // ✅ Đánh dấu toàn cục
             return true;
         };
 
-        if (!init()) {
+        if (!render()) {
             const interval = setInterval(() => {
-                if (init()) clearInterval(interval);
+                if (cancelled) return;
+                if (render()) clearInterval(interval);
             }, 100);
-            return () => clearInterval(interval);
+            return () => {
+                cancelled = true;
+                clearInterval(interval);
+            };
         }
     }, [mode]);
 
     return (
-        <div className="relative w-full">
-            {/* ============ NÚT CUSTOM (visual) ============ */}
-            <button
-                type="button"
-                disabled={googleAuth.isPending}
-                className="flex w-full items-center justify-center gap-3 rounded-xl border border-border bg-surface px-4 py-3 text-sm font-medium text-foreground transition hover:bg-surface-hover disabled:opacity-50"
-            >
-                {/* Google icon SVG inline */}
-                <GoogleIcon />
-
-                {googleAuth.isPending ? (
-                    <Loader2 size={16} className="animate-spin" />
-                ) : (
-                    <span>
-            {mode === 'register'
-                ? txt('continue_with_google_register')
-                : txt('continue_with_google')}
-          </span>
-                )}
-            </button>
-
-            {/* ============ NÚT GOOGLE THẬT (ẩn) ============ */}
-            {/* Phủ lên trên, opacity 0 → click vào là click Google */}
+        <div className="flex w-full flex-col items-center gap-2">
+            {/*
+              Google tự chèn button vào đây. Ép mọi div/iframe con giãn hết cỡ để
+              nút không bị lệch khỏi khung.
+            */}
             <div
                 ref={containerRef}
-                aria-hidden="true"
-                className="absolute inset-0 cursor-pointer opacity-0 [&_iframe]:!h-full [&_iframe]:!w-full [&>div]:!h-full [&>div]:!w-full"
+                className="flex min-h-[44px] w-full justify-center [&>div]:!w-full [&_iframe]:!w-full"
             />
-        </div>
-    );
-}
 
-// ============================================================
-// Google logo SVG (chính chủ)
-// ============================================================
-function GoogleIcon() {
-    return (
-        <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
-            <path
-                fill="#4285F4"
-                d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.9c1.7-1.56 2.7-3.87 2.7-6.62z"
-            />
-            <path
-                fill="#34A853"
-                d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.81.54-1.84.86-3.06.86-2.35 0-4.34-1.58-5.05-3.71H.96v2.33A9 9 0 0 0 9 18z"
-            />
-            <path
-                fill="#FBBC05"
-                d="M3.95 10.71a5.41 5.41 0 0 1 0-3.42V4.96H.96a9 9 0 0 0 0 8.08l2.99-2.33z"
-            />
-            <path
-                fill="#EA4335"
-                d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.59A9 9 0 0 0 .96 4.96l2.99 2.33C4.66 5.16 6.65 3.58 9 3.58z"
-            />
-        </svg>
+            {googleAuth.isPending && (
+                <span className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <Loader2 size={14} className="animate-spin" />
+                    {txt('continue_with_google')}
+                </span>
+            )}
+        </div>
     );
 }
