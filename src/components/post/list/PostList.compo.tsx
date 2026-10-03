@@ -187,15 +187,22 @@ export default function PostList({ groupId, collectionId, canCreate }: Props) {
         setSelected(null);
     };
 
-    const editInitialValues: PostMetaFormValues | undefined = selected
-        ? {
-              title: selected.title,
-              description: selected.description ?? '',
-              deadline_at: toDateTimeLocal(selected.deadline_at),
-              retake: selected.retake,
-              view_each_other_answer: selected.view_each_other_answer,
-          }
-        : undefined;
+    // ⚠️ PHẢI memo: object literal tạo mới mỗi render từng làm
+    // `useEffect(..., [initialValues])` trong PostMetaModal reset form liên tục.
+    const editInitialValues: PostMetaFormValues | undefined = useMemo(
+        () =>
+            selected
+                ? {
+                      title: selected.title,
+                      description: selected.description ?? '',
+                      deadline_at: toDateTimeLocal(selected.deadline_at),
+                      retake: selected.retake,
+                      view_each_other_answer:
+                          selected.view_each_other_answer,
+                  }
+                : undefined,
+        [selected],
+    );
 
     return (
         <>

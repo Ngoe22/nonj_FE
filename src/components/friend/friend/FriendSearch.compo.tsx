@@ -60,7 +60,10 @@ export default function FriendSearch() {
     } = useForm<FriendSearchFormValues>({
         resolver: zodResolver(friendSearchSchema),
         defaultValues: friendSearchDefaultValues,
-        mode: 'onSubmit',
+        // 'onChange' (không phải 'onSubmit'): lỗi phải phản ánh giá trị ĐANG gõ.
+        // Với 'onSubmit', lỗi cũ vẫn hiện dù ô đã có chữ -> trông như app lỗi.
+        mode: 'onChange',
+        reValidateMode: 'onChange',
     });
     const submit = handleSubmit((values) => {
         setSubmitted(values.keyword.trim());

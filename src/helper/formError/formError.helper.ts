@@ -3,7 +3,7 @@ import type { FieldErrors } from 'react-hook-form';
 /**
  * Gom toàn bộ message lỗi trong cây `errors` của react-hook-form.
  *
- * Message của zod trong dự án này là KEY i18n (vd 'enter_something'), nên chỉ
+ * Message của zod trong dự án này là KEY i18n (vd 'enter_title'), nên chỉ
  * cần gom key rồi dịch ở tầng hiển thị.
  *
  * Dùng để hiện bảng tóm tắt "còn thiếu gì" — trước đây lỗi ở cấp mảng (vd

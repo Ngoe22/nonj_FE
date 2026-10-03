@@ -9,7 +9,7 @@ import { z } from 'zod';
 export const slugSearchSchema = z.object({
     keyword: z
         .string()
-        .min(1, 'enter_something')
+        .min(1, 'enter_keyword')
         .max(50, 'max_char_50')
         .regex(/^[a-zA-Z0-9]+$/, 'only_letter_and_number'),
 });
@@ -20,7 +20,7 @@ export const slugSearchSchema = z.object({
 export const nameSearchSchema = z.object({
     keyword: z
         .string()
-        .min(1, 'enter_something')
+        .min(1, 'enter_keyword')
         .max(20, 'max_char_20'),
 });
 

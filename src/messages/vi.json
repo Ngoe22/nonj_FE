@@ -276,7 +276,16 @@
     "max_value_100": "Tối đa 100",
     "max_240_minutes": "Tối đa 240 phút",
     "deadline_must_be_future": "Hạn nộp phải ở tương lai",
-    "only_letter_and_number": "Chỉ cho phép chữ cái và số, không dấu cách, không ký tự đặc biệt"
+    "only_letter_and_number": "Chỉ cho phép chữ cái và số, không dấu cách, không ký tự đặc biệt",
+    "enter_title": "Vui lòng nhập tiêu đề",
+    "enter_nickname": "Vui lòng nhập tên hiển thị",
+    "enter_email": "Vui lòng nhập email",
+    "enter_keyword": "Vui lòng nhập từ khoá tìm kiếm",
+    "enter_question": "Vui lòng nhập câu hỏi",
+    "enter_option": "Vui lòng nhập lựa chọn",
+    "enter_answer": "Vui lòng nhập đáp án",
+    "enter_pair": "Vui lòng nhập đủ cặp",
+    "enter_point": "Vui lòng nhập điểm"
   },
   "Toast": {
     "action_fail": "Thao tác thất bại , ... thử lại sau",

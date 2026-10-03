@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link, useRouter } from '@/i18n/navigation';
 import { ArrowLeft, Layers, Pencil, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -40,6 +40,18 @@ export default function PreparationDetail() {
 
     const [editOpen, setEditOpen] = useState(false);
     const [deleteOpen, setDeleteOpen] = useState(false);
+
+    /**
+     * Giá trị khởi tạo cho modal Sửa.
+     *
+     * ⚠️ PHẢI memo VÀ phải đặt TRƯỚC các `return` sớm (Rules of Hooks).
+     * `toFormValues(...)` gọi thẳng trong JSX tạo object mới mỗi render -> modal
+     * reset form liên tục -> ô hiện chữ nhưng RHF tưởng rỗng.
+     */
+    const editInitialValues = useMemo(
+        () => (preparation ? toFormValues(preparation) : undefined),
+        [preparation],
+    );
 
     // ---------------- Trạng thái tải ----------------
 
@@ -178,7 +190,7 @@ export default function PreparationDetail() {
             <PreparationBuilderModal
                 open={editOpen}
                 mode="edit"
-                initialValues={toFormValues(preparation)}
+                initialValues={editInitialValues}
                 onClose={() => setEditOpen(false)}
                 onSubmit={handleEdit}
                 isSubmitting={updateMutation.isPending}

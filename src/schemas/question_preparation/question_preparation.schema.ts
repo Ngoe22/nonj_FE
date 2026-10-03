@@ -16,9 +16,9 @@ const questionContentSchema = z.object({
 });
 
 const baseItemFields = {
-    question: z.string().max(500, 'max_char_500'),
+    question: z.string().min(1, 'enter_question').max(500, 'max_char_500'),
     point: z
-        .number({ message: 'enter_something' })
+        .number({ message: 'enter_point' })
         .min(1, 'min_value_1')
         .max(10, 'max_value_10'),
 };
@@ -32,7 +32,7 @@ const choseCorrectItemSchema = z
         type: z.literal(Question_Item_Type.CHOSE_CORRECT),
         ...baseItemFields,
         options: z
-            .array(z.string().min(1, 'enter_something'))
+            .array(z.string().min(1, 'enter_option'))
             .min(2, 'min_2_options')
             .max(10, 'max_10_options'),
         correct_options: z.array(z.number()).min(1, 'min_1_correct'),
@@ -53,7 +53,7 @@ const arrangeItemSchema = z.object({
     type: z.literal(Question_Item_Type.ARRANGE),
     ...baseItemFields,
     correct: z
-        .array(z.string().min(1, 'enter_something'))
+        .array(z.string().min(1, 'enter_answer'))
         .min(2, 'min_2_words')
         .max(20, 'max_20_words'),
     // KHÔNG bắt người soạn nhập thứ tự hiển thị: họ chỉ nhập THỨ TỰ ĐÚNG,
@@ -71,8 +71,8 @@ const pairingItemSchema = z.object({
     pairs: z
         .array(
             z.object({
-                key: z.string().min(1, 'enter_something'),
-                value: z.string().min(1, 'enter_something'),
+                key: z.string().min(1, 'enter_pair'),
+                value: z.string().min(1, 'enter_pair'),
             }),
         )
         .min(2, 'min_2_pairs')
@@ -87,7 +87,7 @@ const inputItemSchema = z.object({
     type: z.literal(Question_Item_Type.INPUT),
     ...baseItemFields,
     correct_answers: z
-        .array(z.string().min(1, 'enter_something'))
+        .array(z.string().min(1, 'enter_answer'))
         .min(1, 'min_1_answer')
         .max(10, 'max_10_answers'),
 });
@@ -105,7 +105,7 @@ export const questionItemSchema = z.discriminatedUnion('type', [
 
 const multipleChoiceSectionSchema = z.object({
     type: z.literal(Question_Section_Type.MULTIPLE_CHOICE),
-    title: z.string().min(1, 'enter_something').max(50, 'max_char_50'),
+    title: z.string().min(1, 'enter_title').max(50, 'max_char_50'),
     content: questionContentSchema,
     items: z
         .array(questionItemSchema)
@@ -115,10 +115,10 @@ const multipleChoiceSectionSchema = z.object({
 
 const essaySectionSchema = z.object({
     type: z.literal(Question_Section_Type.ESSAY),
-    title: z.string().min(1, 'enter_something').max(50, 'max_char_50'),
+    title: z.string().min(1, 'enter_title').max(50, 'max_char_50'),
     content: questionContentSchema,
     point: z
-        .number({ message: 'enter_something' })
+        .number({ message: 'enter_point' })
         .min(1, 'min_value_1')
         .max(100, 'max_value_100'),
     sample_answer: z.string().max(5000).optional().or(z.literal('')),
@@ -134,7 +134,7 @@ export const questionSectionSchema = z.discriminatedUnion('type', [
 // ============================================================
 
 export const questionPreparationSchema = z.object({
-    title: z.string().min(1, 'enter_something').max(50, 'max_char_50'),
+    title: z.string().min(1, 'enter_title').max(50, 'max_char_50'),
     sections: z
         .array(questionSectionSchema)
         .min(1, 'min_1_section')

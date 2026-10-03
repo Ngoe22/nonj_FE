@@ -7,7 +7,7 @@ import { z } from 'zod';
 export const friendSearchSchema = z.object({
     keyword: z
         .string()
-        .min(1, 'enter_something')
+        .min(1, 'enter_keyword')
         .max(50, 'max_char_50')
         .regex(/^[a-zA-Z0-9_]+$/, 'only_letter_and_number_and_underscore'),
 });

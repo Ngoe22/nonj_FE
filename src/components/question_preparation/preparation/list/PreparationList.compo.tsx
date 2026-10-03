@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link } from '@/i18n/navigation';
 import { ArrowLeft, Plus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -82,6 +82,13 @@ export default function PreparationList() {
         setSelected(null);
     };
 
+    // ⚠️ PHẢI memo — `toFormValues(...)` gọi thẳng trong JSX tạo object mới mỗi
+    // render, từng làm modal reset form liên tục và nuốt nội dung đang gõ.
+    const editInitialValues = useMemo(
+        () => (selected ? toFormValues(selected) : undefined),
+        [selected],
+    );
+
     return (
         <div className="mx-auto w-full max-w-4xl px-4 py-6 sm:px-6">
             {/* Header */}
@@ -157,7 +164,7 @@ export default function PreparationList() {
             <PreparationBuilderModal
                 open={editOpen}
                 mode="edit"
-                initialValues={selected ? toFormValues(selected) : undefined}
+                initialValues={editInitialValues}
                 onClose={() => {
                     setEditOpen(false);
                     setSelected(null);

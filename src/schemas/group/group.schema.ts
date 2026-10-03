@@ -6,7 +6,7 @@ import {Group_Join_Mode, Group_View_Mode} from "@/enum/group/group_mode.enum";
 export const createGroupSchema = z.object({
     slug: z
         .string()
-        .min(1, 'enter_something')
+        .min(1, 'group_name_required')
         .max(50, 'max_char_50')
         // KHỚP regex của BE (`Group` entity: /^[a-zA-Z0-9]+$/). Trước đây FE cho
         // phép thêm `_` nên submit sẽ bị BE trả 400.
@@ -14,7 +14,7 @@ export const createGroupSchema = z.object({
 
     name: z
         .string()
-        .min(1, 'enter_something')
+        .min(1, 'group_name_required')
         .max(50, 'max_char_50'),
 
     description: z

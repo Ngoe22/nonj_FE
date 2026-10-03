@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect } from 'react';
+
+import { useResetWhenOpen } from '@/hooks/_share/form/use_reset_when_open.hook';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
@@ -49,12 +50,15 @@ export default function PreparationCollectionModal({
     } = useForm<CollectionFormValues>({
         resolver: zodResolver(collectionFormSchema),
         defaultValues: collectionDefaultValues,
-        mode: 'onSubmit',
+        // 'onChange' (không phải 'onSubmit'): lỗi phải phản ánh giá trị ĐANG gõ.
+        // Với 'onSubmit', lỗi cũ vẫn hiện dù ô đã có chữ -> trông như app lỗi.
+        mode: 'onChange',
+        reValidateMode: 'onChange',
     });
 
-    useEffect(() => {
-        if (open) reset({ title: initialTitle, desc: initialDesc });
-    }, [open, initialTitle, initialDesc, reset]);
+    // Xem `useResetWhenOpen`: `reset` của RHF đổi identity mỗi render nên KHÔNG
+    // được để nó trong dep array của useEffect.
+    useResetWhenOpen(open, { title: initialTitle, desc: initialDesc }, reset);
 
     const submit = handleSubmit(async (values) => {
         await onSubmit(values);

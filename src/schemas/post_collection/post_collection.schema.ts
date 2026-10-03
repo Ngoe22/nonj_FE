@@ -6,7 +6,7 @@ import { z } from 'zod';
 export const createCollectionSchema = z.object({
     title: z
         .string()
-        .min(1, 'enter_something')
+        .min(1, 'enter_title')
         .max(50, 'max_char_50'),
 
     desc: z

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { useResetWhenOpen } from '@/hooks/_share/form/use_reset_when_open.hook';
 import { FormProvider, useForm, useFieldArray, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
@@ -69,7 +70,10 @@ export default function PreparationBuilderModal({
     >({
         resolver: zodResolver(questionPreparationSchema),
         defaultValues: questionPreparationDefaultValues,
-        mode: 'onSubmit',
+        // 'onChange' (không phải 'onSubmit'): lỗi phải phản ánh giá trị ĐANG gõ.
+        // Với 'onSubmit', lỗi cũ vẫn hiện dù ô đã có chữ -> trông như app lỗi.
+        mode: 'onChange',
+        reValidateMode: 'onChange',
     });
 
     const {
@@ -103,9 +107,10 @@ export default function PreparationBuilderModal({
     const audioDisabled = audioUsed >= maxAudio;
 
     // Nạp lại dữ liệu mỗi lần mở modal (create -> rỗng, edit -> đề đang sửa)
+    useResetWhenOpen(open, initialValues ?? questionPreparationDefaultValues, reset);
+
     useEffect(() => {
         if (!open) return;
-        reset(initialValues ?? questionPreparationDefaultValues);
         // Phiên soạn mới -> quên các file đã upload ở phiên trước
         clearPendingUploads();
     }, [open, initialValues, reset]);

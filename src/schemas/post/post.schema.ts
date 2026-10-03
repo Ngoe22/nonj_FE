@@ -9,7 +9,7 @@ import { Retake, View_Each_Other_Answer } from '@/enum/post/post.enum';
  *  - sửa post (nội dung câu hỏi bị khoá, xem UpdatePostDto ở BE)
  */
 export const postMetaSchema = z.object({
-    title: z.string().min(1, 'enter_something').max(50, 'max_char_50'),
+    title: z.string().min(1, 'enter_title').max(50, 'max_char_50'),
 
     description: z
         .string()

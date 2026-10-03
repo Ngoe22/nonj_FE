@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
+import { useResetWhenOpen } from '@/hooks/_share/form/use_reset_when_open.hook';
 import { FormProvider, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
@@ -61,7 +62,10 @@ export default function PostMetaModal({
     const form = useForm<PostMetaFormValues>({
         resolver: zodResolver(schema),
         defaultValues: postMetaDefaultValues,
-        mode: 'onSubmit',
+        // 'onChange' (không phải 'onSubmit'): lỗi phải phản ánh giá trị ĐANG gõ.
+        // Với 'onSubmit', lỗi cũ vẫn hiện dù ô đã có chữ -> trông như app lỗi.
+        mode: 'onChange',
+        reValidateMode: 'onChange',
     });
 
     const {
@@ -70,10 +74,10 @@ export default function PostMetaModal({
         formState: { errors, submitCount },
     } = form;
 
-    useEffect(() => {
-        if (!open) return;
-        reset(initialValues ?? postMetaDefaultValues);
-    }, [open, initialValues, reset]);
+    // `initialValues` là OBJECT do cha truyền — nếu cha tạo literal mới mỗi render
+    // (không useMemo) thì effect cũ chạy mỗi render -> nuốt nội dung đang gõ.
+    // `useResetWhenOpen` so theo NỘI DUNG nên miễn nhiễm với lỗi đó.
+    useResetWhenOpen(open, initialValues ?? postMetaDefaultValues, reset);
 
     const errorKeys = collectErrorKeys(errors);
     const showSummary = submitCount > 0 && errorKeys.length > 0;

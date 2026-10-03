@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useResetWhenOpen } from '@/hooks/_share/form/use_reset_when_open.hook';
 import { FormProvider, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
@@ -82,16 +83,17 @@ export default function PickPreparationModal({
     const form = useForm<PostMetaFormValues>({
         resolver: zodResolver(postMetaSchema),
         defaultValues: postMetaDefaultValues,
-        mode: 'onSubmit',
+        // 'onChange' (không phải 'onSubmit'): lỗi phải phản ánh giá trị ĐANG gõ.
+        // Với 'onSubmit', lỗi cũ vẫn hiện dù ô đã có chữ -> trông như app lỗi.
+        mode: 'onChange',
+        reValidateMode: 'onChange',
     });
 
     const { handleSubmit, reset, setValue } = form;
 
     // reset form mỗi lần mở (RHF reset không phải React setState nên không bị
     // rule set-state-in-effect bắt)
-    useEffect(() => {
-        if (open) reset(postMetaDefaultValues);
-    }, [open, reset]);
+    useResetWhenOpen(open, postMetaDefaultValues, reset);
 
     const submit = handleSubmit(async (values) => {
         if (!preparationId) return;

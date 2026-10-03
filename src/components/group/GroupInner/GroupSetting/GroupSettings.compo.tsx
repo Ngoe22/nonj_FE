@@ -46,7 +46,10 @@ export default function GroupSettings({ group }: Props) {
     } = useForm<UpdateGroupFormValues>({
         resolver: zodResolver(updateGroupSchema),
         defaultValues: defaults,
-        mode: 'onSubmit',
+        // 'onChange' (không phải 'onSubmit'): lỗi phải phản ánh giá trị ĐANG gõ.
+        // Với 'onSubmit', lỗi cũ vẫn hiện dù ô đã có chữ -> trông như app lỗi.
+        mode: 'onChange',
+        reValidateMode: 'onChange',
     });
 
     const joinMode = watch('join_mode');

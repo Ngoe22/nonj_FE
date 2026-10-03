@@ -46,7 +46,10 @@ export default function GroupSearchBar({ mode, onModeChange, onSearch }: Props) 
     } = useForm<SlugSearchFormValues>({
         resolver: zodResolver(schema),
         defaultValues: defaults,
-        mode: 'onSubmit',
+        // 'onChange' (không phải 'onSubmit'): lỗi phải phản ánh giá trị ĐANG gõ.
+        // Với 'onSubmit', lỗi cũ vẫn hiện dù ô đã có chữ -> trông như app lỗi.
+        mode: 'onChange',
+        reValidateMode: 'onChange',
     });
 
     /**

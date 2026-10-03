@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link, useRouter } from '@/i18n/navigation';
 import {
     AlarmClock,
@@ -78,6 +78,27 @@ export default function PostDetail() {
     const deleteMutation = useDeletePost(groupId, collectionId);
 
     const [examOpen, setExamOpen] = useState(false);
+
+    /**
+     * Giá trị khởi tạo cho modal Sửa.
+     *
+     * ⚠️ PHẢI là `useMemo` VÀ phải đặt TRƯỚC các `return` sớm bên dưới (Rules of
+     * Hooks — gọi hook sau return sớm sẽ crash). Object literal tạo mới mỗi render
+     * từng làm modal reset form liên tục, nuốt nội dung đang gõ.
+     */
+    const editInitialValues = useMemo<PostMetaFormValues | undefined>(
+        () =>
+            post
+                ? {
+                      title: post.title,
+                      description: post.description ?? '',
+                      deadline_at: toDateTimeLocal(post.deadline_at),
+                      retake: post.retake,
+                      view_each_other_answer: post.view_each_other_answer,
+                  }
+                : undefined,
+        [post],
+    );
     const [answerOpen, setAnswerOpen] = useState(false);
     const [editOpen, setEditOpen] = useState(false);
     const [deleteOpen, setDeleteOpen] = useState(false);
@@ -171,14 +192,6 @@ export default function PostDetail() {
         await deleteMutation.mutateAsync(post.id);
         setDeleteOpen(false);
         router.push(`/group/${groupId}/collection/${collectionId}`);
-    };
-
-    const editInitialValues: PostMetaFormValues = {
-        title: post.title,
-        description: post.description ?? '',
-        deadline_at: toDateTimeLocal(post.deadline_at),
-        retake: post.retake,
-        view_each_other_answer: post.view_each_other_answer,
     };
 
     const viewLabel = viewEachOtherLabel(txt, post.view_each_other_answer);

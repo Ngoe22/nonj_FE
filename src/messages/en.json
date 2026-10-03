@@ -276,7 +276,16 @@
     "max_value_100": "Maximum 100",
     "max_240_minutes": "Max 240 minutes",
     "deadline_must_be_future": "Deadline must be in the future",
-    "only_letter_and_number": "Letters and digits only — no spaces, no special characters"
+    "only_letter_and_number": "Letters and digits only — no spaces, no special characters",
+    "enter_title": "Please enter a title",
+    "enter_nickname": "Please enter a display name",
+    "enter_email": "Please enter your email",
+    "enter_keyword": "Please enter a search keyword",
+    "enter_question": "Please enter the question",
+    "enter_option": "Please enter an option",
+    "enter_answer": "Please enter an answer",
+    "enter_pair": "Please fill in both sides of the pair",
+    "enter_point": "Please enter the score"
   },
   "Toast": {
     "action_fail": "Something went wrong ... , try again later",

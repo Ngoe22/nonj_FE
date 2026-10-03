@@ -8,6 +8,7 @@ import { useTranslations } from 'next-intl';
 import Modal from '@/components/_share/common_modal/CommonModal.compo';
 import { Input } from '@/components/_share/about_form/info_and_input/input.compo';
 import {CreateCollectionFormValues, createCollectionSchema} from "@/schemas/post_collection/post_collection.schema";
+import { useResetWhenOpen } from '@/hooks/_share/form/use_reset_when_open.hook';
 
 
 
@@ -33,7 +34,6 @@ export default function CollectionModal({
                                             isSubmitting = false,
                                         }: Props) {
     const txt = useTranslations('Post_collections');
-    const txtErr = useTranslations('Shema');
 
     const {
         register,
@@ -43,20 +43,20 @@ export default function CollectionModal({
     } = useForm<CreateCollectionFormValues>({
         resolver: zodResolver(createCollectionSchema),
         defaultValues: { title: initialTitle, desc: initialDesc },
-        mode: 'onSubmit',
+        // 'onChange' (không phải 'onSubmit'): lỗi phải phản ánh giá trị ĐANG gõ.
+        // Với 'onSubmit', lỗi cũ vẫn hiện dù ô đã có chữ -> trông như app lỗi.
+        mode: 'onChange',
+        reValidateMode: 'onChange',
     });
 
-    useEffect(() => {
-        if (open) reset({ title: initialTitle, desc: initialDesc });
-    }, [open, initialTitle, initialDesc, reset]);
+    // ⚠️ KHÔNG dùng `useEffect(..., [reset])`: `reset` của RHF đổi identity mỗi
+    // render -> effect chạy liên tục -> xoá form state trong khi ô vẫn hiện chữ
+    // => ô có chữ mà vẫn báo "Vui lòng nhập nội dung".
+    useResetWhenOpen(open, { title: initialTitle, desc: initialDesc }, reset);
 
     const submit = handleSubmit(async (values) => {
         await onSubmit(values);
     });
-
-    // const titleError = errors.title?.message
-    //     ? { ...errors.title, message: txtErr(errors.title.message as any) }
-    //     : undefined;
     //
     // const descError = errors.desc?.message
     //     ? { ...errors.desc, message: txtErr(errors.desc.message as any) }

@@ -48,7 +48,10 @@ export function CreateGroupModal({open, onClose, onSubmit, isSubmitting = false 
     } = useForm<CreateGroupFormValues>({
         resolver: zodResolver(createGroupSchema),
         defaultValues: createGroupDefaultValues,
-        mode: 'onSubmit',
+        // 'onChange' (không phải 'onSubmit'): lỗi phải phản ánh giá trị ĐANG gõ.
+        // Với 'onSubmit', lỗi cũ vẫn hiện dù ô đã có chữ -> trông như app lỗi.
+        mode: 'onChange',
+        reValidateMode: 'onChange',
     });
 
     const slugValue = watch('slug') ?? '';
