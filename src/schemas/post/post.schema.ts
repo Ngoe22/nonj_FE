@@ -6,7 +6,6 @@ import { Retake, View_Each_Other_Answer } from '@/enum/post/post.enum';
  * Các field "bọc ngoài" của post — DÙNG CHUNG cho:
  *  - soạn thủ công (bước 1)
  *  - lấy từ kho question_preparation
- *  - sửa post (nội dung câu hỏi bị khoá, xem UpdatePostDto ở BE)
  */
 export const postMetaSchema = z.object({
     title: z.string().min(1, 'enter_title').max(50, 'max_char_50'),
@@ -31,10 +30,6 @@ export const postMetaSchema = z.object({
 
 /**
  * Hạn nộp phải ở TƯƠNG LAI.
- *
- * `originalDeadline` là hạn ĐANG LƯU. Nếu người dùng không đổi hạn (ví dụ chỉ
- * sửa tiêu đề của bài đã hết hạn) thì phải cho qua — nếu không, sau khi bài hết
- * hạn sẽ không sửa được bất cứ thứ gì.
  */
 export function isDeadlineAcceptable(
     value?: string,

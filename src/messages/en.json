@@ -306,7 +306,7 @@
     "infinity_scroll_is_end_of_data": "— End of list —",
     "infinity_scroll_group_have_not_joined_any": "U haven't joined any group",
     "infinity_scroll_group_have_not_owned_any": "U haven't owned any group",
-    "user_info_title": "Group info"
+    "user_info_title": "User info "
   },
   "Time": {
     "just_now": "Just now",
@@ -356,7 +356,7 @@
     "minutes_placeholder": "Minutes",
     "point": "Points",
     "item_question": "Question",
-    "item_question_placeholder": "Enter question (optional)",
+    "item_question_placeholder": "Enter question ",
     "add_item": "Add question",
     "item_type_chose_correct": "Choose correct answer",
     "item_type_arrange": "Arrange",
