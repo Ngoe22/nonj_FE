@@ -6,10 +6,7 @@ import { api } from '@/lib/axios/axios';
 
 // ---------------------------------------------------------------
 // Logout — POST /auth/logout
-//
-// Sau khi logout PHẢI xoá toàn bộ cache của react-query, vì
-// `useLogin` ghi profile vào cache key `['my_profile']` và
-// vẫn còn thấy dữ liệu của tài khoản cũ sau khi đăng xuất.
+// Sau khi logout PHẢI xoá toàn bộ cache của react-query
 // ---------------------------------------------------------------
 
 export function useLogout() {
@@ -28,12 +25,10 @@ export function useLogout() {
          *
          */
         mutationFn: async (range: 'one' | 'all') => {
-            // BE chỉ có POST /auth/logout/:range — gọi thiếu :range sẽ 404 và
-            // refresh token không bị thu hồi ở server.
+
             await api.post(`/auth/logout/${range}`);
         },
         onSuccess: clearSessionAndRedirect,
-        // API lỗi (vd: token đã hết hạn) thì vẫn phải xoá session ở FE
         onError: clearSessionAndRedirect,
     });
 }

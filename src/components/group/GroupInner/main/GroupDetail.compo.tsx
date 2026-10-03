@@ -53,7 +53,7 @@ export default  function GroupDetail() {
 
     const isMember = currentGroup?.permission?.is_member ?? true;
     /** đã gửi yêu cầu tham gia và đang chờ duyệt */
-    const daGuiYeuCau = currentGroup?.has_pending_request === true;
+    const hasSentRequest = currentGroup?.has_pending_request === true;
     const isByRequest = currentGroup?.join_mode === 'BY_REQUEST';
 
     // vào nhóm xong thì nạp lại thông tin nhóm để `is_member` chuyển true
@@ -64,13 +64,7 @@ export default  function GroupDetail() {
     }, [joinMutation.isSuccess, queryClient, groupId]);
 
     const { mutateAsync: deleteGroup, isPending: isDeleting } = useDeleteGroup()
-    /**
-     * `await mutateAsync` rồi MỚI đóng modal.
-     *
-     * Trước đây gọi `mutate` (không await) rồi đóng modal ngay -> ConfirmModal
-     * biến mất tức thì nên KHÔNG thấy trạng thái đang xử lý, người dùng tưởng
-     * app không phản hồi và bấm lại.
-     */
+
     const deleteHandler = async () => {
         if (!currentGroup?.id) {
             toast.error(toastTxt('action_fail'));
@@ -161,9 +155,6 @@ export default  function GroupDetail() {
         setMenuOpen(false);
     };
 
-    // Tách loading và LỖI: trước đây gộp cả hai vào `!currentGroup` -> nhóm
-    // không tồn tại / không có quyền thì trang treo ở "..." vĩnh viễn, người
-    // dùng không biết chuyện gì và cũng không có nút quay lại.
     if (isLoading) {
         return (
             <div className="mx-auto w-full max-w-5xl px-4 py-6 sm:px-6">
@@ -277,16 +268,9 @@ export default  function GroupDetail() {
                     groupId={groupId}
                 />
 
-                {/*
-                  Người NGOÀI nhóm (nhóm view_mode = PUBLIC) vẫn xem được nhóm và
-                  bộ sưu tập, nhưng KHÔNG xem được bài tập — nội dung bài tập là
-                  thứ tránh bị lấy đi. Hiện dải cảnh báo thay vì để họ bấm vào
-                  rồi nhận lỗi khó hiểu.
-                */}
+
                 {!isMember && (
-                    daGuiYeuCau ? (
-                        /* đã gửi yêu cầu -> hiện trạng thái chờ, KHÔNG hiện lại nút
-                           Join (nếu không người dùng tưởng nút hỏng và bấm liên tục) */
+                    hasSentRequest ? (
                         <div className="mb-4 flex items-center gap-2 rounded-xl border-2 border-status-info bg-status-info-bg p-3 text-sm font-medium text-status-info">
                             <Clock size={16} />
                             {txt('join_request_pending')}
