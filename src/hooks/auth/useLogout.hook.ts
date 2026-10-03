@@ -9,7 +9,6 @@ import { api } from '@/lib/axios/axios';
 //
 // Sau khi logout PHẢI xoá toàn bộ cache của react-query, vì
 // `useLogin` ghi profile vào cache key `['my_profile']` và
-// `useGetMyProfile` có staleTime 1 giờ → nếu không clear, user
 // vẫn còn thấy dữ liệu của tài khoản cũ sau khi đăng xuất.
 // ---------------------------------------------------------------
 

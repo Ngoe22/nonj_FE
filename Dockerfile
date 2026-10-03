@@ -1,12 +1,5 @@
 # ============================================================
-# NONJ frontend — image production (Next.js 16 standalone)
-#
-# Vì sao `output: 'standalone'`: Next tạo sẵn `.next/standalone` gồm
-# `server.js` + node_modules TỐI THIỂU, nên stage runtime không cần chạy
-# `npm ci` — image nhỏ và khởi động nhanh.
-#
-# NEXT_PUBLIC_* được nhận qua ARG lúc build (chúng được nhúng vào bundle,
-# không đọc được ở runtime).
+
 # ============================================================
 
 # ---------------- Builder ----------------
