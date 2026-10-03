@@ -1,6 +1,6 @@
 'use client';
 
-import { Clock3, Trash2 } from 'lucide-react';
+import { Clock3, Trash2, Loader2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { Badge } from '@/components/ui/badge';
@@ -54,7 +54,11 @@ export default function OutgoingGroupRequestItem({ request }: Props) {
                         onClick={handleCancel}
                         className="text-red-600 hover:bg-red-50 hover:text-red-500 focus:outline-none"
                     >
-                        <Trash2 size={14} />
+                        {cancelMutation.isPending ? (
+                            <Loader2 size={14} className="animate-spin" />
+                        ) : (
+                            <Trash2 size={14} />
+                        )}
                         {txt('cancel_request')}
                     </Button>
                 </div>

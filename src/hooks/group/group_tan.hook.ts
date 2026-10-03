@@ -153,8 +153,6 @@ export function useDeleteGroup() {
             onSuccess: {
                 invalidateTags: [['my_own_group'], ['my_all_group']],
                 onSuccessCallback: () => {
-                    // xoá SẠCH cache của nhóm này (bộ sưu tập, bài tập, bài làm,
-                    // thành viên, đơn xin vào…) chứ không chỉ mỗi thông tin nhóm
                     clearGroupCache(queryClient, deletedId.current);
                     router.push('/group');
                 },

@@ -1,6 +1,6 @@
 'use client';
 
-import { Check, X } from 'lucide-react';
+import { Check, Loader2, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import {Group_Join_Request_Status, JoinRequest} from "@/types/group/join_request.type";
 
@@ -11,6 +11,11 @@ interface Props {
     onApprove: (request: JoinRequest) => void;
     onReject: (request: JoinRequest) => void;
     isPending?: boolean;
+    /**
+     * ĐƠN NÀY đang được xử lý. `isPending` là cờ chung cho cả danh sách nên không
+     * biết card nào đang chạy — dùng prop này để chỉ card đúng hiện spinner.
+     */
+    isSelfPending?: boolean;
 }
 
 export function JoinRequestCard({
@@ -18,6 +23,7 @@ export function JoinRequestCard({
                                     onApprove,
                                     onReject,
                                     isPending = false,
+                                    isSelfPending = false,
                                 }: Props) {
     const txt = useTranslations('Group');
 
@@ -62,7 +68,11 @@ export function JoinRequestCard({
                                 onClick={() => onApprove(request)}
                                 className="flex items-center gap-1.5 rounded-xl bg-foreground px-3 py-2 text-sm text-background disabled:opacity-50"
                             >
-                                <Check size={15} />
+                                {isSelfPending ? (
+                                    <Loader2 size={15} className="animate-spin" />
+                                ) : (
+                                    <Check size={15} />
+                                )}
                                 {txt('approve')}
                             </button>
                         )}
@@ -74,7 +84,11 @@ export function JoinRequestCard({
                                 onClick={() => onReject(request)}
                                 className="flex items-center gap-1.5 rounded-xl border border-border px-3 py-2 text-sm text-red-600 hover:bg-red-50 disabled:opacity-50"
                             >
-                                <X size={15} />
+                                {isSelfPending ? (
+                                    <Loader2 size={15} className="animate-spin" />
+                                ) : (
+                                    <X size={15} />
+                                )}
                                 {txt('reject')}
                             </button>
                         )}

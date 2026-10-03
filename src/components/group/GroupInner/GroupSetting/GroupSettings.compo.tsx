@@ -73,6 +73,7 @@ export default function GroupSettings({ group }: Props) {
                     </h3>
                     <ActionBtnGroup
                         isEditing={isEditing}
+                        pending={isPending}
                         onEdit={() => setIsEditing(true)}
                         onConfirm={submit}
                         onCancel={handleCancel}

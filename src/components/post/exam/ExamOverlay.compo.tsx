@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { AlertTriangle, ChevronLeft, ChevronRight, Clock, Send, X } from 'lucide-react';
+import { AlertTriangle, ChevronLeft, ChevronRight, Clock, Send, X, Loader2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { Button } from '@/components/ui/button';
@@ -147,8 +147,12 @@ export function ExamOverlay({
                     disabled={isSubmitting}
                     onClick={() => setSubmitOpen(true)}
                 >
-                    <Send size={13} />
-                    {txt('submit')}
+                    {isSubmitting ? (
+                        <Loader2 size={13} className="animate-spin" />
+                    ) : (
+                        <Send size={13} />
+                    )}
+                    {isSubmitting ? txt('submitting') : txt('submit')}
                 </Button>
             </header>
 

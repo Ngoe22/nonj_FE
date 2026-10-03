@@ -63,27 +63,39 @@ export default  function GroupDetail() {
         queryClient.invalidateQueries({ queryKey: ['collections', groupId] });
     }, [joinMutation.isSuccess, queryClient, groupId]);
 
-    const { mutate : deleteGroup } = useDeleteGroup()
-    const deleteHandler = async () =>{
-
-        // console.log(currentGroup)
-
-        if(currentGroup?.id) {
-            deleteGroup(currentGroup.id)
-        } else {
+    const { mutateAsync: deleteGroup, isPending: isDeleting } = useDeleteGroup()
+    /**
+     * `await mutateAsync` rồi MỚI đóng modal.
+     *
+     * Trước đây gọi `mutate` (không await) rồi đóng modal ngay -> ConfirmModal
+     * biến mất tức thì nên KHÔNG thấy trạng thái đang xử lý, người dùng tưởng
+     * app không phản hồi và bấm lại.
+     */
+    const deleteHandler = async () => {
+        if (!currentGroup?.id) {
             toast.error(toastTxt('action_fail'));
+            return;
         }
-        setGroupDeleteOpen(false);
-    }
+        try {
+            await deleteGroup(currentGroup.id);
+            setGroupDeleteOpen(false);
+        } catch {
+            // giữ modal mở để người dùng thử lại
+        }
+    };
 
-    const { mutate : quitGroup } = useQuitGroup()
-    const quitHandler = async () =>{
-        if(currentGroup?.id) {
-            quitGroup(currentGroup.id)
-        } else {
+    const { mutateAsync: quitGroup, isPending: isQuitting } = useQuitGroup()
+    const quitHandler = async () => {
+        if (!currentGroup?.id) {
             toast.error(toastTxt('action_fail'));
+            return;
         }
-        setQuitOpen(false);
+        try {
+            await quitGroup(currentGroup.id);
+            setQuitOpen(false);
+        } catch {
+            // giữ modal mở để người dùng thử lại
+        }
     }
 
     //
@@ -343,6 +355,7 @@ export default  function GroupDetail() {
                 description={ txt('delete_group_desc') }
                 onClose={() => setGroupDeleteOpen(false)}
                 onConfirm={deleteHandler}
+                pending={isDeleting}
             />
 
             <ConfirmModal
@@ -351,6 +364,7 @@ export default  function GroupDetail() {
                 description= { txt('leave_group_desc') }
                 onClose={() => setQuitOpen(false)}
                 onConfirm={quitHandler}
+                pending={isQuitting}
             />
         </>
     );

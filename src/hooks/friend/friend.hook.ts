@@ -231,6 +231,13 @@ export function useUnfriend() {
         },
         getId: (vars) => vars.friend_id,
         options: {
+            onMutate: {
+                // Huỷ kết bạn -> BỎ NGAY khỏi danh sách, không chờ refetch
+                // (`type: 'remove'` khớp theo `getId` = friend_id)
+                optimisticUI: {
+                    page: [{ tags: [['friends']], type: 'remove' }],
+                },
+            },
             onSuccess: {
                 invalidateTags: [['friends'], ['search_user']],
             },

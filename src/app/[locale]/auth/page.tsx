@@ -6,6 +6,7 @@ import AuthToggle from "@/components/auth/AuthToggle.compo";
 import AuthMethodSelector from "@/components/auth/RegisterMethodSelector";
 
 import {GoogleRegister} from "@/components/auth/GoogleRegister.compo";
+import { useGetPublicConfig } from "@/hooks/config/use_get_media_limits.hook";
 import LoginForm from "@/components/auth/LoginForm.compo";
 import RegisterForm from "@/components/auth/RegisterForm.compo";
 import {LanguageButton} from "@/components/_share/language_model/LanguageSelectorBtn.compo";
@@ -20,8 +21,17 @@ interface AuthPageProps {
     initialMode?: AuthMode;
 }
 
+/**
+ * Ảnh nền mặc định khi admin chưa cấu hình `auth_image_url`.
+ */
+const DEFAULT_AUTH_IMAGE =
+    'https://images.unsplash.com/photo-1519608487953-e999c86e7455';
+
 export default function AuthPage() {
     const [mode, setMode] = useState<AuthMode>('login');
+    // Ảnh nền do ADMIN chỉnh trong /admin/config
+    const { data: config } = useGetPublicConfig();
+    const authImage = config?.auth_image_url?.trim() || DEFAULT_AUTH_IMAGE;
     const [registerMethod, setRegisterMethod] =
         useState<RegisterMethod>('google');
 
@@ -34,8 +44,8 @@ export default function AuthPage() {
                 {/* LEFT - IMAGE */}
                 <section className="relative hidden min-h-0 w-1/2 overflow-hidden md:block">
                     <img
-                        src="https://images.unsplash.com/photo-1519608487953-e999c86e7455"
-                        alt="Auth background"
+                        src={authImage}
+                        alt=""
                         className="h-full w-full object-cover"
                     />
 

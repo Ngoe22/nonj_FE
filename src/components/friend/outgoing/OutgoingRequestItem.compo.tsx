@@ -1,6 +1,6 @@
 'use client';
 
-import { Clock, X } from 'lucide-react';
+import { Clock, X, Loader2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { Badge } from '@/components/ui/badge';
@@ -47,7 +47,11 @@ export default function OutgoingRequestItem({ request }: Props) {
                         onClick={handleCancel}
                         disabled={cancelRequest.isPending}
                     >
-                        <X size={15} />
+                        {cancelRequest.isPending ? (
+                            <Loader2 size={15} className="animate-spin" />
+                        ) : (
+                            <X size={15} />
+                        )}
                         {txt('cancel')}
                     </Button>
                 </div>

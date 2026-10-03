@@ -63,6 +63,7 @@ export function MyProfileInfo(
 
                 <ActionBtnGroup
                     isEditing={isEditing}
+                    pending={isPending}
                     onEdit={() => setIsEditing(true)}
                     onConfirm={() => handleSubmit(onSubmit)()}
                     onCancel={ () => {  reset(editAble); setIsEditing(false)}}

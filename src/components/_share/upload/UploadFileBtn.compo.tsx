@@ -13,9 +13,20 @@ interface Props {
     value?: string;
     onChange: (url: string | null) => void;
     disabled?: boolean;
+    /**
+     * Thư mục trên R2 (vd `avatars`, `system`). Bỏ trống thì BE tự chọn theo
+     * `fileType`. Giá trị phải nằm trong `STORAGE_FOLDER` của BE.
+     */
+    folder?: string;
 }
 
-export function FileUploadButton({ fileType, value, onChange, disabled }: Props) {
+export function FileUploadButton({
+    fileType,
+    value,
+    onChange,
+    disabled,
+    folder,
+}: Props) {
     const txt = useTranslations('Upload');
     const inputRef = useRef<HTMLInputElement>(null);
     const upload = useUploadFile();
@@ -30,7 +41,7 @@ export function FileUploadButton({ fileType, value, onChange, disabled }: Props)
         e.target.value = ''; // reset để chọn lại cùng file
         if (!file) return;
 
-        const res = await upload.mutateAsync({ file, fileType });
+        const res = await upload.mutateAsync({ file, fileType, ...(folder ? { folder } : {}) });
         onChange(res.publicUrl);
     };
 

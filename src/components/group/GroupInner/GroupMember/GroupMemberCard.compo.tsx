@@ -1,6 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
+import { Loader2 } from 'lucide-react';
 import {Group_Member_Role, GroupMember} from "@/types/group/group_member.type";
 import {useRelativeTime} from "@/helper/timeFormat/relativeTime.helper";
 import {formatLocalDateTime} from "@/helper/timeFormat/timezone.helper";
@@ -13,6 +14,13 @@ interface Props {
     onDemote: (member: GroupMember) => void;
     onKick: (member: GroupMember) => void;
     isPending?: boolean;
+    /**
+     * Thành viên NÀY đang được xử lý (promote/demote/kick).
+     *
+     * `isPending` là cờ chung cho cả danh sách nên không biết card nào đang chạy;
+     * prop này để chỉ card đúng hiện spinner.
+     */
+    isSelfPending?: boolean;
 }
 
 export function GroupMemberCard({
@@ -21,6 +29,7 @@ export function GroupMemberCard({
                                     onDemote,
                                     onKick,
                                     isPending = false,
+                                    isSelfPending = false,
                                 }: Props) {
 
 
@@ -103,8 +112,11 @@ export function GroupMemberCard({
                         type="button"
                         disabled={isPending}
                         onClick={() => onKick(member)}
-                        className="rounded-lg border border-border px-3 py-2 text-xs text-red-600 hover:bg-red-50 disabled:opacity-50"
+                        className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-xs text-red-600 hover:bg-red-50 disabled:opacity-50"
                     >
+                        {isSelfPending && (
+                            <Loader2 size={12} className="animate-spin" />
+                        )}
                         {txt('kick')}
                     </button>
                 )}
@@ -114,8 +126,11 @@ export function GroupMemberCard({
                         type="button"
                         disabled={isPending}
                         onClick={() => onPromote(member)}
-                        className="rounded-lg border border-border px-3 py-2 text-xs hover:bg-surface-hover disabled:opacity-50"
+                        className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-xs hover:bg-surface-hover disabled:opacity-50"
                     >
+                        {isSelfPending && (
+                            <Loader2 size={12} className="animate-spin" />
+                        )}
                         {txt('promote')}
                     </button>
                 )}
@@ -125,8 +140,11 @@ export function GroupMemberCard({
                         type="button"
                         disabled={isPending}
                         onClick={() => onDemote(member)}
-                        className="rounded-lg border border-border px-3 py-2 text-xs hover:bg-surface-hover disabled:opacity-50"
+                        className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-xs hover:bg-surface-hover disabled:opacity-50"
                     >
+                        {isSelfPending && (
+                            <Loader2 size={12} className="animate-spin" />
+                        )}
                         {txt('demote')}
                     </button>
                 )}

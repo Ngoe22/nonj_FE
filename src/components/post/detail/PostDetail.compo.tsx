@@ -73,7 +73,8 @@ export default function PostDetail() {
 
     const submitMutation = useSubmitAnswer(groupId, collectionId, postId);
     const retakeMutation = useRetakeAnswer(groupId, collectionId, postId);
-    const updateMutation = useUpdatePost(groupId, collectionId);
+    // Truyền postId -> optimistic cập nhật NGAY trang chi tiết, không chờ refetch
+    const updateMutation = useUpdatePost(groupId, collectionId, postId);
     const deleteMutation = useDeletePost(groupId, collectionId);
 
     const [examOpen, setExamOpen] = useState(false);

@@ -2,7 +2,7 @@ import {BasicUser} from "@/types/user_info/user_info.type";
 import {SearchUserResult} from "@/types/friend/friend.type";
 import {useTranslations} from "next-intl";
 import {Button} from "@/components/ui/button";
-import {Clock, UserMinus, UserPlus} from "lucide-react";
+import {Clock, Loader2, UserMinus, UserPlus} from "lucide-react";
 
 interface ActionButtonsProps {
     user: SearchUserResult;
@@ -26,7 +26,11 @@ export  function ActionButtons({ user, isPending, onAdd, onUnfriend }: ActionBut
                     disabled={isPending}
                     className="shrink-0"
                 >
-                    <UserPlus size={16} />
+                    {isPending ? (
+                        <Loader2 size={16} className="animate-spin" />
+                    ) : (
+                        <UserPlus size={16} />
+                    )}
                     {txt('add_friend')}
                 </Button>
             )}
@@ -53,7 +57,11 @@ export  function ActionButtons({ user, isPending, onAdd, onUnfriend }: ActionBut
                     disabled={isPending}
                     className="shrink-0 text-red-600 hover:bg-red-50 hover:text-red-400"
                 >
-                    <UserMinus size={16} />
+                    {isPending ? (
+                        <Loader2 size={16} className="animate-spin" />
+                    ) : (
+                        <UserMinus size={16} />
+                    )}
                     {txt('unfriend')}
                 </Button>
             )}

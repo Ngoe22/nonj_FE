@@ -48,6 +48,11 @@ export default function GroupJoinRequests() {
         });
     };
 
+    /** ID đơn ĐANG xử lý — `isPending` là cờ chung nên cần biết chính xác đơn nào */
+    const inFlightRequestId = (
+        updateRequest.variables as { join_request_id?: string } | undefined
+    )?.join_request_id;
+
     // ============ Render ============
     return (
         <div className="pt-6">
@@ -60,6 +65,7 @@ export default function GroupJoinRequests() {
                         onApprove={handleApprove}
                         onReject={handleReject}
                         isPending={updateRequest.isPending}
+                        isSelfPending={inFlightRequestId === request.id}
                     />
                 )}
                 hasNextPage={hasNextPage}

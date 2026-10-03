@@ -3,6 +3,7 @@
 
 
 import { Card } from '@/components/ui/card';
+import { Loader2 } from 'lucide-react';
 import {useGetMyProfile} from "@/hooks/profile/useGetMyProfile.hook";
 import {ProfileSkeleton} from "@/components/profile/ProfileSkeletons.compo";
 import {ProfileError} from "@/components/profile/ProfileError.compo";
@@ -71,8 +72,11 @@ export default function MyProfilePage() {
                 <Button
                     onClick={() => logout.mutate('one')}
                     disabled={logout.isPending}
-                    className={`text-card  hover:text-white  bg-card-foreground  hover:bg-destructive`}
+                    className={`gap-2 text-card hover:bg-destructive hover:text-white bg-card-foreground`}
                 >
+                    {logout.isPending && (
+                        <Loader2 size={15} className="animate-spin" />
+                    )}
                     {txt('logout_btn')}
                 </Button>
             </Card>

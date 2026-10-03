@@ -527,7 +527,8 @@
     "text_friend_accepted": "{user} accepted your friend request",
     "text_friend_rejected": "{user} declined your friend request",
     "text_report_resolved": "Your report has been reviewed",
-    "text_system": "You have a new notification"
+    "text_system": "You have a new notification",
+    "marking": "Marking…"
   },
   "Admin": {
     "title": "System administration",
@@ -615,7 +616,7 @@
     "nav_reports": "Reports",
     "online": "Online",
     "online_now": "Users online now",
-    "online_hint": "Updated live over WebSocket — no refresh needed",
+    "online_hint": " ",
     "signed_in_as": "Signed in as {name}",
     "back_to_app": "Back to app",
     "logout": "Sign out",
@@ -770,7 +771,12 @@
     "config_contact_hint": "Leave empty to hide the contact section on the home page.",
     "config_group_limits": "Image / audio limits",
     "config_group_content": "Home page content",
-    "config_group_contact": "Contact"
+    "config_group_contact": "Contact",
+    "config_group_images": "System images",
+    "config_auth_image": "Sign-in page background",
+    "config_auth_image_hint": "Leave empty to use the default image.",
+    "config_favicon": "Favicon (browser tab icon)",
+    "config_favicon_hint": "Square image (PNG/ICO), at least 32×32."
   },
   "Report": {
     "report_violation": "Report violation",

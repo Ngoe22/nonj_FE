@@ -24,10 +24,14 @@ export default function GroupList() {
 
     const { mutateAsync , isError , isPending } = useCreateGroup()
 
-    const  handleCreateGroup = async (body: any)=>  {
-        const data =  await mutateAsync(body)
-        // console.log(data)
-        setIsCreating(false)
+    const handleCreateGroup = async (body: any) => {
+        try {
+            await mutateAsync(body)
+            setIsCreating(false)
+        } catch {
+            // Lỗi đã có toast/state ở hook; KHÔNG đóng modal để người dùng thử lại.
+            // Thiếu try/catch ở đây từng gây unhandled rejection.
+        }
     }
 
     return (
@@ -88,7 +92,8 @@ export default function GroupList() {
                 open={isCreating}
                 onClose={() => setIsCreating(false)}
                 onSubmit={handleCreateGroup}
-                // isSubmitting={mutation.isPending}
+                // Thiếu dòng này thì nút Tạo nhóm không loading và bấm được nhiều lần
+                isSubmitting={isPending}
             />
 
 

@@ -82,6 +82,17 @@ export default function GroupMembers() {
 
     const isPending = updateMember.isPending || kickMember.isPending;
 
+    /**
+     * ID thành viên ĐANG được xử lý — lấy từ `variables` của mutation đang chạy.
+     *
+     * `isPending` là cờ chung nên nếu chỉ dùng nó thì mọi card đều trông như đang
+     * chạy. `variables` cho biết chính xác request đang nhắm vào ai.
+     */
+    const inFlightMemberId =
+        (updateMember.variables as { member_id?: string } | undefined)
+            ?.member_id ??
+        (kickMember.variables as { member_id?: string } | undefined)?.member_id;
+
     // ============ Render ============
     return (
         <div className="pt-6">
@@ -98,6 +109,7 @@ export default function GroupMembers() {
                             onDemote={handleDemote}
                             onKick={handleKickClick}
                             isPending={isPending}
+                            isSelfPending={inFlightMemberId === member.id}
                         />
                     )}
                     hasNextPage={hasNextPage}

@@ -7,7 +7,14 @@ import {
   type ReactNode,
 } from 'react';
 import { useTranslations } from 'next-intl';
-import { Check, Copy, RotateCcw, Search, Trash2 } from 'lucide-react';
+import {
+  Check,
+  Copy,
+  RotateCcw,
+  Search,
+  Trash2,
+  Loader2,
+} from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -219,22 +226,26 @@ export function IconAction({
   tone = 'normal',
   onClick,
   children,
+  disabled = false,
 }: {
   label: string;
   tone?: 'normal' | 'danger';
   onClick: () => void;
   children: ReactNode;
+  /** Đang gửi request -> khoá nút, tránh bấm nhiều lần */
+  disabled?: boolean;
 }) {
   return (
     <button
       type="button"
       title={label}
       aria-label={label}
+      disabled={disabled}
       onClick={(e) => {
         e.stopPropagation();
         onClick();
       }}
-      className={`rounded p-1.5 transition hover:bg-surface-hover ${
+      className={`rounded p-1.5 transition hover:bg-surface-hover disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent ${
         tone === 'danger'
           ? 'text-muted-foreground hover:text-destructive'
           : 'text-muted-foreground hover:text-foreground'
@@ -574,9 +585,13 @@ export function AdminListShell<T extends { id: string; is_deleted: boolean }>({
                           e.stopPropagation();
                           restore.mutate(row.id);
                         }}
-                        className="rounded p-1.5 text-muted-foreground transition hover:bg-surface-hover hover:text-status-success"
+                        className="rounded p-1.5 text-muted-foreground transition hover:bg-surface-hover hover:text-status-success disabled:cursor-not-allowed disabled:opacity-40"
                       >
-                        <RotateCcw size={14} />
+                        {restore.isPending ? (
+                          <Loader2 size={14} className="animate-spin" />
+                        ) : (
+                          <RotateCcw size={14} />
+                        )}
                       </button>
                     )}
                   </span>

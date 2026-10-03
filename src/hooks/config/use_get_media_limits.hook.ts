@@ -15,6 +15,10 @@ export interface PublicConfig {
     contact_facebook: string;
     /** Email liên hệ (rỗng = ẩn) */
     contact_email: string;
+    /** Ảnh nền trang đăng nhập (rỗng = dùng ảnh mặc định) */
+    auth_image_url: string;
+    /** Favicon (rỗng = dùng mặc định) */
+    favicon_url: string;
 }
 
 export const PUBLIC_CONFIG_KEY = ['public_config'] as const;

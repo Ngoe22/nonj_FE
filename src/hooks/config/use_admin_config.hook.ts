@@ -9,6 +9,8 @@ export interface AdminConfig {
   home_text: string;
   contact_facebook: string;
   contact_email: string;
+  auth_image_url: string;
+  favicon_url: string;
 }
 
 interface UpdateConfigResult {

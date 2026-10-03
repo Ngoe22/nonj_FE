@@ -84,6 +84,7 @@ export default function AdminJoinRequestsPage() {
             <>
               <IconAction
                 label={txt('approve')}
+                disabled={update.isPending}
                 onClick={() => decide(row, Group_Join_Request_Status_UPDATE.APPROVED)}
               >
                 <Check size={14} />
@@ -91,6 +92,7 @@ export default function AdminJoinRequestsPage() {
               <IconAction
                 label={txt('reject')}
                 tone="danger"
+                disabled={update.isPending}
                 onClick={() => decide(row, Group_Join_Request_Status_UPDATE.REJECTED)}
               >
                 <X size={14} />

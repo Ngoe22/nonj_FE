@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'react-toastify';
-import { Save } from 'lucide-react';
+import { Loader2, Save } from 'lucide-react';
 import type { UseMutationResult } from '@tanstack/react-query';
 
 import {
@@ -11,6 +11,8 @@ import {
   adminInputClass,
 } from '@/components/admin/_share/AdminListShell.compo';
 import { Button } from '@/components/ui/button';
+import { FileUploadButton } from '@/components/_share/upload/UploadFileBtn.compo';
+import { AdminStorageSection } from '@/components/admin/AdminStorageSection.compo';
 import {
   useAdminConfig,
   type AdminConfig,
@@ -64,6 +66,8 @@ function ConfigForm({ initial, mutation }: ConfigFormProps) {
   const [homeText, setHomeText] = useState(initial.home_text ?? '');
   const [facebook, setFacebook] = useState(initial.contact_facebook ?? '');
   const [email, setEmail] = useState(initial.contact_email ?? '');
+  const [authImage, setAuthImage] = useState(initial.auth_image_url ?? '');
+  const [favicon, setFavicon] = useState(initial.favicon_url ?? '');
 
   const save = async () => {
     const ni = Number(images);
@@ -79,6 +83,8 @@ function ConfigForm({ initial, mutation }: ConfigFormProps) {
       mutation.mutateAsync({ key: 'home_text', value: homeText }),
       mutation.mutateAsync({ key: 'contact_facebook', value: facebook }),
       mutation.mutateAsync({ key: 'contact_email', value: email }),
+      mutation.mutateAsync({ key: 'auth_image_url', value: authImage }),
+      mutation.mutateAsync({ key: 'favicon_url', value: favicon }),
     ]);
 
     if (results.every((r) => r?.success)) {
@@ -167,9 +173,64 @@ function ConfigForm({ initial, mutation }: ConfigFormProps) {
         <span className={hintClass}>{txt('config_contact_hint')}</span>
       </section>
 
+      {/* -------- hình ảnh hệ thống -------- */}
+      <section className="space-y-4 border-t border-border pt-6">
+        <h2 className="text-sm font-semibold">
+          {txt('config_group_images')}
+        </h2>
+
+        <div>
+          <label className={labelClass}>{txt('config_auth_image')}</label>
+          <div className="mt-2 flex items-center gap-3">
+            {/* Upload thẳng lên R2 vào thư mục `system` */}
+            <FileUploadButton
+              fileType="image"
+              folder="system"
+              value={authImage || undefined}
+              onChange={(url) => setAuthImage(url ?? '')}
+            />
+            {authImage && (
+              <img
+                src={authImage}
+                alt=""
+                className="h-12 w-20 rounded-lg border border-border object-cover"
+              />
+            )}
+          </div>
+          <span className={hintClass}>{txt('config_auth_image_hint')}</span>
+        </div>
+
+        <div>
+          <label className={labelClass}>{txt('config_favicon')}</label>
+          <div className="mt-2 flex items-center gap-3">
+            <FileUploadButton
+              fileType="image"
+              folder="system"
+              value={favicon || undefined}
+              onChange={(url) => setFavicon(url ?? '')}
+            />
+            {favicon && (
+              <img
+                src={favicon}
+                alt=""
+                className="h-8 w-8 rounded border border-border object-contain"
+              />
+            )}
+          </div>
+          <span className={hintClass}>{txt('config_favicon_hint')}</span>
+        </div>
+      </section>
+
+      {/* -------- kho R2: xem + dọn rác -------- */}
+      <AdminStorageSection />
+
       <div className="border-t border-border pt-6">
         <Button onClick={save} disabled={mutation.isPending} className="gap-2">
-          <Save size={14} />
+          {mutation.isPending ? (
+            <Loader2 size={14} className="animate-spin" />
+          ) : (
+            <Save size={14} />
+          )}
           {mutation.isPending ? txt('config_saving') : txt('config_save')}
         </Button>
       </div>

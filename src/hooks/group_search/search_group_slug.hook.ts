@@ -8,8 +8,7 @@ import { searchGroupSlugKey } from '@/hooks/group_search/group_search.const';
 import type { SearchGroup } from '@/types/group_search/group_search.type';
 
 // ============================================================
-// SLUG SEARCH — BE trả về 1 object duy nhất, KHÔNG phân trang
-// => useQuery thường, không dùng infinite
+// SLUG SEARCH —
 // ============================================================
 export function useSearchGroupBySlug(slug: string) {
     const trimmed = slug.trim();

@@ -2,19 +2,20 @@
 import { useSidebarStore } from "@/stores/side_bar/side_bar.store";
 import { useThemeStore } from "@/stores/theme/theme.store";
 import {
-    ChevronLeft,
-    ChevronRight,
-    FileText,
-    Handshake,
-    Home,
-    Languages,
-    LogOut,
-    Moon,
-    Sun,
-    Telescope,
-    UserGroup,
-    ShieldCheck,
-} from "lucide-react";
+  ChevronLeft,
+  ChevronRight,
+  FileText,
+  Handshake,
+  Home,
+  Languages,
+  LogOut,
+  Moon,
+  Sun,
+  Telescope,
+  UserGroup,
+  ShieldCheck,
+  Loader2,
+} from 'lucide-react';
 
 import { useOpenLanguageSelector } from "@/components/_share/language_model/LanguageSelectorBtn.compo";
 import LanguageSelector from "@/components/_share/language_model/LanguageSelector.compo";
@@ -125,7 +126,13 @@ export default function Sidebar() {
                     onClick={toggleTheme}
                 />
                 <SidebarButton
-                    icon={<LogOut size={19} />}
+                    icon={
+                        logout.isPending ? (
+                            <Loader2 size={19} className="animate-spin" />
+                        ) : (
+                            <LogOut size={19} />
+                        )
+                    }
                     label={txt('logout')}
                     isOpen={isOpen}
                     onClick={() => logout.mutate('one')}

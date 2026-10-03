@@ -363,6 +363,7 @@ export default function PostList({ groupId, collectionId, canCreate }: Props) {
                     setSelected(null);
                 }}
                 onConfirm={handleDelete}
+                pending={deleteMutation.isPending}
             />
         </>
     );

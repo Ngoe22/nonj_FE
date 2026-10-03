@@ -145,7 +145,20 @@ export function useCreatePostFromPreparation(
 // UPDATE — chỉ title / description / deadline / view_each_other
 // ============================================================
 
-export function useUpdatePost(groupId: string, collectionId: string) {
+/**
+ * Sửa bài (title/description/deadline/view_each_other).
+ *
+ * `postId` là TUỲ CHỌN: truyền vào khi gọi từ trang chi tiết để optimistic cập
+ * nhật luôn cache `['post', groupId, collectionId, postId]`.
+ *
+ * Không truyền thì chỉ optimistic cho danh sách — và `PostDetail` sẽ giữ trạng
+ * thái "đang lưu" cho tới khi refetch xong trang chi tiết (chậm thấy rõ).
+ */
+export function useUpdatePost(
+    groupId: string,
+    collectionId: string,
+    postId?: string,
+) {
     const listKey = postListKey(groupId, collectionId);
 
     return useTanUpdate<Post, UpdatePostVars>({
@@ -160,6 +173,20 @@ export function useUpdatePost(groupId: string, collectionId: string) {
             onMutate: {
                 optimisticUI: {
                     page: [{ tags: [listKey], type: 'update' }],
+                    // `applyOneAction` khớp key CHÍNH XÁC nên phải có postId
+                    ...(postId
+                        ? {
+                              one: {
+                                  tags: [
+                                      postDetailKey(
+                                          groupId,
+                                          collectionId,
+                                          postId,
+                                      ),
+                                  ],
+                              },
+                          }
+                        : {}),
                 },
             },
             onSuccess: {

@@ -20,6 +20,7 @@ import {
   Users,
   UsersRound,
   X,
+  Loader2,
 } from 'lucide-react';
 
 import { useGetMyProfile } from '@/hooks/profile/useGetMyProfile.hook';
@@ -158,9 +159,14 @@ export default function AdminShell({ children }: { children: ReactNode }) {
           <button
             type="button"
             onClick={() => logoutMutation.mutate('all')}
-            className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm text-muted-foreground transition hover:bg-destructive/10 hover:text-destructive"
+            disabled={logoutMutation.isPending}
+            className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm text-muted-foreground transition hover:bg-destructive/10 hover:text-destructive disabled:cursor-not-allowed disabled:opacity-50"
           >
-            <LogOut size={15} />
+            {logoutMutation.isPending ? (
+              <Loader2 size={15} className="animate-spin" />
+            ) : (
+              <LogOut size={15} />
+            )}
             {txt('logout')}
           </button>
         </div>

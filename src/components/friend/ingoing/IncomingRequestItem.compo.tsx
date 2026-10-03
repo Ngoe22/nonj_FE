@@ -1,6 +1,6 @@
 'use client';
 
-import { Check, X } from 'lucide-react';
+import { Check, Loader2, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import { Button } from '@/components/ui/button';
@@ -54,7 +54,11 @@ export default function IncomingRequestItem({ request }: Props) {
                 {isPendingStatus && (
                     <div className="flex gap-2">
                         <Button size="sm" onClick={handleAccept} disabled={isPending}>
-                            <Check size={15} />
+                            {isPending ? (
+                                <Loader2 size={15} className="animate-spin" />
+                            ) : (
+                                <Check size={15} />
+                            )}
                             {txt('accept')}
                         </Button>
 
@@ -64,7 +68,11 @@ export default function IncomingRequestItem({ request }: Props) {
                             onClick={handleReject}
                             disabled={isPending}
                         >
-                            <X size={15} />
+                            {isPending ? (
+                                <Loader2 size={15} className="animate-spin" />
+                            ) : (
+                                <X size={15} />
+                            )}
                             {txt('reject')}
                         </Button>
                     </div>

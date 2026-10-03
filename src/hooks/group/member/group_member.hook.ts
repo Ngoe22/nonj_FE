@@ -46,16 +46,7 @@ export function useUpdateGroupMember(groupId: string) {
         },
         getId: (vars) => vars.target_id,
         options: {
-            onMutate: {
-                optimisticUI: {
-                    page: [
-                        {
-                            tags: [['group_members', groupId]],
-                            type: 'remove',
-                        },
-                    ],
-                },
-            },
+
             onSuccess: {
                 invalidateTags: [['group_members', groupId]],
             },

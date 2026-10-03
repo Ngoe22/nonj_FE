@@ -208,6 +208,7 @@ export default function AdminUsersPage() {
             <IconAction
               label={row.status === User_Status.BANNED ? txt('unban') : txt('ban')}
               tone={row.status === User_Status.BANNED ? 'normal' : 'danger'}
+              disabled={update.isPending}
               // Mở khoá là thao tác an toàn -> làm luôn, không bắt xác nhận
               onClick={() =>
                 row.status === User_Status.BANNED

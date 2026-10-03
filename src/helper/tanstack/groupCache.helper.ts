@@ -15,10 +15,6 @@ import type { QueryClient } from '@tanstack/react-query';
  *   ['my_answer', groupId, collectionId, postId]
  *   ['others_answers', groupId, collectionId, postId]
  *   …
- *
- * Liệt kê tay thì chỉ cần thêm một query mới là quên ngay, và cache cũ sẽ hiện
- * lại khi người dùng vào nhóm khác hoặc bị mời ra khỏi nhóm. Quét theo groupId
- * thì query thêm sau này tự động được dọn.
  */
 export function clearGroupCache(
     queryClient: QueryClient,

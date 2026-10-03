@@ -527,7 +527,8 @@
     "text_friend_accepted": "{user} đã chấp nhận lời mời kết bạn",
     "text_friend_rejected": "{user} đã từ chối lời mời kết bạn",
     "text_report_resolved": "Báo cáo của bạn đã được xử lý",
-    "text_system": "Bạn có thông báo mới"
+    "text_system": "Bạn có thông báo mới",
+    "marking": "Đang đọc…"
   },
   "Admin": {
     "title": "Quản trị hệ thống",
@@ -615,7 +616,7 @@
     "nav_reports": "Báo cáo vi phạm",
     "online": "Đang online",
     "online_now": "Số người đang online",
-    "online_hint": "Cập nhật trực tiếp qua WebSocket, không cần tải lại trang",
+    "online_hint": " ",
     "signed_in_as": "Đăng nhập: {name}",
     "back_to_app": "Về trang người dùng",
     "logout": "Đăng xuất",
@@ -770,7 +771,12 @@
     "config_contact_hint": "Để trống thì phần liên hệ sẽ ẩn trên trang chủ.",
     "config_group_limits": "Giới hạn ảnh / mp3",
     "config_group_content": "Nội dung trang chủ",
-    "config_group_contact": "Liên hệ"
+    "config_group_contact": "Liên hệ",
+    "config_group_images": "Hình ảnh hệ thống",
+    "config_auth_image": "Ảnh nền trang đăng nhập",
+    "config_auth_image_hint": "Để trống thì dùng ảnh mặc định.",
+    "config_favicon": "Favicon (icon tab trình duyệt)",
+    "config_favicon_hint": "Nên là ảnh vuông (PNG/ICO), tối thiểu 32×32."
   },
   "Report": {
     "report_violation": "Báo cáo vi phạm",

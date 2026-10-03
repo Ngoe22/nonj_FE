@@ -27,8 +27,6 @@ export function useLogout() {
          * `one`  = chỉ thu hồi phiên hiện tại (thiết bị này)
          * `all`  = thu hồi MỌI phiên trên mọi thiết bị
          *
-         * BẮT BUỘC truyền — để mỗi chỗ gọi tự nói rõ ý định, không có hành vi
-         * ngầm định nào (đăng xuất là thao tác bảo mật, không nên đoán hộ).
          */
         mutationFn: async (range: 'one' | 'all') => {
             // BE chỉ có POST /auth/logout/:range — gọi thiếu :range sẽ 404 và

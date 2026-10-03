@@ -111,7 +111,17 @@ export function useSubmitAnswer(
             );
             return res.data.data;
         },
-        onSuccess: async () => {
+        onSuccess: async (data) => {
+            // Ghi NGAY bài vừa nộp vào cache TRƯỚC khi invalidate.
+            //
+            // `invalidateQueries` là refetch ở NỀN và `await` bên dưới khiến
+            // `mutateAsync` chỉ resolve SAU khi refetch xong — nên màn thi giữ
+            // trạng thái "đang lưu" rất lâu. `setQueryData` cho UI đổi tức thì.
+            queryClient.setQueryData(
+                myAnswerKey(groupId, collectionId, postId),
+                data,
+            );
+
             await Promise.all([
                 queryClient.invalidateQueries({
                     queryKey: myAnswerKey(groupId, collectionId, postId),
@@ -155,7 +165,13 @@ export function useRetakeAnswer(
             );
             return res.data.data;
         },
-        onSuccess: async () => {
+        onSuccess: async (data) => {
+            // Như `useSubmitAnswer`: cập nhật ngay, không chờ refetch
+            queryClient.setQueryData(
+                myAnswerKey(groupId, collectionId, postId),
+                data,
+            );
+
             await Promise.all([
                 queryClient.invalidateQueries({
                     queryKey: myAnswerKey(groupId, collectionId, postId),
@@ -182,7 +198,13 @@ export function useGradeAnswer(
 ) {
     const queryClient = useQueryClient();
 
-    return useMutation<boolean, Error, GradeAnswerVars>({
+    // Generic thứ 4 = kiểu context trả về từ `onMutate` (dùng để rollback)
+    return useMutation<
+        boolean,
+        Error,
+        GradeAnswerVars,
+        { previous: unknown; key: ReturnType<typeof othersAnswersKey> }
+    >({
         mutationFn: async ({ answer_id, ...body }) => {
             const res = await api.patch<{ data: boolean }>(
                 `${answerBasePath(groupId, collectionId, postId)}/${answer_id}/grade`,
@@ -190,13 +212,37 @@ export function useGradeAnswer(
             );
             return res.data.data;
         },
-        onSuccess: async () => {
+        onMutate: async ({ answer_id, ...body }) => {
+            const key = othersAnswersKey(groupId, collectionId, postId);
+            await queryClient.cancelQueries({ queryKey: key });
+            const previous = queryClient.getQueryData(key);
+
+            // Sửa NGAY item vừa chấm trong danh sách (infinite -> duyệt từng page)
+            queryClient.setQueryData(key, (old: any) => {
+                if (!old?.pages) return old;
+                return {
+                    ...old,
+                    pages: old.pages.map((page: PostAnswer[]) =>
+                        page.map((a) =>
+                            a.id === answer_id ? { ...a, ...body } : a,
+                        ),
+                    ),
+                };
+            });
+
+            return { previous, key };
+        },
+        onError: (_err, _vars, ctx) => {
+            // Trả lại dữ liệu cũ nếu chấm lỗi
+            if (ctx?.previous !== undefined) {
+                queryClient.setQueryData(ctx.key, ctx.previous);
+            }
+            toast.error('grade_failed');
+        },
+        onSettled: async () => {
             await queryClient.invalidateQueries({
                 queryKey: othersAnswersKey(groupId, collectionId, postId),
             });
-        },
-        onError: () => {
-            toast.error('grade_failed');
         },
     });
 }

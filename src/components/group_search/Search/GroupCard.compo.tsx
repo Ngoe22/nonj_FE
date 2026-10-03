@@ -1,6 +1,6 @@
 'use client';
 
-import {ExternalLink, UserPlus} from 'lucide-react';
+import { ExternalLink, UserPlus, Loader2 } from 'lucide-react';
 import {useTranslations} from 'next-intl';
 import {Link} from '@/i18n/navigation';
 
@@ -70,7 +70,11 @@ export default function SearchGroupCard({ group }: Props) {
                             onClick={handleJoinOrRequest}
                             className="w-fit"
                         >
-                            <UserPlus size={16} />
+                            {isPending ? (
+                                <Loader2 size={16} className="animate-spin" />
+                            ) : (
+                                <UserPlus size={16} />
+                            )}
                             {group.join_mode === Group_Join_Mode.PUBLIC
                                 ? txt('join_now_btn')
                                 : txt('request_to_join')}

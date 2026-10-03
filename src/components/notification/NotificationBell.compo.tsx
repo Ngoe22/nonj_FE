@@ -107,8 +107,14 @@ export default function NotificationBell() {
                                 disabled={markAllRead.isPending}
                                 className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground disabled:opacity-50"
                             >
-                                <CheckCheck size={13} />
-                                {txt('mark_all_read')}
+                                {markAllRead.isPending ? (
+                                    <Loader2 size={13} className="animate-spin" />
+                                ) : (
+                                    <CheckCheck size={13} />
+                                )}
+                                {markAllRead.isPending
+                                    ? txt('marking')
+                                    : txt('mark_all_read')}
                             </button>
                         )}
                     </div>
