@@ -3,9 +3,20 @@ import createNextIntlPlugin from 'next-intl/plugin';
 
 
 const nextConfig: NextConfig = {
-  reactCompiler: true,
-
   /**
+   * ⚠️ KHÔNG bật React Compiler (`reactCompiler: true`).
+   *
+   * React Compiler KHÔNG tương thích với react-hook-form: có bug đã biết là
+   * thay đổi `formState.errors` không làm component con re-render (chỉ xuất hiện
+   * ở BẢN BUILD production, dev thì chạy đúng). Hệ quả đã gặp thực tế: nhập vào
+   * ô Tiêu đề của modal "Tạo thư mục" mà lỗi "Vui lòng nhập tiêu đề" không tự
+   * mất, submit mãi không được.
+   *
+   * Tham khảo:
+   * - react-hook-form#13505 — "with React compiler, a change in formState errors
+   *   does not cause child components to re-render"
+   * - react-hook-form#12524 (React Compiler support) + react#37149
+   *
    * Standalone: đóng gói `.next/standalone` + `node_modules` tối thiểu để chạy
    * bằng `node server.js` mà không cần toàn bộ node_modules.
    *
