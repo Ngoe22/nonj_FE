@@ -785,7 +785,11 @@
     "config_auth_image": "Ảnh nền trang đăng nhập",
     "config_auth_image_hint": "Để trống thì dùng ảnh mặc định.",
     "config_favicon": "Favicon (icon tab trình duyệt)",
-    "config_favicon_hint": "Nên là ảnh vuông (PNG/ICO), tối thiểu 32×32."
+    "config_favicon_hint": "Nên là ảnh vuông (PNG/ICO), tối thiểu 32×32.",
+    "set_password": "Đặt mật khẩu",
+    "set_password_hint": "Tài khoản Google của bạn chưa có mật khẩu. Đặt mật khẩu để có thể đăng nhập bằng email.",
+    "password_set": "Đã đặt mật khẩu",
+    "password_already_set": "Tài khoản đã có mật khẩu — hãy dùng \"Đổi mật khẩu\""
   },
   "Report": {
     "report_violation": "Báo cáo vi phạm",

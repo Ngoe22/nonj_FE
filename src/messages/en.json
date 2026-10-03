@@ -785,7 +785,11 @@
     "config_auth_image": "Sign-in page background",
     "config_auth_image_hint": "Leave empty to use the default image.",
     "config_favicon": "Favicon (browser tab icon)",
-    "config_favicon_hint": "Square image (PNG/ICO), at least 32×32."
+    "config_favicon_hint": "Square image (PNG/ICO), at least 32×32.",
+    "set_password": "Set password",
+    "set_password_hint": "Your Google account has no password yet. Set one so you can sign in with email.",
+    "password_set": "Password set",
+    "password_already_set": "Account already has a password — use \"Change password\""
   },
   "Report": {
     "report_violation": "Report violation",

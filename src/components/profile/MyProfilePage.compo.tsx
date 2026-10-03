@@ -62,9 +62,12 @@ export default function MyProfilePage() {
             />
 
 
-            {/* Mật khẩu & bảo mật: đổi mật khẩu · reset qua email · đăng xuất mọi thiết bị */}
+            {/* Mật khẩu & bảo mật: đặt/đổi mật khẩu · reset qua email · đăng xuất mọi thiết bị */}
             <Card className="mt-4 p-5 sm:p-6">
-                <ProfileSecurityBlock />
+                {/* has_password === false -> tài khoản Google chưa có mật khẩu -> hiện "Đặt mật khẩu" */}
+                <ProfileSecurityBlock
+                    hasPassword={myProfile?.has_password !== false}
+                />
             </Card>
 
             {/*logout*/}

@@ -8,6 +8,7 @@ import { LogOut, MailWarning, ShieldCheck } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import ChangePasswordForm from '@/components/profile/ChangePasswordForm.compo';
+import SetPasswordForm from '@/components/profile/SetPasswordForm.compo';
 import { useLogout } from '@/hooks/auth/useLogout.hook';
 import { useResetMyPassword } from '@/hooks/user/userActions.hook';
 import { useRouter } from '@/i18n/navigation';
@@ -91,11 +92,21 @@ function Row({
  * Khu "Mật khẩu & bảo mật" ở trang cá nhân.
  *
  * Gồm 3 việc, gộp một chỗ:
- *  1. Đổi mật khẩu (thu gọn, bấm mới xổ ra)
+ *  1. Đặt/Đổi mật khẩu (thu gọn, bấm mới xổ ra)
  *  2. Reset mật khẩu — gửi mật khẩu mới vào email + thu hồi MỌI phiên
  *  3. Đăng xuất tất cả thiết bị
  */
-export default function ProfileSecurityBlock() {
+export default function ProfileSecurityBlock({
+  hasPassword = true,
+}: {
+  /**
+   * `true` = đã có mật khẩu -> hiện "Đổi mật khẩu" (cần mật khẩu cũ).
+   * `false` = tài khoản Google chưa có mật khẩu -> hiện "Đặt mật khẩu".
+   *
+   * Mặc định `true` để client cũ (chưa truyền prop) vẫn giữ hành vi cũ.
+   */
+  hasPassword?: boolean;
+}) {
   const txt = useTranslations('Admin');
   const queryClient = useQueryClient();
   const router = useRouter();
@@ -133,8 +144,8 @@ export default function ProfileSecurityBlock() {
         <h3 className="text-sm font-medium">{txt('security_block')}</h3>
       </div>
 
-      {/* 1. Đổi mật khẩu — thu gọn */}
-      <ChangePasswordForm />
+      {/* 1. Đặt mật khẩu (Google chưa có) hoặc Đổi mật khẩu — thu gọn */}
+      {hasPassword ? <ChangePasswordForm /> : <SetPasswordForm />}
 
       <div className="border-t border-border" />
 

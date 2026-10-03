@@ -3,6 +3,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { api } from '@/lib/axios/axios';
+import type { AuthUserInfo } from '@/types/auth/auth.type';
 
 /**
  * Check username đã bị dùng chưa.
@@ -34,6 +35,30 @@ export function useChangePassword() {
   return useMutation({
     mutationFn: async (vars: { old_password: string; new_password: string }) => {
       await api.post('user/change_password', vars);
+    },
+  });
+}
+
+/**
+ * Đặt mật khẩu LẦN ĐẦU — chỉ cho tài khoản Google chưa có mật khẩu.
+ *
+ * `POST /user/set_password` trả về `getMyInfo` (đúng shape `GET /user/me`), nên
+ * ghi thẳng vào cache `['my_profile']` — `has_password` thành `true` và UI đổi
+ * sang "Đổi mật khẩu" NGAY, không chờ refetch.
+ */
+export function useSetPassword() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (new_password: string) => {
+      const res = await api.post<{ data: AuthUserInfo }>('user/set_password', {
+        new_password,
+      });
+      return res.data.data;
+    },
+    onSuccess: (data) => {
+      if (data) queryClient.setQueryData(['my_profile'], data);
+      queryClient.invalidateQueries({ queryKey: ['my_profile'] });
     },
   });
 }
